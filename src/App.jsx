@@ -337,7 +337,7 @@ function HeroScrollytelling() {
                     cardsRef.current[index] = node;
                   }}
                 >
-                  <ProjectBoard project={project} />
+                  <ProjectMiniScreen project={project} />
                 </div>
               ))}
             </div>
@@ -357,7 +357,7 @@ function HeroScrollytelling() {
       />
 
       <div className="transition-overlay-card" ref={overlayRef} aria-hidden="true">
-        <ProjectBoard project={projects[0]} />
+        <ProjectMiniScreen project={projects[0]} />
       </div>
     </section>
   );
@@ -389,37 +389,27 @@ function HandDrawnArrow() {
   return (
     <svg
       className="hero-arrow"
-      viewBox="0 0 360 180"
+      viewBox="0 0 360 210"
       aria-hidden="true"
     >
       <path
         className="draw-path"
         pathLength="1"
-        d="M26 126 C77 48 154 39 199 84 C223 107 252 106 286 86"
+        d="M28 136 C76 78 148 72 204 112 C226 128 254 126 294 96 M258 72 C276 83 288 92 294 96 C276 101 258 108 240 119"
         fill="none"
         stroke="currentColor"
         strokeLinecap="round"
         strokeLinejoin="round"
-        strokeWidth="13"
-      />
-      <path
-        className="draw-path"
-        pathLength="1"
-        d="M251 52 C269 67 281 80 286 86 C268 91 248 99 226 112"
-        fill="none"
-        stroke="currentColor"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        strokeWidth="13"
+        strokeWidth="12"
       />
     </svg>
   );
 }
 
-function ProjectBoard({ project }) {
+function ProjectMiniScreen({ project }) {
   return (
     <article
-      className={`project-board project-board-${project.id}`}
+      className={`project-mini-screen project-mini-screen-${project.id}`}
       aria-label={project.label}
       style={{
         "--card-color": project.color,
@@ -427,9 +417,18 @@ function ProjectBoard({ project }) {
         "--card-ink": project.ink,
       }}
     >
-      <div className="project-board-frame">
-        <div className="project-image-placeholder" aria-hidden="true" />
-        <span>{project.label}</span>
+      <div className="mini-screen-frame">
+        <div className="mini-screen-toolbar" aria-hidden="true">
+          <i />
+          <i />
+          <i />
+        </div>
+        <div className="mini-screen-preview" aria-hidden="true">
+          <span />
+          <span />
+          <span />
+          <b />
+        </div>
       </div>
     </article>
   );
