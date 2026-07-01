@@ -68,8 +68,6 @@ const heroStackOffsets = [
   { x: 0.33, y: 0.1, rotate: 12 },
 ];
 
-const sliceCount = 7;
-
 const clamp = (value, min = 0, max = 1) => Math.min(Math.max(value, min), max);
 const lerp = (start, end, progress) => start + (end - start) * progress;
 const easeOut = (progress) => 1 - Math.pow(1 - progress, 3);
@@ -152,9 +150,9 @@ function ProjectStory() {
     mass: 0.72,
   });
 
-  const finalOpacity = useTransform(progress, [0.58, 0.84], [0, 1]);
-  const finalY = useTransform(progress, [0.58, 0.9], [36, 0]);
-  const finalScale = useTransform(progress, [0.62, 0.94], [0.975, 1]);
+  const finalOpacity = useTransform(progress, [0.5, 0.72], [0, 1]);
+  const finalY = useTransform(progress, [0.5, 0.78], [34, 0]);
+  const finalScale = useTransform(progress, [0.54, 0.8], [0.975, 1]);
 
   return (
     <section className="project-story" id="accueil" ref={storyRef}>
@@ -163,8 +161,14 @@ function ProjectStory() {
           <div className="hero-copy">
             <h1 id="hero-title" className="hero-title">
               <span>On transforme vos projets</span>
-              <span>en sites web et apps mobiles</span>
-              <span className="hero-memory">dont les gens se souviennent.</span>
+              <span className="hero-arrow-line">
+                en sites web et apps mobiles
+                <HandDrawnArrow reducedMotion={reducedMotion} />
+              </span>
+              <span className="hero-memory">
+                dont les gens se souviennent.
+                <HandDrawnHighlight reducedMotion={reducedMotion} />
+              </span>
             </h1>
           </div>
           <div className="hero-stage" ref={stageRef} aria-hidden="true">
@@ -173,7 +177,7 @@ function ProjectStory() {
         </div>
       </section>
 
-      <MorphSliceLayer
+      <SoftMorphCanvas
         geometry={geometry}
         progress={progress}
         projects={projects}
@@ -229,6 +233,66 @@ function ProjectStory() {
         </Reveal>
       </section>
     </section>
+  );
+}
+
+function HandDrawnArrow({ reducedMotion }) {
+  return (
+    <svg className="hero-mark hero-arrow-mark" viewBox="0 0 330 140" aria-hidden="true">
+      <motion.path
+        d="M18 102 C66 24 155 4 181 58 C197 91 165 130 140 110 C111 87 145 51 196 54 C245 56 280 83 305 96"
+        fill="none"
+        stroke="currentColor"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        strokeWidth="13"
+        initial={reducedMotion ? { pathLength: 1 } : { pathLength: 0 }}
+        animate={{ pathLength: 1 }}
+        transition={{ duration: reducedMotion ? 0 : 1.05, delay: 0.64, ease: [0.16, 1, 0.3, 1] }}
+      />
+      <motion.path
+        d="M260 49 C278 70 294 88 305 96 C281 99 257 101 232 99"
+        fill="none"
+        stroke="currentColor"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        strokeWidth="13"
+        initial={reducedMotion ? { pathLength: 1 } : { pathLength: 0 }}
+        animate={{ pathLength: 1 }}
+        transition={{ duration: reducedMotion ? 0 : 0.48, delay: 1.32, ease: [0.16, 1, 0.3, 1] }}
+      />
+    </svg>
+  );
+}
+
+function HandDrawnHighlight({ reducedMotion }) {
+  const transition = { duration: reducedMotion ? 0 : 0.9, delay: 1.05, ease: [0.16, 1, 0.3, 1] };
+
+  return (
+    <svg className="hero-mark hero-highlight-mark" viewBox="0 0 820 88" preserveAspectRatio="none" aria-hidden="true">
+      <motion.path
+        d="M20 50 C140 35 235 45 340 38 C466 30 577 40 800 30"
+        fill="none"
+        stroke="currentColor"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        strokeWidth="30"
+        initial={reducedMotion ? { pathLength: 1 } : { pathLength: 0 }}
+        animate={{ pathLength: 1 }}
+        transition={transition}
+      />
+      <motion.path
+        d="M28 62 C152 58 262 52 372 56 C505 61 632 43 792 50"
+        fill="none"
+        stroke="currentColor"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        strokeWidth="20"
+        initial={reducedMotion ? { pathLength: 1 } : { pathLength: 0 }}
+        animate={{ pathLength: 1 }}
+        transition={{ ...transition, delay: reducedMotion ? 0 : 1.16 }}
+      />
+    </svg>
   );
 }
 
@@ -304,130 +368,464 @@ function HeroStackCard({ project, index, progress, reducedMotion }) {
   );
 }
 
-function MorphSliceLayer({ geometry, progress, projects: morphProjects, reducedMotion }) {
+function SoftMorphCanvas({ geometry, progress, projects: morphProjects, reducedMotion }) {
+  const containerRef = useRef(null);
+
+  useEffect(() => {
+    const container = containerRef.current;
+
+    if (!container || !geometry || reducedMotion) {
+      return undefined;
+    }
+
+    let frame = 0;
+    let disposed = false;
+    let renderer;
+    let scene;
+    let camera;
+    let meshes = [];
+    let materials = [];
+    let textures = [];
+    let planeGeometry;
+
+    const rect = container.getBoundingClientRect();
+    const width = Math.max(1, Math.ceil(rect.width));
+    const height = Math.max(1, Math.ceil(rect.height));
+
+    import("three").then((THREE) => {
+      if (disposed) {
+        return;
+      }
+
+      renderer = new THREE.WebGLRenderer({
+        alpha: true,
+        antialias: true,
+        powerPreference: "high-performance",
+      });
+      renderer.setClearColor(0x000000, 0);
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 1.25));
+      renderer.setSize(width, height, false);
+      renderer.domElement.className = "soft-morph-canvas";
+      container.appendChild(renderer.domElement);
+
+      scene = new THREE.Scene();
+      camera = new THREE.OrthographicCamera(0, width, height, 0, -1000, 1000);
+      camera.position.z = 1000;
+      planeGeometry = new THREE.PlaneGeometry(1, 1, 28, 28);
+
+      return Promise.all(morphProjects.map((project) => createProjectTexture(project, THREE))).then((createdTextures) => {
+        if (disposed) {
+          createdTextures.forEach((texture) => texture.dispose());
+          return;
+        }
+
+        textures = createdTextures;
+        meshes = textures.map((texture, index) => {
+          const material = new THREE.ShaderMaterial({
+            uniforms: {
+              uTexture: { value: texture },
+              uProgress: { value: 0 },
+              uOpacity: { value: 0 },
+              uBend: { value: 0 },
+              uSoftness: { value: 0 },
+              uDirection: { value: new THREE.Vector2(1, 0) },
+            },
+            vertexShader: softMorphVertexShader,
+            fragmentShader: softMorphFragmentShader,
+            transparent: true,
+            depthTest: false,
+            depthWrite: false,
+          });
+          const mesh = new THREE.Mesh(planeGeometry, material);
+
+          mesh.frustumCulled = false;
+          mesh.renderOrder = 20 + index;
+          scene.add(mesh);
+          materials.push(material);
+
+          return mesh;
+        });
+
+        const render = () => {
+          if (disposed) {
+            return;
+          }
+
+          updateSoftMorphMeshes(meshes, geometry, progress.get(), THREE);
+          renderer.render(scene, camera);
+          frame = requestAnimationFrame(render);
+        };
+
+        render();
+      });
+    });
+
+    return () => {
+      disposed = true;
+      cancelAnimationFrame(frame);
+      meshes.forEach((mesh) => scene?.remove(mesh));
+      materials.forEach((material) => material.dispose());
+      textures.forEach((texture) => texture.dispose());
+      planeGeometry?.dispose();
+      renderer?.dispose();
+      renderer?.domElement.remove();
+    };
+  }, [geometry, morphProjects, progress, reducedMotion]);
+
   if (!geometry || reducedMotion) {
     return null;
   }
 
-  return (
-    <div className="morph-layer" aria-hidden="true">
-      {morphProjects.map((project, index) => (
-        <MorphCardProxy
-          geometry={geometry.cards[index]}
-          index={index}
-          key={project.name}
-          progress={progress}
-          project={project}
-        />
-      ))}
-    </div>
-  );
+  return <div className="soft-morph-layer" ref={containerRef} aria-hidden="true" />;
 }
 
-function MorphCardProxy({ geometry, index, progress, project }) {
-  const proxyProgress = useTransform(progress, (value) => {
+function updateSoftMorphMeshes(meshes, geometry, rawProgress, THREE) {
+  meshes.forEach((mesh, index) => {
+    const cardGeometry = geometry.cards[index];
+
+    if (!cardGeometry) {
+      return;
+    }
+
     const offset = index * 0.018;
-    return clamp((value - offset) / (0.96 - offset));
+    const progress = clamp((rawProgress - offset) / (0.96 - offset));
+    const eased = easeInOut(progress);
+    const phase = Math.sin(progress * Math.PI);
+    const startCenterX = cardGeometry.start.x + cardGeometry.start.width / 2;
+    const startCenterY = cardGeometry.start.y + cardGeometry.start.height / 2;
+    const endCenterX = cardGeometry.end.x + cardGeometry.start.width / 2;
+    const endCenterY = cardGeometry.end.y + cardGeometry.start.height / 2;
+    const arcX = phase * cardGeometry.curveX;
+    const liftY = phase * cardGeometry.curveY;
+    const centerX = lerp(startCenterX, endCenterX, eased) + arcX;
+    const centerY = lerp(startCenterY, endCenterY, eased) - liftY;
+    const scale = lerp(1, cardGeometry.end.scale, easeOut(progress));
+    const stretch = 1 + phase * 0.18;
+    const squash = 1 - phase * 0.07;
+    const travelX = endCenterX - startCenterX;
+    const travelY = endCenterY - startCenterY;
+    const travelLength = Math.hypot(travelX, travelY) || 1;
+    const directionX = travelX / travelLength;
+    const directionY = travelY / travelLength;
+    const rotation = lerp(cardGeometry.start.rotate, 0, easeOut(progress)) + phase * (index - 2) * 2.2;
+    const opacity = mapRange(rawProgress, 0.035, 0.14, 0, 0.94) * mapRange(rawProgress, 0.58, 0.74, 1, 0);
+
+    mesh.visible = opacity > 0.01;
+    mesh.position.set(centerX, centerY, 30 - index);
+    mesh.rotation.z = THREE.MathUtils.degToRad(rotation);
+    mesh.scale.set(cardGeometry.start.width * scale * stretch, cardGeometry.start.height * scale * squash, 1);
+    mesh.material.uniforms.uProgress.value = progress;
+    mesh.material.uniforms.uOpacity.value = opacity;
+    mesh.material.uniforms.uBend.value = phase;
+    mesh.material.uniforms.uSoftness.value = phase;
+    mesh.material.uniforms.uDirection.value.set(directionX, directionY);
   });
-
-  const x = useTransform(proxyProgress, (value) => {
-    const eased = easeInOut(value);
-    const arc = Math.sin(value * Math.PI) * geometry.curveX;
-    return lerp(geometry.start.x, geometry.end.x, eased) + arc;
-  });
-
-  const y = useTransform(proxyProgress, (value) => {
-    const eased = easeInOut(value);
-    const lift = Math.sin(value * Math.PI) * geometry.curveY;
-    return lerp(geometry.start.y, geometry.end.y, eased) - lift;
-  });
-
-  const scale = useTransform(proxyProgress, (value) => {
-    const eased = easeOut(value);
-    const compression = Math.sin(value * Math.PI) * 0.035;
-    return lerp(1, geometry.end.scale, eased) - compression;
-  });
-
-  const rotate = useTransform(proxyProgress, (value) => {
-    const eased = easeOut(value);
-    const orbit = Math.sin(value * Math.PI) * (index - 2) * 1.8;
-    return lerp(geometry.start.rotate, 0, eased) + orbit;
-  });
-
-  const opacity = useTransform(progress, [0.04, 0.13, 0.78, 0.98], [0, 0.98, 0.92, 0]);
-
-  return (
-    <motion.div
-      className="morph-card-proxy"
-      style={{
-        width: geometry.start.width,
-        height: geometry.start.height,
-        x,
-        y,
-        scale,
-        rotate,
-        opacity,
-        zIndex: 20 + index,
-      }}
-    >
-      {Array.from({ length: sliceCount }, (_, sliceIndex) => (
-        <MorphRibbon
-          index={index}
-          key={`${project.name}-${sliceIndex}`}
-          progress={proxyProgress}
-          project={project}
-          sliceIndex={sliceIndex}
-        />
-      ))}
-    </motion.div>
-  );
 }
 
-function MorphRibbon({ index, progress, project, sliceIndex }) {
-  const centerOffset = sliceIndex - (sliceCount - 1) / 2;
-  const direction = index % 2 === 0 ? 1 : -1;
-  const ribbonX = useTransform(
-    progress,
-    (value) => Math.sin(value * Math.PI) * centerOffset * 15 * direction
-  );
-  const ribbonY = useTransform(progress, (value) => {
-    const phase = Math.sin(value * Math.PI);
-    return phase * (Math.abs(centerOffset) * 7 + index * 2);
-  });
-  const ribbonRotate = useTransform(
-    progress,
-    (value) => Math.sin(value * Math.PI) * centerOffset * 1.55 * direction
-  );
-  const scaleY = useTransform(progress, (value) => {
-    const phase = Math.sin(value * Math.PI);
-    return lerp(1, 0.16 + Math.abs(centerOffset) * 0.012, phase);
-  });
-  const opacity = useTransform(progress, [0, 0.12, 0.82, 1], [0.78, 1, 1, 0.12]);
+function mapRange(value, inMin, inMax, outMin, outMax) {
+  const progress = clamp((value - inMin) / (inMax - inMin));
 
-  return (
-    <motion.div
-      className="morph-ribbon"
-      style={{
-        left: `${(sliceIndex / sliceCount) * 100}%`,
-        width: `${100 / sliceCount + 0.8}%`,
-        x: ribbonX,
-        y: ribbonY,
-        rotate: ribbonRotate,
-        scaleY,
-        opacity,
-      }}
-    >
-      <div
-        className="morph-ribbon-inner"
-        style={{
-          width: `${sliceCount * 100}%`,
-          transform: `translate3d(-${(sliceIndex / sliceCount) * 100}%, 0, 0)`,
-        }}
-      >
-        <ProjectCardSurface project={project} mode="morph" />
-      </div>
-    </motion.div>
-  );
+  return lerp(outMin, outMax, progress);
+}
+
+const softMorphVertexShader = `
+  varying vec2 vUv;
+  uniform float uProgress;
+  uniform float uBend;
+  uniform float uSoftness;
+  uniform vec2 uDirection;
+
+  void main() {
+    vUv = uv;
+    vec3 p = position;
+    vec2 centered = uv - 0.5;
+    float sheet = sin(uv.x * 3.14159265);
+    float crossWave = sin((uv.y + uProgress * 0.42) * 6.2831853);
+    float longWave = sin((uv.x + uProgress * 0.58) * 3.14159265);
+
+    p.x += crossWave * 0.030 * uSoftness;
+    p.y += longWave * 0.070 * uBend;
+    p.x += centered.y * uDirection.x * 0.090 * uSoftness * sheet;
+    p.y += centered.x * uDirection.y * 0.070 * uSoftness * sheet;
+    p.z += sheet * uBend * 0.19;
+
+    gl_Position = projectionMatrix * modelViewMatrix * vec4(p, 1.0);
+  }
+`;
+
+const softMorphFragmentShader = `
+  varying vec2 vUv;
+  uniform sampler2D uTexture;
+  uniform float uOpacity;
+  uniform float uSoftness;
+
+  void main() {
+    vec2 uv = vUv;
+    vec2 centered = uv - 0.5;
+    float shimmer = sin((uv.x + uv.y) * 18.0) * 0.006 * uSoftness;
+    vec4 color = texture2D(uTexture, uv + centered * shimmer);
+    float edgeX = smoothstep(0.0, 0.045, uv.x) * smoothstep(0.0, 0.045, 1.0 - uv.x);
+    float edgeY = smoothstep(0.0, 0.055, uv.y) * smoothstep(0.0, 0.055, 1.0 - uv.y);
+    float edge = edgeX * edgeY;
+    color.rgb += vec3(0.035) * uSoftness * edge;
+    color.a *= uOpacity * edge;
+
+    gl_FragColor = color;
+  }
+`;
+
+async function createProjectTexture(project, THREE) {
+  const width = 720;
+  const height = 920;
+  const canvas = document.createElement("canvas");
+  const ctx = canvas.getContext("2d");
+
+  canvas.width = width;
+  canvas.height = height;
+  drawProjectTextureBase(ctx, project, width, height);
+
+  if (project.image) {
+    try {
+      const image = await loadCanvasImage(project.image);
+      drawProjectImagePreview(ctx, image, width, height);
+    } catch {
+      drawGeneratedTexturePreview(ctx, project.visual, width, height);
+    }
+  } else {
+    drawGeneratedTexturePreview(ctx, project.visual, width, height);
+  }
+
+  drawTextureCopy(ctx, project, width, height);
+
+  const texture = new THREE.CanvasTexture(canvas);
+  texture.colorSpace = THREE.SRGBColorSpace;
+  texture.anisotropy = 4;
+  texture.needsUpdate = true;
+
+  return texture;
+}
+
+function drawProjectTextureBase(ctx, project, width, height) {
+  const gradient = ctx.createLinearGradient(0, 0, width, height);
+
+  if (project.visual === "commerce") {
+    gradient.addColorStop(0, "#191d1f");
+    gradient.addColorStop(0.56, "#42221d");
+    gradient.addColorStop(1, "#d64e1b");
+  } else if (project.visual === "mobile") {
+    gradient.addColorStop(0, "#06131f");
+    gradient.addColorStop(0.56, "#245f9b");
+    gradient.addColorStop(1, "#89d3ef");
+  } else if (project.visual === "operations") {
+    gradient.addColorStop(0, "#10211d");
+    gradient.addColorStop(0.58, "#173f34");
+    gradient.addColorStop(1, "#cfe6d6");
+  } else if (project.visual === "editorial") {
+    gradient.addColorStop(0, "#f1efea");
+    gradient.addColorStop(0.52, "#c8d5d8");
+    gradient.addColorStop(1, "#1f272c");
+  } else {
+    gradient.addColorStop(0, "#111321");
+    gradient.addColorStop(0.55, "#27215f");
+    gradient.addColorStop(1, "#d8e0ff");
+  }
+
+  roundedRect(ctx, 0, 0, width, height, 52);
+  ctx.fillStyle = gradient;
+  ctx.fill();
+
+  const glow = ctx.createRadialGradient(width * 0.18, height * 0.1, 0, width * 0.18, height * 0.1, width * 0.68);
+  glow.addColorStop(0, `${project.accent}80`);
+  glow.addColorStop(1, `${project.accent}00`);
+  ctx.fillStyle = glow;
+  ctx.fillRect(0, 0, width, height);
+}
+
+function drawProjectImagePreview(ctx, image, width, height) {
+  const x = 48;
+  const y = 46;
+  const previewWidth = width - 96;
+  const previewHeight = height * 0.52;
+  const imageRatio = image.width / image.height;
+  const previewRatio = previewWidth / previewHeight;
+  let drawWidth = previewWidth;
+  let drawHeight = previewHeight;
+  let drawX = x;
+  let drawY = y;
+
+  if (imageRatio > previewRatio) {
+    drawWidth = previewHeight * imageRatio;
+    drawX = x - (drawWidth - previewWidth) / 2;
+  } else {
+    drawHeight = previewWidth / imageRatio;
+    drawY = y - (drawHeight - previewHeight) / 2;
+  }
+
+  ctx.save();
+  roundedRect(ctx, x, y, previewWidth, previewHeight, 42);
+  ctx.clip();
+  ctx.drawImage(image, drawX, drawY, drawWidth, drawHeight);
+  ctx.fillStyle = "rgba(255, 255, 255, 0.08)";
+  ctx.fillRect(x, y, previewWidth, previewHeight);
+  ctx.restore();
+}
+
+function drawGeneratedTexturePreview(ctx, visual, width, height) {
+  const x = 48;
+  const y = 46;
+  const previewWidth = width - 96;
+  const previewHeight = height * 0.52;
+
+  ctx.save();
+  roundedRect(ctx, x, y, previewWidth, previewHeight, 42);
+  ctx.clip();
+  ctx.fillStyle = visual === "editorial" ? "#ffffff" : "#f5f7f3";
+  ctx.fillRect(x, y, previewWidth, previewHeight);
+
+  if (visual === "operations") {
+    ctx.fillStyle = "#1b3d34";
+    roundedRect(ctx, x + 34, y + 34, 94, previewHeight - 68, 28);
+    ctx.fill();
+    ctx.fillStyle = "#20a77a";
+    roundedRect(ctx, x + 58, y + 58, 46, 46, 16);
+    ctx.fill();
+    ctx.fillStyle = "#11201d";
+    roundedRect(ctx, x + 158, y + 44, previewWidth - 210, 54, 22);
+    ctx.fill();
+    drawPreviewBlocks(ctx, x + 158, y + 128, previewWidth - 210, previewHeight - 170, "#cfe3d6");
+  } else if (visual === "editorial") {
+    const editorialGradient = ctx.createLinearGradient(x + 38, y + 38, x + previewWidth - 38, y + 180);
+    editorialGradient.addColorStop(0, "#df766d");
+    editorialGradient.addColorStop(1, "#efe3df");
+    ctx.fillStyle = editorialGradient;
+    roundedRect(ctx, x + 38, y + 38, previewWidth - 76, 170, 34);
+    ctx.fill();
+    ctx.fillStyle = "#1f272c";
+    roundedRect(ctx, x + 46, y + 248, previewWidth * 0.58, 18, 9);
+    ctx.fill();
+    drawPreviewBlocks(ctx, x + 46, y + 292, previewWidth - 92, 126, "#ead8d5");
+  } else {
+    ctx.fillStyle = "#111321";
+    roundedRect(ctx, x + 34, y + 34, previewWidth - 68, 56, 22);
+    ctx.fill();
+    ctx.fillStyle = "#6a5cff";
+    roundedRect(ctx, x + previewWidth - 142, y + 48, 72, 28, 14);
+    ctx.fill();
+    ctx.fillStyle = "#ffffff";
+    roundedRect(ctx, x + 46, y + 130, previewWidth - 92, 210, 32);
+    ctx.fill();
+    drawChartBars(ctx, x + 86, y + 174, previewWidth - 172, 128);
+  }
+
+  ctx.restore();
+}
+
+function drawPreviewBlocks(ctx, x, y, width, height, color) {
+  ctx.fillStyle = color;
+  const gap = 16;
+  const blockWidth = (width - gap * 2) / 3;
+
+  for (let i = 0; i < 3; i += 1) {
+    roundedRect(ctx, x + i * (blockWidth + gap), y, blockWidth, height * 0.42, 24);
+    ctx.fill();
+  }
+
+  ctx.fillStyle = "rgba(16, 18, 20, 0.15)";
+
+  for (let i = 0; i < 4; i += 1) {
+    roundedRect(ctx, x, y + height * 0.58 + i * 28, width * (0.92 - i * 0.08), 14, 7);
+    ctx.fill();
+  }
+}
+
+function drawChartBars(ctx, x, y, width, height) {
+  const barWidth = width / 7;
+  const heights = [0.42, 0.72, 0.56, 0.88];
+
+  heights.forEach((barHeight, index) => {
+    ctx.fillStyle = index === 3 ? "#6a5cff" : "rgba(106, 92, 255, 0.35)";
+    roundedRect(ctx, x + index * barWidth * 1.55, y + height * (1 - barHeight), barWidth, height * barHeight, 22);
+    ctx.fill();
+  });
+}
+
+function drawTextureCopy(ctx, project, width, height) {
+  const fade = ctx.createLinearGradient(0, height * 0.48, 0, height);
+  fade.addColorStop(0, "rgba(0, 0, 0, 0)");
+  fade.addColorStop(1, "rgba(0, 0, 0, 0.76)");
+  ctx.fillStyle = fade;
+  ctx.fillRect(0, height * 0.48, width, height * 0.52);
+
+  const left = 52;
+  const bottom = height - 72;
+
+  ctx.fillStyle = "rgba(255, 255, 255, 0.74)";
+  ctx.font = "700 24px system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif";
+  ctx.letterSpacing = "1.2px";
+  ctx.fillText(project.category.toUpperCase(), left, bottom - 142);
+
+  ctx.fillStyle = "#ffffff";
+  ctx.font = "700 46px system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif";
+  ctx.fillText(project.name, left, bottom - 82);
+
+  ctx.fillStyle = "rgba(255, 255, 255, 0.78)";
+  ctx.font = "500 27px system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif";
+  wrapTextureText(ctx, project.description, left, bottom - 36, width - 104, 34, 2);
+}
+
+function wrapTextureText(ctx, text, x, y, maxWidth, lineHeight, maxLines) {
+  const words = text.split(" ");
+  let line = "";
+  let lineCount = 0;
+
+  words.forEach((word, index) => {
+    const testLine = `${line}${word} `;
+
+    if (ctx.measureText(testLine).width > maxWidth && index > 0) {
+      ctx.fillText(line.trim(), x, y + lineCount * lineHeight);
+      line = `${word} `;
+      lineCount += 1;
+    } else {
+      line = testLine;
+    }
+  });
+
+  if (lineCount < maxLines) {
+    ctx.fillText(line.trim(), x, y + lineCount * lineHeight);
+  }
+}
+
+function loadCanvasImage(src) {
+  return new Promise((resolve, reject) => {
+    const image = new Image();
+    const timeout = window.setTimeout(() => {
+      image.onload = null;
+      image.onerror = null;
+      reject(new Error("Image load timeout"));
+    }, 650);
+
+    image.onload = () => {
+      window.clearTimeout(timeout);
+      resolve(image);
+    };
+    image.onerror = (error) => {
+      window.clearTimeout(timeout);
+      reject(error);
+    };
+    image.src = src;
+  });
+}
+
+function roundedRect(ctx, x, y, width, height, radius) {
+  const r = Math.min(radius, width / 2, height / 2);
+
+  ctx.beginPath();
+  ctx.moveTo(x + r, y);
+  ctx.arcTo(x + width, y, x + width, y + height, r);
+  ctx.arcTo(x + width, y + height, x, y + height, r);
+  ctx.arcTo(x, y + height, x, y, r);
+  ctx.arcTo(x, y, x + width, y, r);
+  ctx.closePath();
 }
 
 function ProjectCardSurface({ project, mode }) {
@@ -896,8 +1294,8 @@ function useTransitionGeometry(storyRef, stageRef, slotRefs) {
       const stageCenterY = stageRelativeTop + stageRect.height * 0.52;
       const firstSlotTop = slots[0].getBoundingClientRect().top + window.scrollY;
       const transitionDistance = Math.max(
-        window.innerHeight * 0.68,
-        firstSlotTop - storyTop - window.innerHeight * 0.92
+        window.innerHeight * 1.18,
+        firstSlotTop - storyTop - window.innerHeight * 0.52
       );
 
       const cards = projects.map((_, index) => {
