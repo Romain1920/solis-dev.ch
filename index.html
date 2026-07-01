@@ -34,43 +34,111 @@
     </header>
 
     <main id="contenu">
-      <section class="hero" id="accueil" aria-labelledby="hero-title">
-        <div class="section-wrap hero-copy">
-          <h1 id="hero-title" class="hero-title">
-            On transforme vos
-            <span class="project-word">projets<span class="project-stack" aria-hidden="true">
-                <span class="stack-tile"></span>
-                <span class="stack-tile"></span>
-                <span class="stack-tile"></span>
-                <span class="stack-tile"></span>
-                <span class="stack-tile"></span>
-              </span>
-            </span>
-            en sites web et en applications
-            <span class="hero-memory">dont les gens se souviennent.</span>
-          </h1>
+      <section class="project-story" id="accueil">
+        <div class="project-card-layer" aria-label="Projets phares SOLIS">
+          <article class="feature-card project-card-commerce" data-project-card style="--card-index: 0">
+            <div class="feature-card-plate">
+              <div class="feature-card-visual visual-commerce" aria-hidden="true">
+                <img src="assets/hella-boutique-desktop.png" alt="" />
+              </div>
+              <span>E-commerce</span>
+              <strong>Commerce à fort volume</strong>
+              <em>500 000+ commandes traitées</em>
+            </div>
+          </article>
+          <article class="feature-card project-card-sites" data-project-card style="--card-index: 1">
+            <div class="feature-card-plate">
+              <div class="feature-card-visual visual-sites" aria-hidden="true">
+                <span></span>
+                <span></span>
+                <span></span>
+              </div>
+              <span>Sites web</span>
+              <strong>Présences éditoriales</strong>
+              <em>Identité, vitesse, conversion</em>
+            </div>
+          </article>
+          <article class="feature-card project-card-mobile" data-project-card style="--card-index: 2">
+            <div class="feature-card-plate">
+              <div class="feature-card-visual visual-mobile" aria-hidden="true">
+                <img src="assets/hella-mobile.avif" alt="" />
+              </div>
+              <span>Apps mobiles</span>
+              <strong>Parcours iOS et Android</strong>
+              <em>Interfaces utiles, rapides</em>
+            </div>
+          </article>
+          <article class="feature-card project-card-software" data-project-card style="--card-index: 3">
+            <div class="feature-card-plate">
+              <div class="feature-card-visual visual-software" aria-hidden="true">
+                <span></span>
+                <span></span>
+                <span></span>
+                <span></span>
+              </div>
+              <span>Logiciels métier</span>
+              <strong>Outils internes sur mesure</strong>
+              <em>Processus centralisés</em>
+            </div>
+          </article>
+          <article class="feature-card project-card-prototype" data-project-card style="--card-index: 4">
+            <div class="feature-card-plate">
+              <div class="feature-card-visual visual-prototype" aria-hidden="true">
+                <span>Prototype</span>
+              </div>
+              <span>Maquettes</span>
+              <strong>Décisions plus claires</strong>
+              <em>Un projet tangible avant dev</em>
+            </div>
+          </article>
         </div>
-      </section>
 
-      <section class="trust-strip" aria-label="Indicateurs de confiance">
-        <div class="section-wrap metrics">
-          <p data-reveal>
-            <strong data-counter data-prefix="+" data-target="50">+50</strong>
-            <span>projets réalisés</span>
-          </p>
-          <p data-reveal>
-            <strong data-counter data-prefix="+" data-target="7">+7</strong>
-            <span>ans d’expérience</span>
-          </p>
-          <p data-reveal>
-            <strong>Valais</strong>
-            <span>Suisse, depuis 2019</span>
-          </p>
-          <p data-reveal>
-            <strong data-counter data-prefix="+" data-target="500000">+500 000</strong>
-            <span>commandes e-commerce traitées en deux ans</span>
-          </p>
-        </div>
+        <section class="hero" aria-labelledby="hero-title">
+          <div class="section-wrap hero-layout">
+            <div class="hero-copy">
+              <h1 id="hero-title" class="hero-title">
+                <span>On transforme vos projets</span>
+                <span>en sites web et apps mobiles</span>
+                <span class="hero-memory">dont les gens se souviennent.</span>
+              </h1>
+            </div>
+            <div class="hero-stage-anchor" aria-hidden="true"></div>
+          </div>
+        </section>
+
+        <section class="portfolio story-portfolio" id="realisations" aria-labelledby="portfolio-title">
+          <div class="section-wrap metrics story-metrics" aria-label="Indicateurs de confiance">
+            <p data-reveal>
+              <strong data-counter data-prefix="+" data-target="50">+50</strong>
+              <span>projets réalisés</span>
+            </p>
+            <p data-reveal>
+              <strong data-counter data-prefix="+" data-target="7">+7</strong>
+              <span>ans d’expérience</span>
+            </p>
+            <p data-reveal>
+              <strong>Valais</strong>
+              <span>Suisse, depuis 2019</span>
+            </p>
+            <p data-reveal>
+              <strong data-counter data-prefix="+" data-target="500000">+500 000</strong>
+              <span>commandes e-commerce traitées en deux ans</span>
+            </p>
+          </div>
+          <div class="section-wrap featured-project-slots" aria-hidden="true">
+            <div class="featured-project-slot"></div>
+            <div class="featured-project-slot"></div>
+            <div class="featured-project-slot"></div>
+            <div class="featured-project-slot"></div>
+            <div class="featured-project-slot"></div>
+          </div>
+          <div class="section-wrap portfolio-copy" data-reveal>
+            <h2 id="portfolio-title">Cinq projets phares. Un même niveau d’exigence.</h2>
+            <a class="button light" href="/realisations/" data-track="portfolio-page">
+              Découvrir les réalisations
+            </a>
+          </div>
+        </section>
       </section>
 
       <section class="services" id="services" aria-labelledby="services-title">
@@ -167,29 +235,6 @@
               <p>Développement et mise en ligne.</p>
             </li>
           </ol>
-        </div>
-      </section>
-
-      <section class="portfolio" id="realisations" aria-labelledby="portfolio-title">
-        <div class="project-wall" aria-hidden="true">
-          <div class="project-tile tile-commerce">
-            <span>Commerce</span>
-            <strong>500 000+ commandes</strong>
-          </div>
-          <div class="project-tile tile-internal">
-            <span>Interne</span>
-            <strong>Processus centralisés</strong>
-          </div>
-          <div class="project-tile tile-mobile">
-            <span>Mobile</span>
-            <strong>Parcours simplifiés</strong>
-          </div>
-        </div>
-        <div class="section-wrap portfolio-copy" data-reveal>
-          <h2 id="portfolio-title">Des projets pensés pour être utilisés.</h2>
-          <a class="button light" href="/realisations/" data-track="portfolio-page">
-            Découvrir les réalisations
-          </a>
         </div>
       </section>
 
