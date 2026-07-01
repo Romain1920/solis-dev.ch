@@ -174,8 +174,8 @@ a {
 
 .hero-layout {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(390px, 0.31fr);
-  gap: clamp(42px, 4.8vw, 76px);
+  grid-template-columns: minmax(0, 1.08fr) minmax(390px, 0.29fr);
+  gap: clamp(48px, 5vw, 84px);
   align-items: center;
   min-height: calc(100svh - 232px);
 }
@@ -190,8 +190,8 @@ a {
   margin: 0;
   color: #090a0b;
   font-family: var(--font-main);
-  font-size: clamp(3.16rem, 3.78vw, 4.58rem);
-  line-height: 1.02;
+  font-size: clamp(3.36rem, 4.14vw, 5.08rem);
+  line-height: 0.99;
   letter-spacing: 0;
   font-weight: 500;
 }
@@ -221,26 +221,27 @@ a {
 
 .hero-arrow-mark {
   position: absolute;
-  left: 80%;
-  top: 0.34em;
+  left: calc(100% + clamp(32px, 3.8vw, 68px));
+  top: 0.12em;
   z-index: 1;
-  width: clamp(145px, 14vw, 205px);
+  width: clamp(150px, 14vw, 220px);
   height: auto;
   overflow: visible;
-  transform: rotate(-1deg);
+  transform: rotate(-5deg);
 }
 
 .hero-highlight-mark {
   position: absolute;
-  left: -0.02em;
-  right: -0.05em;
-  bottom: -0.2em;
+  left: -0.01em;
+  right: -0.03em;
+  bottom: -0.46em;
   z-index: -1;
-  width: calc(100% + 0.08em);
-  height: 0.56em;
-  color: rgba(238, 124, 66, 0.34);
+  width: calc(100% + 0.04em);
+  height: 0.38em;
+  color: #ee7c42;
   overflow: visible;
-  transform: rotate(-0.7deg);
+  opacity: 0.9;
+  transform: rotate(-0.4deg);
 }
 
 .hero-stage {
@@ -315,9 +316,6 @@ a {
   width: 100%;
   height: 100%;
   overflow: hidden;
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-end;
   border: 1px solid rgba(255, 255, 255, 0.68);
   border-radius: 28px;
   background:
@@ -327,17 +325,11 @@ a {
   box-shadow:
     0 34px 90px rgba(16, 18, 20, 0.18),
     inset 0 1px 0 rgba(255, 255, 255, 0.72);
-  padding: 22px;
   isolation: isolate;
 }
 
 .project-card-surface::after {
-  position: absolute;
-  inset: auto 0 0;
-  z-index: 1;
-  height: 46%;
-  content: "";
-  background: linear-gradient(180deg, rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.72));
+  display: none;
 }
 
 .project-card-commerce {
@@ -372,11 +364,11 @@ a {
 
 .project-preview {
   position: absolute;
-  inset: 18px 18px auto;
+  inset: 0;
   z-index: 0;
-  height: 62%;
+  height: 100%;
   overflow: hidden;
-  border-radius: 20px;
+  border-radius: inherit;
   background: rgba(255, 255, 255, 0.18);
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.4);
 }
@@ -392,10 +384,7 @@ a {
 }
 
 .project-card-copy {
-  position: relative;
-  z-index: 2;
-  display: grid;
-  gap: 8px;
+  display: none;
 }
 
 .project-card-copy span {
@@ -602,8 +591,8 @@ a {
 
 .portfolio {
   position: relative;
-  min-height: 116svh;
-  padding: 0 0 150px;
+  min-height: 142svh;
+  padding: 0 0 132px;
   background: #fff;
   color: var(--ink);
   isolation: isolate;
@@ -618,36 +607,161 @@ a {
   position: relative;
   z-index: 4;
   background: #fff;
-  border-top: 1px solid var(--line);
-  border-bottom: 1px solid var(--line);
+  padding-top: 20px;
 }
 
 .metrics p {
-  min-height: 190px;
+  min-height: 178px;
   display: flex;
   flex-direction: column;
   justify-content: center;
   gap: 12px;
   margin: 0;
-  border-right: 1px solid var(--line);
-  padding: 26px 26px 26px 0;
+  padding: 26px 34px 26px 0;
 }
 
 .metrics p:last-child {
-  border-right: 0;
   padding-right: 0;
 }
 
 .metrics strong {
-  font-size: 3.45rem;
+  font-size: clamp(2.9rem, 3.8vw, 4.35rem);
   line-height: 0.9;
   font-weight: 600;
 }
 
 .metrics span {
-  max-width: 220px;
+  max-width: 300px;
   color: var(--muted);
   font-weight: 500;
+}
+
+.monitor-showcase {
+  position: relative;
+  z-index: 4;
+  display: grid;
+  grid-template-columns: minmax(260px, 0.36fr) minmax(0, 0.64fr);
+  gap: clamp(56px, 7vw, 120px);
+  align-items: center;
+  margin-top: clamp(108px, 13vw, 190px);
+}
+
+.project-selector-panel {
+  align-self: center;
+}
+
+.portfolio-kicker {
+  margin: 0 0 22px;
+  color: var(--muted);
+  font-weight: 600;
+}
+
+.project-selector-panel h2 {
+  max-width: 520px;
+  margin-bottom: 42px;
+  font-size: clamp(2.45rem, 3.2vw, 4rem);
+}
+
+.project-selector {
+  display: grid;
+  gap: 18px;
+  justify-items: start;
+}
+
+.project-selector button {
+  appearance: none;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  color: rgba(16, 18, 20, 0.36);
+  cursor: pointer;
+  font: inherit;
+  font-size: clamp(1.18rem, 1.35vw, 1.48rem);
+  font-weight: 600;
+  letter-spacing: 0;
+  padding: 0;
+  text-align: left;
+  transition: color 180ms ease, transform 180ms ease;
+}
+
+.project-selector button:hover,
+.project-selector button:focus-visible,
+.project-selector button.is-selected {
+  color: var(--ink);
+}
+
+.project-selector button.is-selected {
+  transform: translate3d(12px, 0, 0);
+}
+
+.monitor-stage {
+  position: relative;
+  min-height: clamp(520px, 48vw, 710px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.desktop-monitor {
+  width: min(100%, 860px);
+  transform: translate3d(0, 0, 0);
+}
+
+.monitor-bezel {
+  position: relative;
+  border-radius: 10px;
+  background: #161719;
+  padding: clamp(8px, 0.9vw, 13px);
+  box-shadow:
+    0 34px 90px rgba(16, 18, 20, 0.13),
+    inset 0 1px 0 rgba(255, 255, 255, 0.16);
+}
+
+.monitor-screen {
+  position: relative;
+  aspect-ratio: 16 / 9;
+  overflow: hidden;
+  border-radius: 5px;
+  background:
+    radial-gradient(circle at 48% 42%, rgba(255, 255, 255, 0.5), transparent 28%),
+    linear-gradient(130deg, #edf5fb, #d9eef9 36%, #6da5f8 68%, #1768dd);
+}
+
+.monitor-screen-content {
+  position: absolute;
+  inset: clamp(16px, 2.4vw, 36px);
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow:
+    0 16px 42px rgba(16, 18, 20, 0.2),
+    0 0 0 1px rgba(255, 255, 255, 0.55);
+}
+
+.monitor-screen-content .project-card-surface {
+  border-radius: inherit;
+  border-color: rgba(255, 255, 255, 0.72);
+  box-shadow: none;
+}
+
+.monitor-neck {
+  width: 23%;
+  height: clamp(74px, 7vw, 112px);
+  margin: 0 auto;
+  background:
+    linear-gradient(90deg, rgba(16, 18, 20, 0.06), rgba(255, 255, 255, 0.8) 42%, rgba(16, 18, 20, 0.08)),
+    #e8e8e6;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.86);
+}
+
+.monitor-foot {
+  width: 42%;
+  height: clamp(16px, 1.8vw, 28px);
+  margin: 0 auto;
+  border-radius: 100% 100% 10px 10px;
+  background: #efefed;
+  box-shadow:
+    0 16px 36px rgba(16, 18, 20, 0.08),
+    inset 0 1px 0 rgba(255, 255, 255, 0.86);
 }
 
 .featured-project-grid {
@@ -1032,7 +1146,7 @@ h2 {
   }
 
   .hero-title {
-    font-size: clamp(3rem, 6vw, 4.45rem);
+    font-size: clamp(3.05rem, 6.2vw, 4.65rem);
   }
 
   .hero-title span {
@@ -1045,9 +1159,9 @@ h2 {
 
   .hero-arrow-mark {
     left: auto;
-    right: 2%;
-    top: 0.74em;
-    width: min(220px, 24vw);
+    right: -1%;
+    top: 0.16em;
+    width: min(190px, 22vw);
   }
 
   .hero-stage {
@@ -1071,6 +1185,20 @@ h2 {
 
   .featured-project-grid {
     grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .monitor-showcase {
+    grid-template-columns: 1fr;
+    gap: 54px;
+    margin-top: 118px;
+  }
+
+  .project-selector-panel h2 {
+    max-width: 720px;
+  }
+
+  .monitor-stage {
+    min-height: 540px;
   }
 
   .services-layout,
@@ -1171,8 +1299,8 @@ h2 {
   }
 
   .hero-highlight-mark {
-    bottom: -0.16em;
-    height: 0.5em;
+    bottom: -0.42em;
+    height: 0.34em;
   }
 
   .hero-stage {
@@ -1193,7 +1321,7 @@ h2 {
   }
 
   .portfolio {
-    min-height: 126svh;
+    min-height: 142svh;
     padding: 0 0 92px;
   }
 
@@ -1205,7 +1333,6 @@ h2 {
   .metrics p:nth-child(2) {
     min-height: 138px;
     border-right: 0;
-    border-bottom: 1px solid var(--line);
     padding: 22px 0;
   }
 
@@ -1223,17 +1350,43 @@ h2 {
     margin-top: 220px;
   }
 
+  .monitor-showcase {
+    gap: 38px;
+    margin-top: 72px;
+  }
+
+  .project-selector-panel h2 {
+    margin-bottom: 30px;
+    font-size: 2.55rem;
+  }
+
+  .project-selector {
+    gap: 14px;
+  }
+
+  .project-selector button {
+    font-size: 1.16rem;
+  }
+
+  .monitor-stage {
+    min-height: 360px;
+  }
+
+  .monitor-screen-content {
+    inset: 12px;
+  }
+
   .portfolio-project {
     height: 340px;
   }
 
   .project-card-surface {
     border-radius: 22px;
-    padding: 18px;
   }
 
   .project-preview {
-    inset: 14px 14px auto;
+    inset: 0;
+    height: 100%;
     border-radius: 16px;
   }
 
@@ -1345,7 +1498,7 @@ h2 {
   }
 
   .hero-title {
-    font-size: clamp(2.36rem, 11.2vw, 2.85rem);
+    font-size: clamp(2.5rem, 11.9vw, 3.05rem);
   }
 
   .hero-stage {
@@ -1355,6 +1508,14 @@ h2 {
 
   .hero-stack-card {
     width: min(250px, 64%);
+  }
+
+  .monitor-stage {
+    min-height: 300px;
+  }
+
+  .monitor-neck {
+    height: 58px;
   }
 
   .portfolio-copy .button {

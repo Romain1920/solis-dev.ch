@@ -22,39 +22,34 @@ const navItems = [
 
 const projects = [
   {
-    category: "Site e-commerce",
-    name: "Hella Boutique",
-    description: "Catalogue, panier, tunnel de commande et pilotage stock.",
+    id: "ecommerce",
+    label: "Site e-commerce",
     image: hellaDesktop,
     visual: "commerce",
     accent: "#f26122",
   },
   {
-    category: "Application mobile",
-    name: "Hella Mobile",
-    description: "Parcours client rapide, clair, pensé pour l’usage quotidien.",
+    id: "mobile",
+    label: "Application mobile",
     image: hellaMobile,
     visual: "mobile",
     accent: "#2b7cff",
   },
   {
-    category: "Plateforme métier",
-    name: "Operations Hub",
-    description: "Planning, dossiers, validations et indicateurs en temps réel.",
+    id: "operations",
+    label: "Plateforme métier",
     visual: "operations",
     accent: "#20a77a",
   },
   {
-    category: "Site institutionnel",
-    name: "Maison Locale",
-    description: "Éditorial, pages clés, contenus vivants et image maîtrisée.",
+    id: "institutionnel",
+    label: "Site institutionnel",
     visual: "editorial",
     accent: "#d8584b",
   },
   {
-    category: "Logiciel SaaS",
-    name: "Solis OS",
-    description: "Tableaux de bord, comptes, workflows et reporting produit.",
+    id: "saas",
+    label: "Logiciel SaaS",
     visual: "saas",
     accent: "#6a5cff",
   },
@@ -66,6 +61,14 @@ const heroStackOffsets = [
   { x: 0, y: -0.06, rotate: 1.5 },
   { x: 0.17, y: 0.01, rotate: 7 },
   { x: 0.33, y: 0.1, rotate: 12 },
+];
+
+const heroStackMergeTransforms = [
+  { x: 0, y: 0 },
+  { x: -44, y: 42 },
+  { x: -92, y: 74 },
+  { x: -128, y: 32 },
+  { x: -154, y: -18 },
 ];
 
 const clamp = (value, min = 0, max = 1) => Math.min(Math.max(value, min), max);
@@ -131,9 +134,12 @@ function App() {
 function ProjectStory() {
   const storyRef = useRef(null);
   const stageRef = useRef(null);
-  const slotRefs = useRef([]);
+  const monitorScreenRef = useRef(null);
+  const [selectedProjectId, setSelectedProjectId] = useState(projects[0].id);
+  const selectedProject =
+    projects.find((project) => project.id === selectedProjectId) || projects[0];
   const reducedMotion = useReducedMotion();
-  const geometry = useTransitionGeometry(storyRef, stageRef, slotRefs);
+  const geometry = useTransitionGeometry(storyRef, stageRef, monitorScreenRef);
   const { scrollY } = useScroll();
 
   const rawProgress = useTransform(scrollY, (latest) => {
@@ -150,9 +156,7 @@ function ProjectStory() {
     mass: 0.72,
   });
 
-  const finalOpacity = useTransform(progress, [0.5, 0.72], [0, 1]);
-  const finalY = useTransform(progress, [0.5, 0.78], [34, 0]);
-  const finalScale = useTransform(progress, [0.54, 0.8], [0.975, 1]);
+  const monitorContentOpacity = useTransform(progress, [0.74, 0.94], [0, 1]);
 
   return (
     <section className="project-story" id="accueil" ref={storyRef}>
@@ -179,57 +183,66 @@ function ProjectStory() {
 
       <SoftMorphCanvas
         geometry={geometry}
+        project={projects[0]}
         progress={progress}
-        projects={projects}
         reducedMotion={reducedMotion}
       />
 
       <section className="portfolio story-portfolio" id="realisations" aria-labelledby="portfolio-title">
         <div className="section-wrap metrics story-metrics" aria-label="Indicateurs de confiance">
           <Reveal as="p">
-            <Counter prefix="+" target={50} />
-            <span>projets réalisés</span>
+            <Counter prefix="+" target={100} />
+            <span>sites web et applications mobiles réalisés</span>
           </Reveal>
           <Reveal as="p">
-            <Counter prefix="+" target={7} />
-            <span>ans d’expérience</span>
+            <Counter prefix="+" target={7} suffix=" ans" />
+            <span>d’expérience</span>
           </Reveal>
           <Reveal as="p">
-            <strong>Valais</strong>
-            <span>Suisse, depuis 2019</span>
+            <Counter target={2019} textPrefix="Fondée en " useGrouping={false} />
+            <span>en Valais, Suisse</span>
           </Reveal>
           <Reveal as="p">
-            <Counter prefix="+" target={500000} />
-            <span>commandes e-commerce traitées en deux ans</span>
+            <Counter prefix="+" target={500000} suffix=" CHF" />
+            <span>de commandes générées en 2025 sur les sites e-commerce construits</span>
           </Reveal>
         </div>
 
-        <motion.div
-          className="section-wrap featured-project-grid"
-          style={
-            reducedMotion
-              ? undefined
-              : { opacity: finalOpacity, y: finalY, scale: finalScale }
-          }
-        >
-          {projects.map((project, index) => (
-            <article
-              className="portfolio-project"
-              key={project.name}
-              ref={(node) => {
-                slotRefs.current[index] = node;
-              }}
-            >
-              <ProjectCardSurface project={project} mode="portfolio" />
-            </article>
-          ))}
-        </motion.div>
+        <Reveal className="section-wrap monitor-showcase">
+          <div className="project-selector-panel">
+            <p className="portfolio-kicker">Réalisations</p>
+            <h2 id="portfolio-title">Un projet à l’écran. Les autres à portée de main.</h2>
+            <div className="project-selector" aria-label="Sélection de projet">
+              {projects.map((project) => (
+                <button
+                  aria-pressed={selectedProjectId === project.id}
+                  className={selectedProjectId === project.id ? "is-selected" : undefined}
+                  key={project.id}
+                  onClick={() => setSelectedProjectId(project.id)}
+                  type="button"
+                >
+                  {project.label}
+                </button>
+              ))}
+            </div>
+          </div>
 
-        <Reveal className="section-wrap portfolio-copy">
-          <h2 id="portfolio-title">Cinq projets phares. Un même niveau d’exigence.</h2>
-          <a className="button light" href="/realisations/" data-track="portfolio-page">
-            Découvrir les réalisations
-          </a>
+          <div className="monitor-stage">
+            <div className="desktop-monitor" aria-label={`Aperçu ${selectedProject.label}`}>
+              <div className="monitor-bezel">
+                <div className="monitor-screen" ref={monitorScreenRef}>
+                  <motion.div
+                    className="monitor-screen-content"
+                    style={reducedMotion ? undefined : { opacity: monitorContentOpacity }}
+                  >
+                    <ProjectCardSurface project={selectedProject} mode="monitor" />
+                  </motion.div>
+                </div>
+              </div>
+              <div className="monitor-neck" />
+              <div className="monitor-foot" />
+            </div>
+          </div>
         </Reveal>
       </section>
     </section>
@@ -240,57 +253,50 @@ function HandDrawnArrow({ reducedMotion }) {
   return (
     <svg className="hero-mark hero-arrow-mark" viewBox="0 0 330 140" aria-hidden="true">
       <motion.path
-        d="M18 102 C66 24 155 4 181 58 C197 91 165 130 140 110 C111 87 145 51 196 54 C245 56 280 83 305 96"
+        d="M18 94 C62 35 133 20 176 55 C214 86 253 93 307 76"
         fill="none"
+        pathLength="1"
         stroke="currentColor"
         strokeLinecap="round"
         strokeLinejoin="round"
         strokeWidth="13"
-        initial={reducedMotion ? { pathLength: 1 } : { pathLength: 0 }}
-        animate={{ pathLength: 1 }}
+        strokeDasharray="1"
+        initial={reducedMotion ? { strokeDashoffset: 0 } : { strokeDashoffset: 1 }}
+        animate={{ strokeDashoffset: 0 }}
         transition={{ duration: reducedMotion ? 0 : 1.05, delay: 0.64, ease: [0.16, 1, 0.3, 1] }}
       />
       <motion.path
-        d="M260 49 C278 70 294 88 305 96 C281 99 257 101 232 99"
+        d="M263 38 C282 53 296 65 307 76 C286 80 263 86 239 94"
         fill="none"
+        pathLength="1"
         stroke="currentColor"
         strokeLinecap="round"
         strokeLinejoin="round"
         strokeWidth="13"
-        initial={reducedMotion ? { pathLength: 1 } : { pathLength: 0 }}
-        animate={{ pathLength: 1 }}
-        transition={{ duration: reducedMotion ? 0 : 0.48, delay: 1.32, ease: [0.16, 1, 0.3, 1] }}
+        strokeDasharray="1"
+        initial={reducedMotion ? { strokeDashoffset: 0 } : { strokeDashoffset: 1 }}
+        animate={{ strokeDashoffset: 0 }}
+        transition={{ duration: reducedMotion ? 0 : 0.38, delay: 1.42, ease: [0.16, 1, 0.3, 1] }}
       />
     </svg>
   );
 }
 
 function HandDrawnHighlight({ reducedMotion }) {
-  const transition = { duration: reducedMotion ? 0 : 0.9, delay: 1.05, ease: [0.16, 1, 0.3, 1] };
-
   return (
-    <svg className="hero-mark hero-highlight-mark" viewBox="0 0 820 88" preserveAspectRatio="none" aria-hidden="true">
+    <svg className="hero-mark hero-highlight-mark" viewBox="0 0 820 54" preserveAspectRatio="none" aria-hidden="true">
       <motion.path
-        d="M20 50 C140 35 235 45 340 38 C466 30 577 40 800 30"
+        d="M18 31 C138 40 250 26 368 32 C505 39 642 28 802 34"
         fill="none"
+        pathLength="1"
         stroke="currentColor"
         strokeLinecap="round"
         strokeLinejoin="round"
-        strokeWidth="30"
-        initial={reducedMotion ? { pathLength: 1 } : { pathLength: 0 }}
-        animate={{ pathLength: 1 }}
-        transition={transition}
-      />
-      <motion.path
-        d="M28 62 C152 58 262 52 372 56 C505 61 632 43 792 50"
-        fill="none"
-        stroke="currentColor"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        strokeWidth="20"
-        initial={reducedMotion ? { pathLength: 1 } : { pathLength: 0 }}
-        animate={{ pathLength: 1 }}
-        transition={{ ...transition, delay: reducedMotion ? 0 : 1.16 }}
+        strokeWidth="18"
+        strokeDasharray="1"
+        initial={reducedMotion ? { strokeDashoffset: 0 } : { strokeDashoffset: 1 }}
+        animate={{ strokeDashoffset: 0 }}
+        transition={{ duration: reducedMotion ? 0 : 0.92, delay: 1.06, ease: [0.16, 1, 0.3, 1] }}
       />
     </svg>
   );
@@ -302,7 +308,7 @@ function HeroStack({ projects: stackProjects, progress, reducedMotion }) {
       {stackProjects.map((project, index) => (
         <HeroStackCard
           index={index}
-          key={project.name}
+          key={project.id}
           project={project}
           progress={progress}
           reducedMotion={reducedMotion}
@@ -313,11 +319,16 @@ function HeroStack({ projects: stackProjects, progress, reducedMotion }) {
 }
 
 function HeroStackCard({ project, index, progress, reducedMotion }) {
-  const opacity = useTransform(progress, [0, 0.06, 0.28], [1, 0.8, 0]);
-  const scale = useTransform(progress, [0, 0.26], [1, 0.9]);
-  const x = useTransform(progress, [0, 0.26], [0, (2 - index) * 14]);
-  const y = useTransform(progress, [0, 0.26], [0, 22 + index * 5]);
-  const rotate = useTransform(progress, [0, 0.26], [heroStackOffsets[index].rotate, (2 - index) * 2]);
+  const merge = heroStackMergeTransforms[index];
+  const opacity = useTransform(
+    progress,
+    index === 0 ? [0, 0.13, 0.24] : [0, 0.1, 0.25],
+    index === 0 ? [1, 0.9, 0] : [1, 0.78, 0]
+  );
+  const scale = useTransform(progress, [0, 0.18], [1, index === 0 ? 1 : 0.96]);
+  const x = useTransform(progress, [0, 0.18], [0, merge.x]);
+  const y = useTransform(progress, [0, 0.18], [0, merge.y]);
+  const rotate = useTransform(progress, [0, 0.18], [heroStackOffsets[index].rotate, 0]);
 
   return (
     <motion.article
@@ -368,7 +379,7 @@ function HeroStackCard({ project, index, progress, reducedMotion }) {
   );
 }
 
-function SoftMorphCanvas({ geometry, progress, projects: morphProjects, reducedMotion }) {
+function SoftMorphCanvas({ geometry, progress, project, reducedMotion }) {
   const containerRef = useRef(null);
 
   useEffect(() => {
@@ -383,9 +394,9 @@ function SoftMorphCanvas({ geometry, progress, projects: morphProjects, reducedM
     let renderer;
     let scene;
     let camera;
-    let meshes = [];
-    let materials = [];
-    let textures = [];
+    let mesh;
+    let material;
+    let texture;
     let planeGeometry;
 
     const rect = container.getBoundingClientRect();
@@ -411,47 +422,41 @@ function SoftMorphCanvas({ geometry, progress, projects: morphProjects, reducedM
       scene = new THREE.Scene();
       camera = new THREE.OrthographicCamera(0, width, height, 0, -1000, 1000);
       camera.position.z = 1000;
-      planeGeometry = new THREE.PlaneGeometry(1, 1, 28, 28);
+      planeGeometry = new THREE.PlaneGeometry(1, 1, 36, 36);
 
-      return Promise.all(morphProjects.map((project) => createProjectTexture(project, THREE))).then((createdTextures) => {
+      return createProjectTexture(project, THREE).then((createdTexture) => {
         if (disposed) {
-          createdTextures.forEach((texture) => texture.dispose());
+          createdTexture.dispose();
           return;
         }
 
-        textures = createdTextures;
-        meshes = textures.map((texture, index) => {
-          const material = new THREE.ShaderMaterial({
-            uniforms: {
-              uTexture: { value: texture },
-              uProgress: { value: 0 },
-              uOpacity: { value: 0 },
-              uBend: { value: 0 },
-              uSoftness: { value: 0 },
-              uDirection: { value: new THREE.Vector2(1, 0) },
-            },
-            vertexShader: softMorphVertexShader,
-            fragmentShader: softMorphFragmentShader,
-            transparent: true,
-            depthTest: false,
-            depthWrite: false,
-          });
-          const mesh = new THREE.Mesh(planeGeometry, material);
-
-          mesh.frustumCulled = false;
-          mesh.renderOrder = 20 + index;
-          scene.add(mesh);
-          materials.push(material);
-
-          return mesh;
+        texture = createdTexture;
+        material = new THREE.ShaderMaterial({
+          uniforms: {
+            uTexture: { value: texture },
+            uProgress: { value: 0 },
+            uOpacity: { value: 0 },
+            uBend: { value: 0 },
+            uSoftness: { value: 0 },
+            uDirection: { value: new THREE.Vector2(1, 0) },
+          },
+          vertexShader: softMorphVertexShader,
+          fragmentShader: softMorphFragmentShader,
+          transparent: true,
+          depthTest: false,
+          depthWrite: false,
         });
+        mesh = new THREE.Mesh(planeGeometry, material);
+        mesh.frustumCulled = false;
+        mesh.renderOrder = 24;
+        scene.add(mesh);
 
         const render = () => {
           if (disposed) {
             return;
           }
 
-          updateSoftMorphMeshes(meshes, geometry, progress.get(), THREE);
+          updateSoftMorphMesh(mesh, geometry, progress.get(), THREE);
           renderer.render(scene, camera);
           frame = requestAnimationFrame(render);
         };
@@ -463,14 +468,16 @@ function SoftMorphCanvas({ geometry, progress, projects: morphProjects, reducedM
     return () => {
       disposed = true;
       cancelAnimationFrame(frame);
-      meshes.forEach((mesh) => scene?.remove(mesh));
-      materials.forEach((material) => material.dispose());
-      textures.forEach((texture) => texture.dispose());
+      if (mesh) {
+        scene?.remove(mesh);
+      }
+      material?.dispose();
+      texture?.dispose();
       planeGeometry?.dispose();
       renderer?.dispose();
       renderer?.domElement.remove();
     };
-  }, [geometry, morphProjects, progress, reducedMotion]);
+  }, [geometry, progress, project, reducedMotion]);
 
   if (!geometry || reducedMotion) {
     return null;
@@ -479,47 +486,45 @@ function SoftMorphCanvas({ geometry, progress, projects: morphProjects, reducedM
   return <div className="soft-morph-layer" ref={containerRef} aria-hidden="true" />;
 }
 
-function updateSoftMorphMeshes(meshes, geometry, rawProgress, THREE) {
-  meshes.forEach((mesh, index) => {
-    const cardGeometry = geometry.cards[index];
+function updateSoftMorphMesh(mesh, geometry, rawProgress, THREE) {
+  const cardGeometry = geometry.card;
 
-    if (!cardGeometry) {
-      return;
-    }
+  if (!mesh || !cardGeometry) {
+    return;
+  }
 
-    const offset = index * 0.018;
-    const progress = clamp((rawProgress - offset) / (0.96 - offset));
-    const eased = easeInOut(progress);
-    const phase = Math.sin(progress * Math.PI);
-    const startCenterX = cardGeometry.start.x + cardGeometry.start.width / 2;
-    const startCenterY = cardGeometry.start.y + cardGeometry.start.height / 2;
-    const endCenterX = cardGeometry.end.x + cardGeometry.start.width / 2;
-    const endCenterY = cardGeometry.end.y + cardGeometry.start.height / 2;
-    const arcX = phase * cardGeometry.curveX;
-    const liftY = phase * cardGeometry.curveY;
-    const centerX = lerp(startCenterX, endCenterX, eased) + arcX;
-    const centerY = lerp(startCenterY, endCenterY, eased) - liftY;
-    const scale = lerp(1, cardGeometry.end.scale, easeOut(progress));
-    const stretch = 1 + phase * 0.18;
-    const squash = 1 - phase * 0.07;
-    const travelX = endCenterX - startCenterX;
-    const travelY = endCenterY - startCenterY;
-    const travelLength = Math.hypot(travelX, travelY) || 1;
-    const directionX = travelX / travelLength;
-    const directionY = travelY / travelLength;
-    const rotation = lerp(cardGeometry.start.rotate, 0, easeOut(progress)) + phase * (index - 2) * 2.2;
-    const opacity = mapRange(rawProgress, 0.035, 0.14, 0, 0.94) * mapRange(rawProgress, 0.58, 0.74, 1, 0);
+  const progress = clamp(rawProgress);
+  const eased = easeInOut(progress);
+  const phase = Math.sin(progress * Math.PI);
+  const startCenterX = cardGeometry.start.x + cardGeometry.start.width / 2;
+  const startCenterY = cardGeometry.start.y + cardGeometry.start.height / 2;
+  const endCenterX = cardGeometry.end.x + cardGeometry.start.width / 2;
+  const endCenterY = cardGeometry.end.y + cardGeometry.start.height / 2;
+  const arcX = phase * cardGeometry.curveX;
+  const liftY = phase * cardGeometry.curveY;
+  const centerX = lerp(startCenterX, endCenterX, eased) + arcX;
+  const centerY = lerp(startCenterY, endCenterY, eased) - liftY;
+  const scaleX = lerp(1, cardGeometry.end.scaleX, easeOut(progress));
+  const scaleY = lerp(1, cardGeometry.end.scaleY, easeOut(progress));
+  const stretch = 1 + phase * 0.12;
+  const squash = 1 - phase * 0.045;
+  const travelX = endCenterX - startCenterX;
+  const travelY = endCenterY - startCenterY;
+  const travelLength = Math.hypot(travelX, travelY) || 1;
+  const directionX = travelX / travelLength;
+  const directionY = travelY / travelLength;
+  const rotation = lerp(cardGeometry.start.rotate, 0, easeOut(progress)) + phase * -1.8;
+  const opacity = mapRange(rawProgress, 0.025, 0.12, 0, 0.98) * mapRange(rawProgress, 0.82, 0.98, 1, 0);
 
-    mesh.visible = opacity > 0.01;
-    mesh.position.set(centerX, centerY, 30 - index);
-    mesh.rotation.z = THREE.MathUtils.degToRad(rotation);
-    mesh.scale.set(cardGeometry.start.width * scale * stretch, cardGeometry.start.height * scale * squash, 1);
-    mesh.material.uniforms.uProgress.value = progress;
-    mesh.material.uniforms.uOpacity.value = opacity;
-    mesh.material.uniforms.uBend.value = phase;
-    mesh.material.uniforms.uSoftness.value = phase;
-    mesh.material.uniforms.uDirection.value.set(directionX, directionY);
-  });
+  mesh.visible = opacity > 0.01;
+  mesh.position.set(centerX, centerY, 30);
+  mesh.rotation.z = THREE.MathUtils.degToRad(rotation);
+  mesh.scale.set(cardGeometry.start.width * scaleX * stretch, cardGeometry.start.height * scaleY * squash, 1);
+  mesh.material.uniforms.uProgress.value = progress;
+  mesh.material.uniforms.uOpacity.value = opacity;
+  mesh.material.uniforms.uBend.value = phase;
+  mesh.material.uniforms.uSoftness.value = phase;
+  mesh.material.uniforms.uDirection.value.set(directionX, directionY);
 }
 
 function mapRange(value, inMin, inMax, outMin, outMax) {
@@ -595,8 +600,6 @@ async function createProjectTexture(project, THREE) {
     drawGeneratedTexturePreview(ctx, project.visual, width, height);
   }
 
-  drawTextureCopy(ctx, project, width, height);
-
   const texture = new THREE.CanvasTexture(canvas);
   texture.colorSpace = THREE.SRGBColorSpace;
   texture.anisotropy = 4;
@@ -642,10 +645,10 @@ function drawProjectTextureBase(ctx, project, width, height) {
 }
 
 function drawProjectImagePreview(ctx, image, width, height) {
-  const x = 48;
-  const y = 46;
-  const previewWidth = width - 96;
-  const previewHeight = height * 0.52;
+  const x = 0;
+  const y = 0;
+  const previewWidth = width;
+  const previewHeight = height;
   const imageRatio = image.width / image.height;
   const previewRatio = previewWidth / previewHeight;
   let drawWidth = previewWidth;
@@ -662,19 +665,17 @@ function drawProjectImagePreview(ctx, image, width, height) {
   }
 
   ctx.save();
-  roundedRect(ctx, x, y, previewWidth, previewHeight, 42);
+  roundedRect(ctx, x, y, previewWidth, previewHeight, 52);
   ctx.clip();
   ctx.drawImage(image, drawX, drawY, drawWidth, drawHeight);
-  ctx.fillStyle = "rgba(255, 255, 255, 0.08)";
-  ctx.fillRect(x, y, previewWidth, previewHeight);
   ctx.restore();
 }
 
 function drawGeneratedTexturePreview(ctx, visual, width, height) {
-  const x = 48;
-  const y = 46;
-  const previewWidth = width - 96;
-  const previewHeight = height * 0.52;
+  const x = 0;
+  const y = 0;
+  const previewWidth = width;
+  const previewHeight = height;
 
   ctx.save();
   roundedRect(ctx, x, y, previewWidth, previewHeight, 42);
@@ -749,52 +750,6 @@ function drawChartBars(ctx, x, y, width, height) {
   });
 }
 
-function drawTextureCopy(ctx, project, width, height) {
-  const fade = ctx.createLinearGradient(0, height * 0.48, 0, height);
-  fade.addColorStop(0, "rgba(0, 0, 0, 0)");
-  fade.addColorStop(1, "rgba(0, 0, 0, 0.76)");
-  ctx.fillStyle = fade;
-  ctx.fillRect(0, height * 0.48, width, height * 0.52);
-
-  const left = 52;
-  const bottom = height - 72;
-
-  ctx.fillStyle = "rgba(255, 255, 255, 0.74)";
-  ctx.font = "700 24px system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif";
-  ctx.letterSpacing = "1.2px";
-  ctx.fillText(project.category.toUpperCase(), left, bottom - 142);
-
-  ctx.fillStyle = "#ffffff";
-  ctx.font = "700 46px system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif";
-  ctx.fillText(project.name, left, bottom - 82);
-
-  ctx.fillStyle = "rgba(255, 255, 255, 0.78)";
-  ctx.font = "500 27px system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif";
-  wrapTextureText(ctx, project.description, left, bottom - 36, width - 104, 34, 2);
-}
-
-function wrapTextureText(ctx, text, x, y, maxWidth, lineHeight, maxLines) {
-  const words = text.split(" ");
-  let line = "";
-  let lineCount = 0;
-
-  words.forEach((word, index) => {
-    const testLine = `${line}${word} `;
-
-    if (ctx.measureText(testLine).width > maxWidth && index > 0) {
-      ctx.fillText(line.trim(), x, y + lineCount * lineHeight);
-      line = `${word} `;
-      lineCount += 1;
-    } else {
-      line = testLine;
-    }
-  });
-
-  if (lineCount < maxLines) {
-    ctx.fillText(line.trim(), x, y + lineCount * lineHeight);
-  }
-}
-
 function loadCanvasImage(src) {
   return new Promise((resolve, reject) => {
     const image = new Image();
@@ -832,6 +787,7 @@ function ProjectCardSurface({ project, mode }) {
   return (
     <div
       className={`project-card-surface project-card-${project.visual} project-card-${mode}`}
+      aria-label={project.label}
       style={{ "--project-accent": project.accent }}
     >
       <div className="project-preview" aria-hidden="true">
@@ -840,11 +796,6 @@ function ProjectCardSurface({ project, mode }) {
         ) : (
           <GeneratedProjectPreview visual={project.visual} />
         )}
-      </div>
-      <div className="project-card-copy">
-        <span>{project.category}</span>
-        <strong>{project.name}</strong>
-        <p>{project.description}</p>
       </div>
     </div>
   );
@@ -1104,7 +1055,7 @@ function Reveal({ as = "div", children, className, ...props }) {
   );
 }
 
-function Counter({ prefix = "", target }) {
+function Counter({ prefix = "", suffix = "", target, textPrefix = "", useGrouping = true }) {
   const ref = useRef(null);
   const reducedMotion = useReducedMotion();
 
@@ -1115,10 +1066,12 @@ function Counter({ prefix = "", target }) {
       return undefined;
     }
 
-    const formatNumber = (value) => new Intl.NumberFormat("fr-CH").format(value);
+    const formatNumber = (value) =>
+      new Intl.NumberFormat("fr-CH", { useGrouping }).format(value);
+    const formatValue = (value) => `${textPrefix}${prefix}${formatNumber(value)}${suffix}`;
 
     if (reducedMotion) {
-      node.textContent = `${prefix}${formatNumber(target)}`;
+      node.textContent = formatValue(target);
       return undefined;
     }
 
@@ -1130,7 +1083,7 @@ function Counter({ prefix = "", target }) {
       const tick = (now) => {
         const progress = clamp((now - start) / duration);
         const eased = easeOut(progress);
-        node.textContent = `${prefix}${formatNumber(Math.round(target * eased))}`;
+        node.textContent = formatValue(Math.round(target * eased));
 
         if (progress < 1) {
           frame = requestAnimationFrame(tick);
@@ -1158,9 +1111,9 @@ function Counter({ prefix = "", target }) {
       cancelAnimationFrame(frame);
       observer.disconnect();
     };
-  }, [prefix, reducedMotion, target]);
+  }, [prefix, reducedMotion, suffix, target, textPrefix, useGrouping]);
 
-  return <strong ref={ref}>{prefix}0</strong>;
+  return <strong ref={ref}>{textPrefix}{prefix}0{suffix}</strong>;
 }
 
 function MagneticLink({ children, className, ...props }) {
@@ -1263,7 +1216,7 @@ function useActiveSection() {
   return activeSection;
 }
 
-function useTransitionGeometry(storyRef, stageRef, slotRefs) {
+function useTransitionGeometry(storyRef, stageRef, monitorScreenRef) {
   const [geometry, setGeometry] = useState(null);
 
   useEffect(() => {
@@ -1272,14 +1225,15 @@ function useTransitionGeometry(storyRef, stageRef, slotRefs) {
     const measure = () => {
       const story = storyRef.current;
       const stage = stageRef.current;
-      const slots = slotRefs.current.filter(Boolean);
+      const screen = monitorScreenRef.current;
 
-      if (!story || !stage || slots.length !== projects.length) {
+      if (!story || !stage || !screen) {
         return;
       }
 
       const storyRect = story.getBoundingClientRect();
       const stageRect = stage.getBoundingClientRect();
+      const screenRect = screen.getBoundingClientRect();
       const storyTop = storyRect.top + window.scrollY;
       const storyLeft = storyRect.left + window.scrollX;
       const viewportWidth = window.innerWidth;
@@ -1292,39 +1246,35 @@ function useTransitionGeometry(storyRef, stageRef, slotRefs) {
       const cardHeight = cardWidth * 1.28;
       const stageCenterX = stageRelativeLeft + stageRect.width * 0.53;
       const stageCenterY = stageRelativeTop + stageRect.height * 0.52;
-      const firstSlotTop = slots[0].getBoundingClientRect().top + window.scrollY;
+      const screenTop = screenRect.top + window.scrollY;
+      const screenCenterX = screenRect.left + window.scrollX - storyLeft + screenRect.width / 2;
+      const screenCenterY = screenRect.top + window.scrollY - storyTop + screenRect.height / 2;
+      const finalScaleX = screenRect.width / cardWidth;
+      const finalScaleY = screenRect.height / cardHeight;
+      const startOffset = heroStackOffsets[0];
       const transitionDistance = Math.max(
-        window.innerHeight * 1.18,
-        firstSlotTop - storyTop - window.innerHeight * 0.52
+        window.innerHeight * 1.32,
+        screenTop - storyTop - window.innerHeight * 0.42
       );
 
-      const cards = projects.map((_, index) => {
-        const slotRect = slots[index].getBoundingClientRect();
-        const offset = heroStackOffsets[index];
-        const slotCenterX = slotRect.left + window.scrollX - storyLeft + slotRect.width / 2;
-        const slotCenterY = slotRect.top + window.scrollY - storyTop + slotRect.height / 2;
-        const finalScale = Math.min(slotRect.width / cardWidth, slotRect.height / cardHeight);
-
-        return {
-          curveX: (index - 2) * 44,
-          curveY: 86 + index * 15,
+      setGeometry({
+        card: {
+          curveX: viewportWidth > 960 ? -120 : 28,
+          curveY: viewportWidth > 960 ? 180 : 92,
           start: {
-            x: stageCenterX - cardWidth / 2 + cardWidth * offset.x,
-            y: stageCenterY - cardHeight / 2 + cardHeight * offset.y,
+            x: stageCenterX - cardWidth / 2 + cardWidth * startOffset.x,
+            y: stageCenterY - cardHeight / 2 + cardHeight * startOffset.y,
             width: cardWidth,
             height: cardHeight,
-            rotate: offset.rotate,
+            rotate: startOffset.rotate,
           },
           end: {
-            x: slotCenterX - cardWidth / 2,
-            y: slotCenterY - cardHeight / 2,
-            scale: finalScale,
+            x: screenCenterX - cardWidth / 2,
+            y: screenCenterY - cardHeight / 2,
+            scaleX: finalScaleX,
+            scaleY: finalScaleY,
           },
-        };
-      });
-
-      setGeometry({
-        cards,
+        },
         storyTop,
         transitionDistance,
       });
@@ -1336,7 +1286,7 @@ function useTransitionGeometry(storyRef, stageRef, slotRefs) {
     };
 
     const observer = new ResizeObserver(scheduleMeasure);
-    const observedNodes = [storyRef.current, stageRef.current, ...slotRefs.current].filter(Boolean);
+    const observedNodes = [storyRef.current, stageRef.current, monitorScreenRef.current].filter(Boolean);
     observedNodes.forEach((node) => observer.observe(node));
 
     window.addEventListener("resize", scheduleMeasure);
@@ -1354,7 +1304,7 @@ function useTransitionGeometry(storyRef, stageRef, slotRefs) {
       window.removeEventListener("resize", scheduleMeasure);
       window.removeEventListener("load", scheduleMeasure);
     };
-  }, [stageRef, storyRef, slotRefs]);
+  }, [monitorScreenRef, stageRef, storyRef]);
 
   return geometry;
 }
