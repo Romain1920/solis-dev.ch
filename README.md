@@ -1,13 +1,20 @@
 # SOLIS Développement
 
-Homepage statique haute fidélité pour SOLIS Développement.
+Homepage React/Vite haute fidélité pour SOLIS Développement.
 
 ## Aperçu local
 
 Depuis ce dossier:
 
 ```sh
-python3 -m http.server 4173
+npm install
+npm run dev
 ```
 
-Puis ouvrir `http://localhost:4173`.
+Puis ouvrir l’URL locale indiquée par Vite.
+
+## Build
+
+```sh
+npm run build
+```
