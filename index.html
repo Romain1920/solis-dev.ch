@@ -8,7 +8,6 @@
       content="SOLIS Développement conçoit des sites web, applications et logiciels métier entièrement sur mesure en Suisse romande."
     />
     <title>SOLIS Développement - Maquettes interactives et logiciels sur mesure</title>
-    <link rel="preload" href="assets/solis-logo-white.png" as="image" />
     <link rel="stylesheet" href="styles.css" />
   </head>
   <body>
@@ -17,7 +16,7 @@
     <header class="site-header">
       <nav class="nav-shell" aria-label="Navigation principale">
         <a class="brand" href="#accueil" aria-label="SOLIS Développement">
-          <img src="assets/solis-logo-white.png" alt="SOLIS" />
+          <span class="brand-mark" aria-hidden="true">SOLIS<sup>+</sup></span>
         </a>
         <div class="nav-links" aria-label="Sections">
           <a href="#services">Services</a>
@@ -37,29 +36,21 @@
 
     <main id="contenu">
       <section class="hero" id="accueil" aria-labelledby="hero-title">
-        <div class="hero-field" aria-hidden="true">
-          <div class="prototype-board float-one">
-            <span class="browser-line"></span>
-            <span class="prototype-head"></span>
-            <span class="prototype-copy"></span>
-            <span class="prototype-cta"></span>
-          </div>
-          <div class="prototype-mobile float-two">
-            <span></span>
-            <i></i>
-            <i></i>
-          </div>
-          <div class="prototype-note float-three">
-            <span>0 CHF</span>
-            <strong>avant engagement</strong>
-          </div>
-        </div>
-
         <div class="section-wrap hero-copy" data-reveal>
-          <h1 id="hero-title">Voyez votre futur produit avant de vous engager.</h1>
+          <h1 id="hero-title" class="hero-title">
+            <span>On construit</span>
+            <span class="inline-visual visual-one" aria-hidden="true">
+              <i></i>
+              <i></i>
+              <i></i>
+            </span>
+            <span>votre maquette</span>
+            <span>avant tout</span>
+            <span class="inline-arrow" aria-hidden="true">↝</span>
+            <span>engagement.</span>
+          </h1>
           <p>
-            Une maquette interactive offerte, construite avec vous. Sans
-            obligation.
+            Un prototype cliquable, personnalisé avec vous. Sans obligation.
           </p>
           <div class="hero-actions" aria-label="Actions principales">
             <a
@@ -255,7 +246,7 @@
     <footer class="site-footer">
       <div class="section-wrap footer-inner">
         <a class="footer-brand" href="#accueil" aria-label="SOLIS Développement">
-          <img src="assets/solis-logo-white.png" alt="SOLIS" />
+          <span class="brand-mark" aria-hidden="true">SOLIS<sup>+</sup></span>
         </a>
         <p>Sites web, applications et logiciels métier sur mesure en Suisse romande.</p>
         <div class="footer-links">
