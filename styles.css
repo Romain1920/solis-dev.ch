@@ -196,7 +196,7 @@ a {
   margin: 0;
   color: #0b0c0c;
   font-family: var(--font-main);
-  font-size: 5.8rem;
+  font-size: 6.5rem;
   line-height: 1.02;
   letter-spacing: 0;
   font-weight: 500;
@@ -208,14 +208,14 @@ a {
 }
 
 .project-stack {
-  --tile-width: 0.6em;
-  --tile-height: 0.38em;
+  --tile-width: 0.78em;
+  --tile-height: 0.49em;
   display: inline-flex;
   align-items: center;
-  width: 1.18em;
+  width: 1.56em;
   height: var(--tile-height);
-  margin: 0 0.04em 0 0.025em;
-  vertical-align: 0.01em;
+  margin: 0 0.08em 0 0.04em;
+  vertical-align: -0.03em;
   isolation: isolate;
 }
 
@@ -228,42 +228,42 @@ a {
   background: #efede8;
   box-shadow: 0 0.08em 0.26em rgba(16, 18, 20, 0.08);
   opacity: 0;
-  transform: translateX(calc(-0.62em - (var(--tile-index) * 0.1em))) scale(0.9);
-  animation: project-tile-in 460ms cubic-bezier(0.2, 0.9, 0.25, 1) forwards;
+  transform: translateX(calc(-0.78em - (var(--tile-index) * 0.12em))) scale(0.88);
+  animation: project-tile-in 740ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
 .stack-tile + .stack-tile {
-  margin-left: -0.45em;
+  margin-left: -0.585em;
 }
 
 .stack-tile:nth-child(1) {
   --tile-index: 0;
   background: #ebe7df;
-  animation-delay: 80ms;
+  animation-delay: 120ms;
 }
 
 .stack-tile:nth-child(2) {
   --tile-index: 1;
   background: #d9d7d0;
-  animation-delay: 145ms;
+  animation-delay: 300ms;
 }
 
 .stack-tile:nth-child(3) {
   --tile-index: 2;
   background: #f4f1eb;
-  animation-delay: 210ms;
+  animation-delay: 480ms;
 }
 
 .stack-tile:nth-child(4) {
   --tile-index: 3;
   background: #cbc6bd;
-  animation-delay: 275ms;
+  animation-delay: 660ms;
 }
 
 .stack-tile:nth-child(5) {
   --tile-index: 4;
   background: #e2ded6;
-  animation-delay: 340ms;
+  animation-delay: 840ms;
 }
 
 .hero-memory {
@@ -276,12 +276,17 @@ a {
 @keyframes project-tile-in {
   0% {
     opacity: 0;
-    transform: translateX(calc(-0.62em - (var(--tile-index) * 0.1em))) scale(0.9);
+    transform: translateX(calc(-0.78em - (var(--tile-index) * 0.12em))) scale(0.88);
   }
 
   58% {
     opacity: 1;
-    transform: translateX(0.035em) scale(1.015);
+    transform: translateX(0.06em) scale(1.035);
+  }
+
+  78% {
+    opacity: 1;
+    transform: translateX(-0.015em) scale(0.995);
   }
 
   to {
@@ -841,7 +846,7 @@ h2 {
 
 @media (max-width: 1140px) {
   .hero h1 {
-    font-size: 5.15rem;
+    font-size: 5.8rem;
     line-height: 1.02;
   }
 
@@ -939,7 +944,7 @@ h2 {
   }
 
   .hero h1 {
-    font-size: 3.55rem;
+    font-size: 3.95rem;
     line-height: 1.02;
   }
 
@@ -1100,19 +1105,19 @@ h2 {
   }
 
   .hero h1 {
-    font-size: 2.55rem;
+    font-size: 2.85rem;
     line-height: 1.03;
   }
 
   .project-stack {
-    --tile-width: 0.54em;
-    --tile-height: 0.34em;
-    width: 1.03em;
-    margin-left: 0.035em;
+    --tile-width: 0.7em;
+    --tile-height: 0.44em;
+    width: 1.36em;
+    margin-left: 0.045em;
   }
 
   .stack-tile + .stack-tile {
-    margin-left: -0.405em;
+    margin-left: -0.535em;
   }
 
   h2,
