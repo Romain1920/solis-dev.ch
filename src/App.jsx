@@ -1,11 +1,14 @@
 import { useEffect, useRef, useState } from "react";
+import { flushSync } from "react-dom";
 import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
+import { Flip } from "gsap/Flip";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
 import logoDark from "../assets/solis-logo-dark.png";
 import studioDisplay from "../assets/studio-display-light.png";
 import { projects } from "./data/projects";
 
-gsap.registerPlugin(useGSAP);
+gsap.registerPlugin(useGSAP, Flip, ScrollTrigger);
 
 const contactHref =
   "mailto:info@solis.li?subject=Maquette%20interactive%20offerte";
@@ -22,6 +25,14 @@ const stackLayout = [
   { x: "7%", y: "6%", rotation: "-2.6deg", scale: 0.94, z: 3 },
   { x: "10%", y: "-6%", rotation: "2.6deg", scale: 0.91, z: 2 },
   { x: "13%", y: "-18%", rotation: "-1.6deg", scale: 0.88, z: 1 },
+];
+
+const decompressedStackLayout = [
+  { x: "8px", y: "42px", rotation: "0deg" },
+  { x: "-42px", y: "138px", rotation: "-4.4deg" },
+  { x: "44px", y: "226px", rotation: "3.6deg" },
+  { x: "-22px", y: "318px", rotation: "-2.6deg" },
+  { x: "34px", y: "404px", rotation: "3.1deg" },
 ];
 
 function App() {
@@ -86,9 +97,11 @@ function HomePage() {
 
 function Hero() {
   const heroRef = useRef(null);
+  const [stackReady, setStackReady] = useState(false);
 
   useGSAP(
-    () => {
+    (context, contextSafe) => {
+      const markStackReady = contextSafe(() => setStackReady(true));
       const mm = gsap.matchMedia();
 
       mm.add(
@@ -118,11 +131,13 @@ function Hero() {
               scale: 1,
               rotation: 0,
             });
+            markStackReady();
             return undefined;
           }
 
           const timeline = gsap.timeline({
             defaults: { ease: "power3.out" },
+            onComplete: markStackReady,
           });
 
           timeline
@@ -159,9 +174,11 @@ function Hero() {
                 scale: 0.9,
                 rotation: -7,
                 rotationX: -7,
-                duration: 0.74,
+                duration: (_, target) => {
+                  const slot = Number(target.closest(".screenshot-card")?.dataset.stackSlot || 0);
+                  return slot === 0 ? 0.65 : 0.72 + slot * 0.085;
+                },
                 transformOrigin: "50% 60%",
-                stagger: { each: 0.07, from: "end" },
                 ease: "back.out(1.12)",
               },
               0.04
@@ -191,7 +208,7 @@ function Hero() {
         </div>
 
         <HandDrawnArrow />
-        <ScreenshotStack />
+        <ScreenshotStack introComplete={stackReady} />
       </div>
     </section>
   );
@@ -235,32 +252,241 @@ function HandDrawnArrow() {
   );
 }
 
-function ScreenshotStack() {
-  return (
-    <div className="hero-screenshot-stack" aria-label="Aperçus de projets SOLIS">
-      {projects.map((project, index) => {
-        const item = stackLayout[index];
+function ScreenshotStack({ introComplete }) {
+  const [activeProjectId, setActiveProjectId] = useState(projects[0].id);
+  const stageRef = useRef(null);
+  const activeProjectIdRef = useRef(activeProjectId);
+  const autoPausedRef = useRef(false);
+  const manualPauseUntilRef = useRef(0);
+  const flipTweenRef = useRef(null);
+  const selectProjectRef = useRef(null);
+  const reducedMotion = usePrefersReducedMotion();
+  const { contextSafe } = useGSAP({ scope: stageRef });
 
-        return (
-          <figure
-            className="screenshot-card"
-            key={project.id}
-            style={{
-              "--stack-x": item.x,
-              "--stack-y": item.y,
-              "--stack-rotation": item.rotation,
-              "--stack-scale": item.scale,
-              zIndex: item.z,
-            }}
-          >
-            <div className="screenshot-card-inner">
-              <img src={project.image} alt={`Aperçu ${project.title}`} />
-            </div>
-          </figure>
+  const selectProject = contextSafe((projectId, options = {}) => {
+    const isManual = options.manual === true;
+
+    if (isManual) {
+      manualPauseUntilRef.current = Date.now() + 9000;
+    }
+
+    if (projectId === activeProjectIdRef.current) {
+      return;
+    }
+
+    const cards = getStackCards(stageRef.current);
+    flipTweenRef.current?.kill();
+
+    if (reducedMotion || !cards.length) {
+      activeProjectIdRef.current = projectId;
+      setActiveProjectId(projectId);
+      requestAnimationFrame(() => ScrollTrigger.refresh());
+      return;
+    }
+
+    const state = Flip.getState(cards);
+    activeProjectIdRef.current = projectId;
+
+    flushSync(() => setActiveProjectId(projectId));
+
+    const finishFlip = () => {
+      flipTweenRef.current = null;
+      gsap.set(getStackCards(stageRef.current), {
+        clearProps: "transform,translate,rotate,scale",
+      });
+      ScrollTrigger.refresh();
+    };
+
+    flipTweenRef.current = Flip.from(state, {
+      duration: 0.55,
+      ease: "power3.inOut",
+      stagger: 0.02,
+      nested: true,
+      scale: true,
+      onComplete: finishFlip,
+      onInterrupt: finishFlip,
+    });
+  });
+
+  selectProjectRef.current = selectProject;
+
+  useEffect(() => {
+    activeProjectIdRef.current = activeProjectId;
+  }, [activeProjectId]);
+
+  useEffect(() => {
+    if (!introComplete || reducedMotion) {
+      return undefined;
+    }
+
+    const intervalId = window.setInterval(() => {
+      if (autoPausedRef.current || Date.now() < manualPauseUntilRef.current) {
+        return;
+      }
+
+      selectProjectRef.current?.(getNextProjectId(activeProjectIdRef.current));
+    }, 4200);
+
+    return () => window.clearInterval(intervalId);
+  }, [introComplete, reducedMotion]);
+
+  useGSAP(
+    () => {
+      const stage = stageRef.current;
+      const initialCards = getStackCards(stage);
+
+      gsap.set(initialCards, {
+        "--decompress-x": "0px",
+        "--decompress-y": "0px",
+        "--decompress-rotation": "0deg",
+      });
+
+      if (!stage || reducedMotion) {
+        return undefined;
+      }
+
+      const mm = gsap.matchMedia();
+
+      mm.add("(min-width: 1081px)", () => {
+        const cards = getStackCards(stage);
+
+        gsap.set(cards, {
+          "--decompress-x": "0px",
+          "--decompress-y": "0px",
+          "--decompress-rotation": "0deg",
+        });
+
+        if (!cards.length) {
+          return undefined;
+        }
+
+        const heroSection = stage.closest(".hero-section");
+        const proofSection = document.querySelector(".proof-section");
+
+        if (!heroSection || !proofSection) {
+          return undefined;
+        }
+
+        const timeline = gsap.timeline({
+          scrollTrigger: {
+            trigger: heroSection,
+            start: "top top+=120",
+            endTrigger: proofSection,
+            end: "top 72%",
+            scrub: 0.75,
+            pin: stage,
+            pinSpacing: false,
+            invalidateOnRefresh: true,
+            refreshPriority: -5,
+          },
+        });
+
+        timeline.to(
+          cards,
+          {
+            "--decompress-x": (_, target) => getDecompressedStackValue(target, "x"),
+            "--decompress-y": (_, target) => getDecompressedStackValue(target, "y"),
+            "--decompress-rotation": (_, target) => getDecompressedStackValue(target, "rotation"),
+            duration: 1,
+            ease: "none",
+          },
+          0
         );
-      })}
+
+        return undefined;
+      });
+
+      return () => mm.revert();
+    },
+    { scope: stageRef, dependencies: [reducedMotion], revertOnUpdate: true }
+  );
+
+  const pauseAutoRotation = () => {
+    autoPausedRef.current = true;
+  };
+
+  const resumeAutoRotation = () => {
+    autoPausedRef.current = false;
+  };
+
+  const handleBlur = (event) => {
+    if (!event.currentTarget.contains(event.relatedTarget)) {
+      resumeAutoRotation();
+    }
+  };
+
+  return (
+    <div className="hero-screenshot-stage" ref={stageRef}>
+      <div
+        className="hero-screenshot-stack"
+        aria-label="Aperçus de projets SOLIS"
+        onBlur={handleBlur}
+        onFocus={pauseAutoRotation}
+        onMouseEnter={pauseAutoRotation}
+        onMouseLeave={resumeAutoRotation}
+      >
+        {projects.map((project) => {
+          const slot = getProjectStackSlot(project.id, activeProjectId);
+          const item = stackLayout[slot] || stackLayout[0];
+          const isFront = slot === 0;
+
+          return (
+            <button
+              aria-label={`Afficher ${project.title}`}
+              aria-pressed={isFront}
+              className={`screenshot-card${isFront ? " is-front" : ""}`}
+              data-flip-id={project.id}
+              data-project-id={project.id}
+              data-stack-slot={slot}
+              key={project.id}
+              onClick={() => selectProject(project.id, { manual: true })}
+              style={{
+                "--stack-x": item.x,
+                "--stack-y": item.y,
+                "--stack-rotation": item.rotation,
+                "--stack-scale": item.scale,
+                zIndex: item.z,
+              }}
+              type="button"
+            >
+              <span className="screenshot-card-inner">
+                <img src={project.image} alt={`Aperçu ${project.title}`} />
+              </span>
+            </button>
+          );
+        })}
+      </div>
     </div>
   );
+}
+
+function getStackCards(root) {
+  return root ? Array.from(root.querySelectorAll(".screenshot-card")) : [];
+}
+
+function getProjectStackSlot(projectId, activeProjectId) {
+  const activeIndex = projects.findIndex((project) => project.id === activeProjectId);
+  const projectIndex = projects.findIndex((project) => project.id === projectId);
+
+  if (activeIndex < 0 || projectIndex < 0) {
+    return 0;
+  }
+
+  return (projectIndex - activeIndex + projects.length) % projects.length;
+}
+
+function getNextProjectId(projectId) {
+  const projectIndex = projects.findIndex((project) => project.id === projectId);
+  const nextIndex = projectIndex < 0 ? 0 : (projectIndex + 1) % projects.length;
+
+  return projects[nextIndex].id;
+}
+
+function getDecompressedStackValue(target, key) {
+  const slot = Number(target.dataset.stackSlot || 0);
+  const item = decompressedStackLayout[slot] || decompressedStackLayout[0];
+
+  return item[key];
 }
 
 function ProofMetrics() {
