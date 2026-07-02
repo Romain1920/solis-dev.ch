@@ -15,7 +15,7 @@ const navItems = [
   { href: "#projets", label: "Projets" },
 ];
 
-const slideDelays = [960, 1420, 760, 1280, 1080, 1660, 880];
+const screenshotIntervalMs = 1500;
 
 function App() {
   return (
@@ -161,28 +161,30 @@ function Hero() {
     >
       <div className="hero-shell">
         <h1 id="hero-title" className="hero-title">
-          <span className="hero-line hero-line-arrow hero-reveal">
+          <span className="hero-line hero-reveal">
             On transforme <br className="mobile-only" />
             vos projets
+          </span>
+          <span className="hero-line hero-line-arrow hero-reveal">
             <HandDrawnArrow />
+            <span>
+              en sites webs <br className="mobile-only" />
+              et en apps
+            </span>
           </span>
-          <span className="hero-line hero-reveal">
-            en sites webs <br className="mobile-only" />
-            et en apps
-          </span>
-          <span className="hero-line hero-reveal">
-            mobiles <br className="mobile-only" />
-            sur-mesure <br className="mobile-only" />
-          </span>
-          <span className="hero-line hero-line-final hero-reveal">
-            dont les gens se souviennent
+          <span className="hero-line hero-line-reel hero-reveal">
+            <span>
+              mobiles <br className="mobile-only" />
+              sur-mesure
+            </span>
             <ProjectReel />
           </span>
+          <span className="hero-line hero-reveal">dont les gens se souviennent</span>
         </h1>
 
         <a
           className="hero-request"
-          href={`${contactHref}&body=Bonjour%2C%20j'aimerais%20demander%20une%20maquette%20sur%20mesure%20offerte%2C%20sans%20engagement.`}
+          href={`${contactHref}&body=Bonjour%2C%20j'aimerais%20demander%20un%20premier%20rendez-vous%20et%20une%20maquette%20sur%20mesure%20offerte%2C%20sans%20engagement.`}
           data-track="hero-maquette-offerte"
         >
           <span className="request-icon" aria-hidden="true">
@@ -191,9 +193,9 @@ function Hero() {
           <span className="request-copy">
             <strong>Besoin de se projeter&nbsp;?</strong>
             <span>
-              Demandez votre maquette <br className="mobile-only" />
-              sur mesure offerte, sans engagement
+              Demandez votre premier rendez-vous et votre maquette sur mesure offerte, sans engagement.
             </span>
+            <small>☕ (Le café est offert.)</small>
           </span>
         </a>
       </div>
@@ -203,7 +205,6 @@ function Hero() {
 
 function ProjectReel() {
   const [index, setIndex] = useState(0);
-  const [delayIndex, setDelayIndex] = useState(0);
   const reducedMotion = usePrefersReducedMotion();
   const reelProjects = useMemo(
     () =>
@@ -222,13 +223,12 @@ function ProjectReel() {
       return undefined;
     }
 
-    const timeout = window.setTimeout(() => {
+    const interval = window.setInterval(() => {
       setIndex((current) => (current + 1) % reelProjects.length);
-      setDelayIndex((current) => (current + 1) % slideDelays.length);
-    }, slideDelays[delayIndex]);
+    }, screenshotIntervalMs);
 
-    return () => window.clearTimeout(timeout);
-  }, [delayIndex, reducedMotion, reelProjects.length]);
+    return () => window.clearInterval(interval);
+  }, [reducedMotion, reelProjects.length]);
 
   const currentProject = reelProjects[index % reelProjects.length];
 
