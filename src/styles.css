@@ -204,6 +204,7 @@ a {
   font-weight: 500;
   line-height: 1.02;
   letter-spacing: 0;
+  text-align: center;
   overflow: visible;
 }
 
@@ -228,6 +229,7 @@ a {
 .hero-line-reel {
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: clamp(14px, 1.45vw, 24px);
 }
 
