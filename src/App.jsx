@@ -173,10 +173,9 @@ function Hero() {
           <span className="hero-line hero-reveal">
             mobiles <br className="mobile-only" />
             sur-mesure <br className="mobile-only" />
-            dont
           </span>
           <span className="hero-line hero-line-final hero-reveal">
-            les gens se souviennent
+            dont les gens se souviennent
             <ProjectReel />
           </span>
         </h1>
