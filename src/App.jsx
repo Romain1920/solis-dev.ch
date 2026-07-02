@@ -1,14 +1,13 @@
 import { useEffect, useRef, useState } from "react";
-import { flushSync } from "react-dom";
+import { motion, useScroll, useTransform } from "framer-motion";
 import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
-import { Flip } from "gsap/Flip";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
+import ReactLenis from "lenis/react";
 import logoDark from "../assets/solis-logo-dark.png";
 import studioDisplay from "../assets/studio-display-light.png";
 import { projects } from "./data/projects";
 
-gsap.registerPlugin(useGSAP, Flip, ScrollTrigger);
+gsap.registerPlugin(useGSAP);
 
 const contactHref =
   "mailto:info@solis.li?subject=Maquette%20interactive%20offerte";
@@ -19,27 +18,11 @@ const navItems = [
   { href: "#realisations", label: "Réalisations" },
 ];
 
-const stackLayout = [
-  { x: "0%", y: "30%", rotation: "-1.2deg", scale: 1, z: 5 },
-  { x: "4%", y: "18%", rotation: "1.8deg", scale: 0.97, z: 4 },
-  { x: "7%", y: "6%", rotation: "-2.6deg", scale: 0.94, z: 3 },
-  { x: "10%", y: "-6%", rotation: "2.6deg", scale: 0.91, z: 2 },
-  { x: "13%", y: "-18%", rotation: "-1.6deg", scale: 0.88, z: 1 },
-];
-
-const decompressedStackLayout = [
-  { x: "8px", y: "42px", rotation: "0deg" },
-  { x: "-42px", y: "138px", rotation: "-4.4deg" },
-  { x: "44px", y: "226px", rotation: "3.6deg" },
-  { x: "-22px", y: "318px", rotation: "-2.6deg" },
-  { x: "34px", y: "404px", rotation: "3.1deg" },
-];
-
 function App() {
   const activeSection = useActiveSection();
 
   return (
-    <>
+    <ReactLenis root options={{ lerp: 0.08, wheelMultiplier: 0.9 }}>
       <a className="skip-link" href="#contenu">
         Aller au contenu
       </a>
@@ -49,7 +32,7 @@ function App() {
       <main id="contenu">
         <HomePage />
       </main>
-    </>
+    </ReactLenis>
   );
 }
 
@@ -97,11 +80,9 @@ function HomePage() {
 
 function Hero() {
   const heroRef = useRef(null);
-  const [stackReady, setStackReady] = useState(false);
 
   useGSAP(
-    (context, contextSafe) => {
-      const markStackReady = contextSafe(() => setStackReady(true));
+    () => {
       const mm = gsap.matchMedia();
 
       mm.add(
@@ -112,7 +93,6 @@ function Hero() {
         (context) => {
           const { reduceMotion } = context.conditions;
           const titleLines = gsap.utils.toArray(".hero-title-line");
-          const screenshotInners = gsap.utils.toArray(".screenshot-card-inner");
           const drawPaths = gsap.utils.toArray(".draw-path");
 
           drawPaths.forEach((path) => {
@@ -124,20 +104,15 @@ function Hero() {
           });
 
           if (reduceMotion) {
-            gsap.set([...titleLines, ...screenshotInners], {
+            gsap.set(titleLines, {
               autoAlpha: 1,
-              x: 0,
               y: 0,
-              scale: 1,
-              rotation: 0,
             });
-            markStackReady();
             return undefined;
           }
 
           const timeline = gsap.timeline({
             defaults: { ease: "power3.out" },
-            onComplete: markStackReady,
           });
 
           timeline
@@ -164,24 +139,6 @@ function Hero() {
                 ease: "power1.inOut",
               },
               0.16
-            )
-            .from(
-              screenshotInners,
-              {
-                autoAlpha: 0,
-                x: 58,
-                y: -96,
-                scale: 0.9,
-                rotation: -7,
-                rotationX: -7,
-                duration: (_, target) => {
-                  const slot = Number(target.closest(".screenshot-card")?.dataset.stackSlot || 0);
-                  return slot === 0 ? 0.65 : 0.72 + slot * 0.085;
-                },
-                transformOrigin: "50% 60%",
-                ease: "back.out(1.12)",
-              },
-              0.04
             );
 
           return undefined;
@@ -199,16 +156,16 @@ function Hero() {
         <div className="hero-copy">
           <h1 id="hero-title" className="hero-title">
             <span className="hero-title-line">On transforme vos projets</span>
-            <span className="hero-title-line">en sites web et apps</span>
+            <span className="hero-title-line">en sites web et apps mobiles</span>
             <span className="hero-title-line hero-memory">
-              dont on se souvient.
+              dont les gens se souviennent.
               <HandDrawnUnderline />
             </span>
           </h1>
         </div>
 
         <HandDrawnArrow />
-        <ScreenshotStack introComplete={stackReady} />
+        <HeroProjectStack />
       </div>
     </section>
   );
@@ -252,241 +209,63 @@ function HandDrawnArrow() {
   );
 }
 
-function ScreenshotStack({ introComplete }) {
-  const [activeProjectId, setActiveProjectId] = useState(projects[0].id);
-  const stageRef = useRef(null);
-  const activeProjectIdRef = useRef(activeProjectId);
-  const autoPausedRef = useRef(false);
-  const manualPauseUntilRef = useRef(0);
-  const flipTweenRef = useRef(null);
-  const selectProjectRef = useRef(null);
-  const reducedMotion = usePrefersReducedMotion();
-  const { contextSafe } = useGSAP({ scope: stageRef });
-
-  const selectProject = contextSafe((projectId, options = {}) => {
-    const isManual = options.manual === true;
-
-    if (isManual) {
-      manualPauseUntilRef.current = Date.now() + 9000;
-    }
-
-    if (projectId === activeProjectIdRef.current) {
-      return;
-    }
-
-    const cards = getStackCards(stageRef.current);
-    flipTweenRef.current?.kill();
-
-    if (reducedMotion || !cards.length) {
-      activeProjectIdRef.current = projectId;
-      setActiveProjectId(projectId);
-      requestAnimationFrame(() => ScrollTrigger.refresh());
-      return;
-    }
-
-    const state = Flip.getState(cards);
-    activeProjectIdRef.current = projectId;
-
-    flushSync(() => setActiveProjectId(projectId));
-
-    const finishFlip = () => {
-      flipTweenRef.current = null;
-      gsap.set(getStackCards(stageRef.current), {
-        clearProps: "transform,translate,rotate,scale",
-      });
-      ScrollTrigger.refresh();
-    };
-
-    flipTweenRef.current = Flip.from(state, {
-      duration: 0.55,
-      ease: "power3.inOut",
-      stagger: 0.02,
-      nested: true,
-      scale: true,
-      onComplete: finishFlip,
-      onInterrupt: finishFlip,
-    });
+function HeroProjectStack() {
+  const container = useRef(null);
+  const stackedProjects = [...projects].reverse();
+  const { scrollYProgress } = useScroll({
+    target: container,
+    offset: ["start start", "end end"],
   });
 
-  selectProjectRef.current = selectProject;
-
-  useEffect(() => {
-    activeProjectIdRef.current = activeProjectId;
-  }, [activeProjectId]);
-
-  useEffect(() => {
-    if (!introComplete || reducedMotion) {
-      return undefined;
-    }
-
-    const intervalId = window.setInterval(() => {
-      if (autoPausedRef.current || Date.now() < manualPauseUntilRef.current) {
-        return;
-      }
-
-      selectProjectRef.current?.(getNextProjectId(activeProjectIdRef.current));
-    }, 4200);
-
-    return () => window.clearInterval(intervalId);
-  }, [introComplete, reducedMotion]);
-
-  useGSAP(
-    () => {
-      const stage = stageRef.current;
-      const initialCards = getStackCards(stage);
-
-      gsap.set(initialCards, {
-        "--decompress-x": "0px",
-        "--decompress-y": "0px",
-        "--decompress-rotation": "0deg",
-      });
-
-      if (!stage || reducedMotion) {
-        return undefined;
-      }
-
-      const mm = gsap.matchMedia();
-
-      mm.add("(min-width: 1081px)", () => {
-        const cards = getStackCards(stage);
-
-        gsap.set(cards, {
-          "--decompress-x": "0px",
-          "--decompress-y": "0px",
-          "--decompress-rotation": "0deg",
-        });
-
-        if (!cards.length) {
-          return undefined;
-        }
-
-        const heroSection = stage.closest(".hero-section");
-        const proofSection = document.querySelector(".proof-section");
-
-        if (!heroSection || !proofSection) {
-          return undefined;
-        }
-
-        const timeline = gsap.timeline({
-          scrollTrigger: {
-            trigger: heroSection,
-            start: "top top+=120",
-            endTrigger: proofSection,
-            end: "top 72%",
-            scrub: 0.75,
-            pin: stage,
-            pinSpacing: false,
-            invalidateOnRefresh: true,
-            refreshPriority: -5,
-          },
-        });
-
-        timeline.to(
-          cards,
-          {
-            "--decompress-x": (_, target) => getDecompressedStackValue(target, "x"),
-            "--decompress-y": (_, target) => getDecompressedStackValue(target, "y"),
-            "--decompress-rotation": (_, target) => getDecompressedStackValue(target, "rotation"),
-            duration: 1,
-            ease: "none",
-          },
-          0
+  return (
+    <main className="hero-project-stack" ref={container} aria-label="Aperçus de projets SOLIS">
+      {stackedProjects.map((project, i) => {
+        const targetScale = Math.max(
+          0.5,
+          1 - (stackedProjects.length - i - 1) * 0.1
         );
 
-        return undefined;
-      });
-
-      return () => mm.revert();
-    },
-    { scope: stageRef, dependencies: [reducedMotion], revertOnUpdate: true }
+        return (
+          <StickyCard_001
+            i={i}
+            key={`p_${i}`}
+            progress={scrollYProgress}
+            range={[i * 0.25, 1]}
+            src={project.src}
+            targetScale={targetScale}
+            title={project.title}
+          />
+        );
+      })}
+    </main>
   );
+}
 
-  const pauseAutoRotation = () => {
-    autoPausedRef.current = true;
-  };
-
-  const resumeAutoRotation = () => {
-    autoPausedRef.current = false;
-  };
-
-  const handleBlur = (event) => {
-    if (!event.currentTarget.contains(event.relatedTarget)) {
-      resumeAutoRotation();
-    }
-  };
+function StickyCard_001({ i, title, src, progress, range, targetScale }) {
+  const container = useRef(null);
+  const reducedMotion = usePrefersReducedMotion();
+  const scale = useTransform(progress, range, [1, targetScale]);
 
   return (
-    <div className="hero-screenshot-stage" ref={stageRef}>
-      <div
-        className="hero-screenshot-stack"
-        aria-label="Aperçus de projets SOLIS"
-        onBlur={handleBlur}
-        onFocus={pauseAutoRotation}
-        onMouseEnter={pauseAutoRotation}
-        onMouseLeave={resumeAutoRotation}
+    <div className="sticky-project-card-container" ref={container}>
+      <motion.div
+        className="project-stack-card"
+        animate={{ opacity: 1, y: 0 }}
+        initial={reducedMotion ? false : { opacity: 0, y: 72 }}
+        style={{
+          scale,
+          top: `calc(-5vh + ${i * 20 + 250}px)`,
+        }}
+        transition={{
+          delay: reducedMotion ? 0 : 0.12 + i * 0.055,
+          duration: reducedMotion ? 0 : 0.62 + i * 0.06,
+          ease: [0.22, 1, 0.36, 1],
+        }}
       >
-        {projects.map((project) => {
-          const slot = getProjectStackSlot(project.id, activeProjectId);
-          const item = stackLayout[slot] || stackLayout[0];
-          const isFront = slot === 0;
-
-          return (
-            <button
-              aria-label={`Afficher ${project.title}`}
-              aria-pressed={isFront}
-              className={`screenshot-card${isFront ? " is-front" : ""}`}
-              data-flip-id={project.id}
-              data-project-id={project.id}
-              data-stack-slot={slot}
-              key={project.id}
-              onClick={() => selectProject(project.id, { manual: true })}
-              style={{
-                "--stack-x": item.x,
-                "--stack-y": item.y,
-                "--stack-rotation": item.rotation,
-                "--stack-scale": item.scale,
-                zIndex: item.z,
-              }}
-              type="button"
-            >
-              <span className="screenshot-card-inner">
-                <img src={project.image} alt={`Aperçu ${project.title}`} />
-              </span>
-            </button>
-          );
-        })}
-      </div>
+        <img src={src} alt={title} />
+      </motion.div>
     </div>
   );
-}
-
-function getStackCards(root) {
-  return root ? Array.from(root.querySelectorAll(".screenshot-card")) : [];
-}
-
-function getProjectStackSlot(projectId, activeProjectId) {
-  const activeIndex = projects.findIndex((project) => project.id === activeProjectId);
-  const projectIndex = projects.findIndex((project) => project.id === projectId);
-
-  if (activeIndex < 0 || projectIndex < 0) {
-    return 0;
-  }
-
-  return (projectIndex - activeIndex + projects.length) % projects.length;
-}
-
-function getNextProjectId(projectId) {
-  const projectIndex = projects.findIndex((project) => project.id === projectId);
-  const nextIndex = projectIndex < 0 ? 0 : (projectIndex + 1) % projects.length;
-
-  return projects[nextIndex].id;
-}
-
-function getDecompressedStackValue(target, key) {
-  const slot = Number(target.dataset.stackSlot || 0);
-  const item = decompressedStackLayout[slot] || decompressedStackLayout[0];
-
-  return item[key];
 }
 
 function ProofMetrics() {
@@ -735,7 +514,7 @@ function PortfolioDisplay() {
           <div className="studio-display" aria-label={`Aperçu ${selectedProject.title}`}>
             <div className="studio-display-screen">
               <div className="monitor-preview" ref={previewRef}>
-                <img src={selectedProject.image} alt={`Aperçu ${selectedProject.title}`} />
+                <img src={selectedProject.src} alt={`Aperçu ${selectedProject.title}`} />
               </div>
             </div>
             <img

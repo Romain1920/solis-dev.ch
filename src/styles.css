@@ -41,6 +41,7 @@
 
 html {
   scroll-behavior: smooth;
+  overflow-x: hidden;
 }
 
 body {
@@ -189,26 +190,27 @@ button {
 }
 
 .hero-section .section-wrap {
-  width: min(1420px, calc(100% - clamp(96px, 9.4vw, 136px)));
+  width: min(1560px, calc(100% - clamp(48px, 6vw, 96px)));
 }
 
 .hero-section {
-  min-height: 84svh;
+  min-height: clamp(780px, 112svh, 1080px);
   display: flex;
-  align-items: center;
-  padding: clamp(118px, 12svh, 152px) 0 clamp(42px, 5vw, 78px);
+  align-items: flex-start;
+  padding: clamp(118px, 12svh, 152px) 0 clamp(70px, 8vw, 124px);
   overflow: hidden;
 }
 
 .hero-layout {
-  --stage-width: clamp(430px, 32vw, 590px);
-  --arrow-width: clamp(104px, 8vw, 148px);
+  --stage-width: clamp(420px, 31vw, 570px);
+  --arrow-width: clamp(112px, 8.6vw, 154px);
   position: relative;
   display: grid;
   grid-template-columns: minmax(0, 1fr) var(--arrow-width) var(--stage-width);
-  gap: clamp(16px, 2vw, 34px);
-  align-items: center;
-  min-height: clamp(500px, 56svh, 660px);
+  gap: clamp(12px, 1.7vw, 30px);
+  align-items: start;
+  min-height: calc(100svh - clamp(168px, 18svh, 220px));
+  padding-top: clamp(168px, 22svh, 238px);
 }
 
 .hero-copy {
@@ -220,9 +222,9 @@ button {
 .hero-title {
   margin: 0;
   color: #08090a;
-  font-size: clamp(3.55rem, 3.9vw, 5.25rem);
+  font-size: clamp(3.3rem, 3.65vw, 5.15rem);
   font-weight: 500;
-  line-height: 0.95;
+  line-height: 0.96;
   letter-spacing: 0;
 }
 
@@ -269,94 +271,59 @@ button {
   overflow: visible;
   pointer-events: none;
   justify-self: center;
-  align-self: center;
-  transform: translate3d(0, 32px, 0) rotate(-4deg);
+  align-self: start;
+  margin-top: clamp(104px, 12svh, 150px);
+  transform: translate3d(0, 58px, 0) rotate(-4deg);
 }
 
-.hero-screenshot-stage {
+.hero-project-stack {
   position: relative;
   z-index: 3;
   width: var(--stage-width);
-  height: clamp(410px, 34vw, 610px);
   justify-self: end;
-  perspective: 1200px;
-  transform: translate3d(clamp(16px, 1.8vw, 30px), clamp(52px, 5vw, 82px), 0);
-  will-change: transform;
-}
-
-.hero-screenshot-stack {
-  position: absolute;
-  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin-top: clamp(-280px, -18vw, -190px);
+  padding: 0 0 86vh;
+  perspective: 1400px;
   transform-style: preserve-3d;
+  transform: translate3d(clamp(16px, 1.8vw, 30px), clamp(52px, 5vw, 82px), 0);
 }
 
-.screenshot-card {
-  appearance: none;
-  position: absolute;
-  left: 0;
+.sticky-project-card-container {
+  position: sticky;
   top: 0;
-  width: 84%;
-  aspect-ratio: 16 / 10;
-  margin: 0;
-  padding: 0;
-  border: 0;
-  background: transparent;
-  color: inherit;
-  cursor: pointer;
-  transform:
-    translate3d(var(--stack-x), var(--stack-y), 0)
-    translate3d(var(--decompress-x, 0px), var(--decompress-y, 0px), 0)
-    rotate(var(--stack-rotation))
-    rotate(var(--decompress-rotation, 0deg))
-    scale(var(--stack-scale));
-  transform-origin: 50% 50%;
-  will-change: transform;
-}
-
-.screenshot-card.is-front {
-  cursor: default;
-}
-
-.screenshot-card:focus-visible {
-  outline: none;
-}
-
-.screenshot-card-inner {
-  display: block;
-  position: relative;
   width: 100%;
-  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.sticky-project-card-container + .sticky-project-card-container {
+  margin-top: -280px;
+}
+
+.project-stack-card {
+  position: relative;
+  width: min(500px, 100%);
+  height: 300px;
+  display: flex;
+  flex-direction: column;
   overflow: hidden;
-  border: 2px solid rgba(255, 255, 255, 0.92);
-  border-radius: clamp(16px, 1.4vw, 26px);
-  background: #ffffff;
+  border-radius: 32px;
+  background: #111111;
   box-shadow:
-    0 34px 88px rgba(16, 17, 18, 0.16),
-    0 12px 24px rgba(16, 17, 18, 0.08);
-  will-change: transform, opacity;
-  transition:
-    box-shadow 180ms ease,
-    border-color 180ms ease;
-}
-
-.screenshot-card:not(.is-front):hover .screenshot-card-inner,
-.screenshot-card:focus-visible .screenshot-card-inner {
-  border-color: rgba(238, 124, 66, 0.72);
-  box-shadow:
-    0 0 0 4px rgba(238, 124, 66, 0.18),
-    0 36px 92px rgba(16, 17, 18, 0.17),
-    0 14px 28px rgba(16, 17, 18, 0.09);
-}
-
-.screenshot-card-inner::after {
-  content: "";
-  position: absolute;
-  inset: 0;
+    0 42px 100px rgba(16, 17, 18, 0.2),
+    0 18px 40px rgba(16, 17, 18, 0.12),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.78);
+  transform-origin: top;
   pointer-events: none;
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.16), transparent 34%);
+  will-change: transform, opacity;
 }
 
-.screenshot-card img {
+.project-stack-card img {
   width: 100%;
   height: 100%;
   object-fit: cover;
@@ -565,6 +532,7 @@ button {
     grid-template-columns: 1fr;
     gap: 34px;
     min-height: auto;
+    padding-top: 0;
   }
 
   .hero-section {
@@ -592,10 +560,34 @@ button {
     display: none;
   }
 
-  .hero-screenshot-stage {
+  .hero-project-stack {
     justify-self: center;
-    height: clamp(310px, 58vw, 520px);
+    width: 100%;
+    min-height: auto;
+    margin-top: clamp(28px, 6vw, 48px);
+    padding: 0;
     transform: translate3d(0, 12px, 0);
+  }
+
+  .sticky-project-card-container {
+    position: relative;
+    top: auto;
+    margin-top: clamp(-238px, -37vw, -178px);
+  }
+
+  .sticky-project-card-container + .sticky-project-card-container {
+    margin-top: clamp(-238px, -37vw, -178px);
+  }
+
+  .sticky-project-card-container:first-child {
+    margin-top: 0;
+  }
+
+  .project-stack-card {
+    width: min(100%, 500px);
+    height: auto;
+    aspect-ratio: 5 / 3;
+    top: 0 !important;
   }
 
   .proof-grid {
@@ -624,19 +616,20 @@ button {
   }
 
   .nav-shell {
-    width: calc(100vw - 24px);
+    width: calc(100dvw - 24px);
+    max-width: calc(100dvw - 24px);
     min-height: 64px;
     margin: 0 12px;
-    display: flex;
-    justify-content: space-between;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
     gap: 10px;
     padding: 10px 8px 10px 12px;
     overflow: hidden;
   }
 
   .brand {
-    flex: 0 0 auto;
     width: 104px;
+    justify-self: start;
   }
 
   .nav-links {
@@ -644,9 +637,9 @@ button {
   }
 
   .nav-cta {
-    flex: 0 0 auto;
     min-width: 92px;
     min-height: 44px;
+    justify-self: end;
     padding: 0 14px;
     font-size: 0.95rem;
   }
@@ -676,13 +669,15 @@ button {
     width: 100%;
   }
 
-  .hero-screenshot-stage {
-    width: min(100%, 430px);
-    height: clamp(250px, 72vw, 390px);
+  .hero-project-stack {
+    width: 100%;
+    margin-top: 30px;
+    padding-top: 0;
   }
 
-  .screenshot-card {
-    width: 80%;
+  .project-stack-card {
+    width: min(100%, 430px);
+    border-radius: clamp(22px, 6vw, 30px);
   }
 
   .proof-section {
@@ -705,9 +700,13 @@ button {
     margin-bottom: 30px;
   }
 
+  .project-selector button.is-selected {
+    transform: none;
+  }
+
   .studio-display {
-    width: 118vw;
-    margin-left: -9vw;
+    width: 100%;
+    margin-left: 0;
   }
 }
 
