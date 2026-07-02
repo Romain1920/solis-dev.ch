@@ -17,11 +17,11 @@ const navItems = [
 ];
 
 const stackLayout = [
-  { x: "0%", y: "22%", rotation: "-1.4deg", scale: 1, z: 5 },
-  { x: "13%", y: "14%", rotation: "2.2deg", scale: 0.97, z: 4 },
-  { x: "25%", y: "7%", rotation: "-3.6deg", scale: 0.94, z: 3 },
-  { x: "37%", y: "0%", rotation: "3.4deg", scale: 0.91, z: 2 },
-  { x: "49%", y: "-7%", rotation: "-2deg", scale: 0.88, z: 1 },
+  { x: "0%", y: "30%", rotation: "-1.2deg", scale: 1, z: 5 },
+  { x: "4%", y: "18%", rotation: "1.8deg", scale: 0.97, z: 4 },
+  { x: "7%", y: "6%", rotation: "-2.6deg", scale: 0.94, z: 3 },
+  { x: "10%", y: "-6%", rotation: "2.6deg", scale: 0.91, z: 2 },
+  { x: "13%", y: "-18%", rotation: "-1.6deg", scale: 0.88, z: 1 },
 ];
 
 function App() {

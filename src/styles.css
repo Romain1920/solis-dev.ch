@@ -188,6 +188,10 @@ button {
   margin: 0 auto;
 }
 
+.hero-section .section-wrap {
+  width: min(1420px, calc(100% - clamp(96px, 9.4vw, 136px)));
+}
+
 .hero-section {
   min-height: 84svh;
   display: flex;
@@ -197,7 +201,7 @@ button {
 }
 
 .hero-layout {
-  --stage-width: clamp(460px, 35vw, 640px);
+  --stage-width: clamp(430px, 32vw, 590px);
   --arrow-width: clamp(104px, 8vw, 148px);
   position: relative;
   display: grid;
@@ -273,7 +277,7 @@ button {
   position: relative;
   z-index: 3;
   width: var(--stage-width);
-  height: clamp(340px, 31vw, 560px);
+  height: clamp(410px, 34vw, 610px);
   justify-self: end;
   perspective: 1200px;
 }
@@ -282,7 +286,7 @@ button {
   position: absolute;
   left: 0;
   top: 0;
-  width: 74%;
+  width: 84%;
   aspect-ratio: 16 / 10;
   margin: 0;
   transform:
@@ -494,8 +498,12 @@ button {
     width: min(100% - 56px, 1480px);
   }
 
+  .hero-section .section-wrap {
+    width: min(100% - 88px, 1280px);
+  }
+
   .hero-layout {
-    --stage-width: clamp(420px, 34vw, 560px);
+    --stage-width: clamp(400px, 32vw, 520px);
     --arrow-width: clamp(94px, 7.2vw, 126px);
     gap: clamp(12px, 1.7vw, 24px);
   }
@@ -525,6 +533,10 @@ button {
   .hero-section {
     min-height: auto;
     padding: 122px 0 66px;
+  }
+
+  .hero-section .section-wrap {
+    width: min(100% - 40px, 720px);
   }
 
   .hero-title {
