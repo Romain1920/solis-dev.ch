@@ -197,11 +197,12 @@ button {
 }
 
 .hero-layout {
-  --stage-width: clamp(560px, 41vw, 790px);
+  --stage-width: clamp(460px, 35vw, 640px);
+  --arrow-width: clamp(104px, 8vw, 148px);
   position: relative;
   display: grid;
-  grid-template-columns: minmax(0, 1fr) var(--stage-width);
-  gap: clamp(38px, 4.2vw, 82px);
+  grid-template-columns: minmax(0, 1fr) var(--arrow-width) var(--stage-width);
+  gap: clamp(16px, 2vw, 34px);
   align-items: center;
   min-height: clamp(500px, 56svh, 660px);
 }
@@ -215,7 +216,7 @@ button {
 .hero-title {
   margin: 0;
   color: #08090a;
-  font-size: clamp(3.55rem, 3.95vw, 5.45rem);
+  font-size: clamp(3.55rem, 3.9vw, 5.25rem);
   font-weight: 500;
   line-height: 0.95;
   letter-spacing: 0;
@@ -230,7 +231,7 @@ button {
   position: relative;
   width: max-content;
   max-width: 100%;
-  padding-bottom: 0.2em;
+  padding-bottom: 0.24em;
 }
 
 .hero-underline {
@@ -256,23 +257,23 @@ button {
 }
 
 .hero-arrow {
-  position: absolute;
-  left: calc(100% - var(--stage-width) - clamp(4px, 1vw, 22px));
-  top: 61%;
+  position: relative;
   z-index: 6;
-  width: clamp(136px, 10.6vw, 210px);
+  width: min(100%, var(--arrow-width));
   height: auto;
   color: var(--orange);
   overflow: visible;
   pointer-events: none;
-  transform: translate3d(-50%, -50%, 0) rotate(-4deg);
+  justify-self: center;
+  align-self: center;
+  transform: translate3d(0, 32px, 0) rotate(-4deg);
 }
 
 .hero-screenshot-stack {
   position: relative;
   z-index: 3;
   width: var(--stage-width);
-  height: clamp(370px, 34vw, 600px);
+  height: clamp(340px, 31vw, 560px);
   justify-self: end;
   perspective: 1200px;
 }
@@ -281,7 +282,7 @@ button {
   position: absolute;
   left: 0;
   top: 0;
-  width: 82%;
+  width: 74%;
   aspect-ratio: 16 / 10;
   margin: 0;
   transform:
@@ -494,12 +495,13 @@ button {
   }
 
   .hero-layout {
-    --stage-width: clamp(470px, 38vw, 620px);
-    gap: clamp(38px, 4.4vw, 72px);
+    --stage-width: clamp(420px, 34vw, 560px);
+    --arrow-width: clamp(94px, 7.2vw, 126px);
+    gap: clamp(12px, 1.7vw, 24px);
   }
 
   .hero-title {
-    font-size: clamp(3.1rem, 3.72vw, 4.95rem);
+    font-size: clamp(3rem, 3.55vw, 4.65rem);
   }
 }
 
