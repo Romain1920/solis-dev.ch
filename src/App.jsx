@@ -1,10 +1,11 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
 import ReactLenis from "lenis/react";
 import { projects } from "./data/projects";
 
-gsap.registerPlugin(useGSAP);
+gsap.registerPlugin(useGSAP, ScrollTrigger);
 
 const contactHref =
   "mailto:info@solis.li?subject=Maquette%20interactive%20offerte";
@@ -17,6 +18,22 @@ const navItems = [
 
 const screenshotIntervalMs = 1500;
 
+const metrics = [
+  {
+    value: "+100",
+    label: "sites web et applications construites",
+  },
+  {
+    value: "+10 ans",
+    label: "d'expérience",
+  },
+  {
+    value: "+500'000 CHF",
+    label: "générés sur les sites e-commerce construits en 2025",
+    variant: "commerce",
+  },
+];
+
 function App() {
   return (
     <ReactLenis root options={{ lerp: 0.08, wheelMultiplier: 0.9 }}>
@@ -28,6 +45,7 @@ function App() {
 
       <main id="contenu">
         <Hero />
+        <MetricsSection />
       </main>
     </ReactLenis>
   );
@@ -236,6 +254,89 @@ function ProjectReel() {
         <img src={currentProject.src} alt="" aria-hidden="true" />
       </span>
     </span>
+  );
+}
+
+function MetricsSection() {
+  const metricsRef = useRef(null);
+
+  useGSAP(
+    () => {
+      const mm = gsap.matchMedia();
+
+      mm.add(
+        {
+          reduceMotion: "(prefers-reduced-motion: reduce)",
+          all: "(min-width: 0px)",
+        },
+        (context) => {
+          const { reduceMotion } = context.conditions;
+          const metricItems = gsap.utils.toArray(".metric-item");
+
+          if (reduceMotion) {
+            gsap.set(metricItems, {
+              autoAlpha: 1,
+              y: 0,
+              scale: 1,
+              filter: "blur(0px)",
+            });
+            return undefined;
+          }
+
+          gsap.fromTo(
+            metricItems,
+            {
+              autoAlpha: 0,
+              y: 72,
+              scale: 0.96,
+              filter: "blur(10px)",
+            },
+            {
+              autoAlpha: 1,
+              y: 0,
+              scale: 1,
+              filter: "blur(0px)",
+              duration: 0.72,
+              ease: "power3.out",
+              stagger: 0.09,
+              scrollTrigger: {
+                trigger: metricsRef.current,
+                start: "top 78%",
+                toggleActions: "play none none reverse",
+              },
+            }
+          );
+
+          return undefined;
+        }
+      );
+
+      return () => mm.revert();
+    },
+    { scope: metricsRef }
+  );
+
+  return (
+    <section
+      className="metrics-section"
+      id="kpis"
+      ref={metricsRef}
+      aria-label="Chiffres clés SOLIS"
+    >
+      <div className="metrics-shell">
+        {metrics.map((metric) => (
+          <div
+            className={
+              metric.variant ? `metric-item metric-item--${metric.variant}` : "metric-item"
+            }
+            key={metric.value}
+          >
+            <strong>{metric.value}</strong>
+            <span>{metric.label}</span>
+          </div>
+        ))}
+      </div>
+    </section>
   );
 }
 

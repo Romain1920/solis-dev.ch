@@ -185,7 +185,7 @@ a {
   min-height: 100svh;
   display: flex;
   align-items: center;
-  padding: clamp(116px, 13svh, 162px) 0 clamp(42px, 7vw, 92px);
+  padding: clamp(116px, 13svh, 162px) 0 clamp(30px, 4vw, 58px);
   overflow: hidden;
 }
 
@@ -387,6 +387,52 @@ a {
   transform: translate3d(-2px, 1px, 0) rotate(45deg);
 }
 
+.metrics-section {
+  position: relative;
+  overflow: hidden;
+  padding: clamp(10px, 2.5vw, 34px) 0 clamp(84px, 12vw, 170px);
+}
+
+.metrics-shell {
+  width: min(1220px, calc(100vw - 56px));
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: minmax(0, 0.9fr) minmax(0, 0.9fr) minmax(0, 1.2fr);
+  align-items: start;
+  gap: clamp(24px, 4vw, 64px);
+}
+
+.metric-item {
+  min-width: 0;
+  text-align: center;
+  color: #090a0a;
+  will-change: filter, transform, opacity;
+}
+
+.metric-item strong {
+  display: block;
+  font-size: clamp(3.2rem, 6vw, 6.6rem);
+  font-weight: 500;
+  line-height: 0.86;
+  letter-spacing: 0;
+  white-space: nowrap;
+}
+
+.metric-item--commerce strong {
+  font-size: clamp(2.75rem, 4.7vw, 5.45rem);
+}
+
+.metric-item span {
+  display: block;
+  width: min(100%, 24ch);
+  margin: clamp(14px, 1.4vw, 22px) auto 0;
+  color: rgba(9, 10, 10, 0.58);
+  font-size: clamp(1rem, 1.05vw, 1.18rem);
+  font-weight: 500;
+  line-height: 1.16;
+  letter-spacing: 0;
+}
+
 @keyframes reel-swap {
   0% {
     opacity: 0;
@@ -461,6 +507,25 @@ a {
     width: min(280px, 68vw);
     height: clamp(68px, 14vw, 92px);
   }
+
+  .metrics-section {
+    padding: 18px 0 96px;
+  }
+
+  .metrics-shell {
+    width: min(760px, calc(100vw - 40px));
+    grid-template-columns: 1fr;
+    gap: 42px;
+  }
+
+  .metric-item strong,
+  .metric-item--commerce strong {
+    font-size: clamp(4rem, 15vw, 6.6rem);
+  }
+
+  .metric-item span {
+    font-size: 1.05rem;
+  }
 }
 
 @media (max-width: 680px) {
@@ -499,7 +564,7 @@ a {
   }
 
   .hero-section {
-    padding: 96px 0 38px;
+    padding: 96px 0 30px;
   }
 
   .hero-shell {
@@ -608,6 +673,29 @@ a {
   .hero-request:hover,
   .hero-request:focus-visible {
     translate: -50% 0;
+  }
+
+  .metrics-section {
+    padding: 10px 0 76px;
+  }
+
+  .metrics-shell {
+    width: calc(100vw - 30px);
+    gap: 34px;
+  }
+
+  .metric-item strong,
+  .metric-item--commerce strong {
+    font-size: clamp(3.4rem, 17vw, 5rem);
+    line-height: 0.9;
+    white-space: normal;
+  }
+
+  .metric-item span {
+    width: min(100%, 28ch);
+    margin-top: 11px;
+    font-size: 0.98rem;
+    line-height: 1.18;
   }
 }
 
