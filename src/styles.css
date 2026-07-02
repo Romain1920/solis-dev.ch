@@ -190,7 +190,7 @@ a {
 }
 
 .hero-shell {
-  width: min(1180px, calc(100vw - 48px));
+  width: min(1240px, calc(100vw - 48px));
   margin: 0 auto;
   padding-top: clamp(18px, 4svh, 54px);
 }
@@ -199,7 +199,7 @@ a {
   margin: 0;
   color: #090a0a;
   max-width: 100%;
-  font-size: clamp(3.85rem, 5.45vw, 6.55rem);
+  font-size: clamp(3.65rem, 5.18vw, 6.25rem);
   font-weight: 500;
   line-height: 0.9;
   letter-spacing: 0;
@@ -229,7 +229,7 @@ a {
 
 .hero-line-arrow {
   position: relative;
-  padding-right: clamp(120px, 11vw, 184px);
+  padding-right: clamp(96px, 9.6vw, 160px);
 }
 
 .hero-line-final {
@@ -239,13 +239,13 @@ a {
 
 .hero-arrow {
   position: absolute;
-  right: 0;
-  bottom: 0.02em;
-  width: clamp(126px, 10.5vw, 178px);
+  right: clamp(0px, 1vw, 14px);
+  bottom: 0.32em;
+  width: clamp(104px, 8.8vw, 150px);
   height: auto;
   color: var(--orange);
   overflow: visible;
-  transform: translate3d(0, 0.08em, 0) rotate(-3deg);
+  transform: translate3d(0, 0, 0) rotate(-3deg);
 }
 
 .project-reel {
@@ -389,11 +389,11 @@ a {
 
 @media (max-width: 1280px) {
   .hero-shell {
-    width: min(1080px, calc(100vw - 72px));
+    width: min(1040px, calc(100vw - 72px));
   }
 
   .hero-title {
-    font-size: clamp(3.5rem, 5.9vw, 5.55rem);
+    font-size: clamp(3.25rem, 5.35vw, 5.05rem);
   }
 }
 
