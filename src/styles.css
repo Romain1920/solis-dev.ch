@@ -280,6 +280,7 @@ button {
   height: clamp(410px, 34vw, 610px);
   justify-self: end;
   perspective: 1200px;
+  transform: translate3d(0, clamp(34px, 4vw, 62px), 0);
 }
 
 .screenshot-card {
