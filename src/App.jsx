@@ -100,14 +100,14 @@ function Hero() {
           const { reduceMotion } = context.conditions;
           const titleLines = gsap.utils.toArray(".hero-title-line");
           const screenshotInners = gsap.utils.toArray(".screenshot-card-inner");
+          const drawPaths = gsap.utils.toArray(".draw-path");
 
-          gsap.set(".underline-path", {
-            strokeDasharray: 940,
-            strokeDashoffset: reduceMotion ? 0 : 940,
-          });
-          gsap.set(".arrow-path", {
-            strokeDasharray: 900,
-            strokeDashoffset: reduceMotion ? 0 : 900,
+          drawPaths.forEach((path) => {
+            const length = path.getTotalLength();
+            gsap.set(path, {
+              strokeDasharray: length,
+              strokeDashoffset: reduceMotion ? 0 : length,
+            });
           });
 
           if (reduceMotion) {
@@ -128,40 +128,43 @@ function Hero() {
           timeline
             .from(titleLines, {
               autoAlpha: 0,
-              y: 42,
-              duration: 0.82,
-              stagger: 0.09,
-            })
+              y: 24,
+              duration: 0.46,
+              stagger: 0.035,
+            }, 0)
             .to(
               ".underline-path",
               {
                 strokeDashoffset: 0,
-                duration: 0.72,
-                ease: "power2.inOut",
+                duration: 0.62,
+                ease: "power1.inOut",
               },
-              "-=0.18"
+              0.1
             )
             .to(
               ".arrow-path",
               {
                 strokeDashoffset: 0,
-                duration: 1.08,
-                ease: "power2.inOut",
+                duration: 0.7,
+                ease: "power1.inOut",
               },
-              "-=0.04"
+              0.16
             )
             .from(
               screenshotInners,
               {
                 autoAlpha: 0,
-                x: 86,
-                y: 54,
-                scale: 0.92,
-                rotation: 6,
-                duration: 0.72,
-                stagger: 0.14,
+                x: 58,
+                y: -96,
+                scale: 0.9,
+                rotation: -7,
+                rotationX: -7,
+                duration: 0.74,
+                transformOrigin: "50% 60%",
+                stagger: { each: 0.07, from: "end" },
+                ease: "back.out(1.12)",
               },
-              "-=0.28"
+              0.04
             );
 
           return undefined;
@@ -204,13 +207,13 @@ function HandDrawnUnderline() {
     >
       <path
         className="draw-path underline-path"
-        pathLength="1"
         d="M20 44 C146 58 266 33 402 44 C554 57 706 28 880 40"
         fill="none"
         stroke="currentColor"
         strokeLinecap="round"
         strokeLinejoin="round"
-        strokeWidth="16"
+        strokeWidth="24"
+        strokeOpacity="0.94"
       />
     </svg>
   );
@@ -221,7 +224,6 @@ function HandDrawnArrow() {
     <svg className="hero-arrow" viewBox="0 0 468 264" aria-hidden="true">
       <path
         className="draw-path arrow-path"
-        pathLength="1"
         d="M6 226 C58 154 124 94 190 90 C225 88 249 99 256 124 C264 154 244 190 220 218 C200 242 181 236 181 212 C181 178 216 128 264 116 C319 102 379 134 438 188 M385 106 C409 128 428 154 438 188 M438 188 C410 187 380 188 354 188"
         fill="none"
         stroke="currentColor"
