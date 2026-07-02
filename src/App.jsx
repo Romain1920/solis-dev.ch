@@ -123,7 +123,7 @@ function Hero() {
               0.42
             )
             .from(
-              ".reel-card",
+              ".project-reel",
               {
                 autoAlpha: 0,
                 y: 18,
@@ -161,22 +161,22 @@ function Hero() {
     >
       <div className="hero-shell">
         <h1 id="hero-title" className="hero-title">
-          <span className="hero-line hero-reveal">
+          <span className="hero-line hero-line-arrow hero-reveal">
             On transforme <br className="mobile-only" />
             vos projets
-          </span>
-          <span className="hero-line hero-reveal">
-            et sites web <br className="mobile-only" />
-            en apps
-          </span>
-          <span className="hero-line hero-line-arrow hero-reveal">
-            mobiles sur <br className="mobile-only" />
-            mesure
             <HandDrawnArrow />
           </span>
-          <span className="hero-line hero-reveal">dont les gens se</span>
+          <span className="hero-line hero-reveal">
+            en sites webs <br className="mobile-only" />
+            et en apps
+          </span>
+          <span className="hero-line hero-reveal">
+            mobiles <br className="mobile-only" />
+            sur-mesure <br className="mobile-only" />
+            dont
+          </span>
           <span className="hero-line hero-line-final hero-reveal">
-            souviennent
+            les gens se souviennent
             <ProjectReel />
           </span>
         </h1>
@@ -231,21 +231,13 @@ function ProjectReel() {
     return () => window.clearTimeout(timeout);
   }, [delayIndex, reducedMotion, reelProjects.length]);
 
-  const visibleProjects = [0, 1, 2].map(
-    (offset) => reelProjects[(index + offset) % reelProjects.length]
-  );
+  const currentProject = reelProjects[index % reelProjects.length];
 
   return (
-    <span className="project-reel" aria-label="Apercus de projets SOLIS">
-      {visibleProjects.map((project, cardIndex) => (
-        <span
-          className="reel-card"
-          data-card={cardIndex}
-          key={`${project.id}-${cardIndex}`}
-        >
-          <img src={project.src} alt="" aria-hidden="true" />
-        </span>
-      ))}
+    <span className="project-reel" aria-label="Aperçus de projets SOLIS">
+      <span className="reel-slide" key={currentProject.id}>
+        <img src={currentProject.src} alt="" aria-hidden="true" />
+      </span>
     </span>
   );
 }
