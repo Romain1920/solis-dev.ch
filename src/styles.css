@@ -394,12 +394,13 @@ a {
 }
 
 .metrics-shell {
-  width: min(1220px, calc(100vw - 56px));
+  width: min(1180px, calc(100vw - 56px));
   margin: 0 auto;
   display: grid;
-  grid-template-columns: minmax(0, 0.9fr) minmax(0, 0.9fr) minmax(0, 1.2fr);
+  grid-template-columns: repeat(3, max-content);
+  justify-content: center;
   align-items: start;
-  gap: clamp(24px, 4vw, 64px);
+  gap: clamp(64px, 7.2vw, 118px);
 }
 
 .metric-item {
@@ -411,15 +412,15 @@ a {
 
 .metric-item strong {
   display: block;
-  font-size: clamp(3.2rem, 6vw, 6.6rem);
+  font-size: clamp(3rem, 5.2vw, 5.9rem);
   font-weight: 500;
-  line-height: 0.86;
+  line-height: 0.9;
   letter-spacing: 0;
   white-space: nowrap;
 }
 
 .metric-item--commerce strong {
-  font-size: clamp(2.75rem, 4.7vw, 5.45rem);
+  font-size: clamp(2.65rem, 4.05vw, 4.7rem);
 }
 
 .metric-item span {
