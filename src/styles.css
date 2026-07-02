@@ -217,7 +217,7 @@ a {
 }
 
 .hero-reveal {
-  will-change: clip-path, filter, transform, opacity;
+  will-change: filter, transform, opacity;
 }
 
 .mobile-only {

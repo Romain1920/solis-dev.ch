@@ -100,13 +100,11 @@ function Hero() {
               titleItems,
               {
                 autoAlpha: 0,
-                clipPath: "inset(0 100% 0 0)",
                 filter: "blur(7px)",
                 x: -18,
               },
               {
                 autoAlpha: 1,
-                clipPath: "inset(0 0% 0 0)",
                 filter: "blur(0px)",
                 x: 0,
                 duration: 0.86,
