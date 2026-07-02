@@ -196,7 +196,7 @@ a {
 }
 
 .hero-title {
-  width: min(100%, 1080px);
+  width: fit-content;
   margin: 0 auto;
   color: #090a0a;
   max-width: 100%;
@@ -204,7 +204,7 @@ a {
   font-weight: 500;
   line-height: 1.02;
   letter-spacing: 0;
-  text-align: center;
+  text-align: left;
   overflow: visible;
 }
 
@@ -229,7 +229,6 @@ a {
 .hero-line-reel {
   display: flex;
   align-items: center;
-  justify-content: center;
   gap: clamp(14px, 1.45vw, 24px);
 }
 
