@@ -218,11 +218,11 @@ function HandDrawnUnderline() {
 
 function HandDrawnArrow() {
   return (
-    <svg className="hero-arrow" viewBox="0 0 430 250" aria-hidden="true">
+    <svg className="hero-arrow" viewBox="0 0 468 264" aria-hidden="true">
       <path
         className="draw-path arrow-path"
         pathLength="1"
-        d="M28 172 C86 86 182 64 238 122 C270 154 238 198 202 174 C166 150 192 82 272 82 C334 82 383 112 406 154 M360 124 C384 136 398 147 406 154 C386 156 363 157 340 162"
+        d="M6 226 C58 154 124 94 190 90 C225 88 249 99 256 124 C264 154 244 190 220 218 C200 242 181 236 181 212 C181 178 216 128 264 116 C319 102 379 134 438 188 M385 106 C409 128 428 154 438 188 M438 188 C410 187 380 188 354 188"
         fill="none"
         stroke="currentColor"
         strokeLinecap="round"
