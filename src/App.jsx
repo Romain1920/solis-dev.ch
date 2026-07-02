@@ -1,12 +1,11 @@
 import { useEffect, useRef, useState } from "react";
 import gsap from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useGSAP } from "@gsap/react";
-import Lenis from "lenis";
 import logoDark from "../assets/solis-logo-dark.png";
 import studioDisplay from "../assets/studio-display-light.png";
+import { projects } from "./data/projects";
 
-gsap.registerPlugin(ScrollTrigger, useGSAP);
+gsap.registerPlugin(useGSAP);
 
 const contactHref =
   "mailto:info@solis.li?subject=Maquette%20interactive%20offerte";
@@ -17,50 +16,16 @@ const navItems = [
   { href: "#realisations", label: "Réalisations" },
 ];
 
-const projects = [
-  {
-    id: "ecommerce",
-    label: "Site e-commerce",
-    color: "#ef6b3a",
-    colorEnd: "#ffb077",
-    ink: "#2e1209",
-  },
-  {
-    id: "mobile",
-    label: "Application mobile",
-    color: "#75aef4",
-    colorEnd: "#d7ebff",
-    ink: "#0d253e",
-  },
-  {
-    id: "metier",
-    label: "Plateforme métier",
-    color: "#4cbd91",
-    colorEnd: "#c9ead8",
-    ink: "#0c2a20",
-  },
-  {
-    id: "institutionnel",
-    label: "Site institutionnel",
-    color: "#e86f62",
-    colorEnd: "#f3ddd4",
-    ink: "#321210",
-  },
-  {
-    id: "saas",
-    label: "Logiciel SaaS",
-    color: "#8178f3",
-    colorEnd: "#e0e1ff",
-    ink: "#17153f",
-  },
+const stackLayout = [
+  { x: "0%", y: "22%", rotation: "-1.6deg", scale: 1, z: 5 },
+  { x: "8%", y: "14%", rotation: "2.4deg", scale: 0.97, z: 4 },
+  { x: "16%", y: "7%", rotation: "-4.5deg", scale: 0.94, z: 3 },
+  { x: "24%", y: "1%", rotation: "3.8deg", scale: 0.91, z: 2 },
+  { x: "32%", y: "-5%", rotation: "-2.2deg", scale: 0.88, z: 1 },
 ];
-
-const heroStackRotations = [-2, -7, 1.5, 7, 12];
 
 function App() {
   const activeSection = useActiveSection();
-
-  useLenisScroll();
 
   return (
     <>
@@ -68,296 +33,162 @@ function App() {
         Aller au contenu
       </a>
 
-      <header className="site-header">
-        <nav className="nav-shell" aria-label="Navigation principale">
-          <a className="brand" href="#accueil" aria-label="SOLIS Développement">
-            <img src={logoDark} alt="SOLIS" />
-          </a>
-          <div className="nav-links" aria-label="Sections">
-            {navItems.map((item) => (
-              <a
-                key={item.href}
-                href={item.href}
-                className={activeSection === item.href ? "is-active" : undefined}
-              >
-                {item.label}
-              </a>
-            ))}
-          </div>
-          <a
-            className="nav-cta"
-            href={`${contactHref}&body=Source%3A%20navigation`}
-            data-track="navigation-contact"
-          >
-            Contact
-          </a>
-        </nav>
-      </header>
+      <Header activeSection={activeSection} />
 
       <main id="contenu">
-        <HeroScrollytelling />
+        <HomePage />
       </main>
     </>
   );
 }
 
-function HeroScrollytelling() {
-  const sectionRef = useRef(null);
+function Header({ activeSection }) {
+  return (
+    <header className="site-header">
+      <nav className="nav-shell" aria-label="Navigation principale">
+        <a className="brand" href="#accueil" aria-label="SOLIS Développement">
+          <img src={logoDark} alt="SOLIS" />
+        </a>
+
+        <div className="nav-links" aria-label="Sections">
+          {navItems.map((item) => (
+            <a
+              key={item.href}
+              href={item.href}
+              className={activeSection === item.href ? "is-active" : undefined}
+            >
+              {item.label}
+            </a>
+          ))}
+        </div>
+
+        <a
+          className="nav-cta"
+          href={`${contactHref}&body=Source%3A%20navigation`}
+          data-track="navigation-contact"
+        >
+          Contact
+        </a>
+      </nav>
+    </header>
+  );
+}
+
+function HomePage() {
+  return (
+    <>
+      <Hero />
+      <ProofMetrics />
+      <PortfolioDisplay />
+    </>
+  );
+}
+
+function Hero() {
   const heroRef = useRef(null);
-  const cardsRef = useRef([]);
-  const overlayRef = useRef(null);
-  const monitorScreenRef = useRef(null);
-  const monitorContentRef = useRef(null);
-  const [selectedProjectId, setSelectedProjectId] = useState(projects[0].id);
-  const reducedMotion = usePrefersReducedMotion();
-  const selectedProject =
-    projects.find((project) => project.id === selectedProjectId) || projects[0];
 
   useGSAP(
     () => {
-      const section = sectionRef.current;
-      const hero = heroRef.current;
-      const overlay = overlayRef.current;
-      const monitorScreen = monitorScreenRef.current;
-      const monitorContent = monitorContentRef.current;
-      const cards = cardsRef.current.filter(Boolean);
-
-      if (!section || !hero || !overlay || !monitorScreen || !cards.length) {
-        return undefined;
-      }
-
-      gsap.set(cards, {
-        autoAlpha: 1,
-        x: 0,
-        y: 0,
-        scale: 1,
-        rotation: (index) => heroStackRotations[index],
-        transformOrigin: "50% 50%",
-      });
-
-      gsap.set(overlay, { autoAlpha: 0, pointerEvents: "none" });
-
-      if (monitorContent) {
-        gsap.set(monitorContent, {
-          autoAlpha: reducedMotion ? 1 : 0,
-          scale: reducedMotion ? 1 : 0.985,
-        });
-      }
-
-      if (!reducedMotion) {
-        gsap.from(cards, {
-          autoAlpha: 0,
-          x: 90,
-          y: 46,
-          scale: 0.92,
-          rotation: (index) => heroStackRotations[index] + 9,
-          duration: 0.82,
-          stagger: 0.16,
-          ease: "power3.out",
-          delay: 0.18,
-        });
-      }
-
       const mm = gsap.matchMedia();
 
-      mm.add("(min-width: 900px)", () => {
-        if (reducedMotion) {
+      mm.add(
+        {
+          all: "(min-width: 0px)",
+          reduceMotion: "(prefers-reduced-motion: reduce)",
+        },
+        (context) => {
+          const { reduceMotion } = context.conditions;
+          const titleLines = gsap.utils.toArray(".hero-title-line");
+          const screenshotInners = gsap.utils.toArray(".screenshot-card-inner");
+
+          gsap.set(".underline-path", {
+            strokeDasharray: 940,
+            strokeDashoffset: reduceMotion ? 0 : 940,
+          });
+          gsap.set(".arrow-path", {
+            strokeDasharray: 900,
+            strokeDashoffset: reduceMotion ? 0 : 900,
+          });
+
+          if (reduceMotion) {
+            gsap.set([...titleLines, ...screenshotInners], {
+              autoAlpha: 1,
+              x: 0,
+              y: 0,
+              scale: 1,
+              rotation: 0,
+            });
+            return undefined;
+          }
+
+          const timeline = gsap.timeline({
+            defaults: { ease: "power3.out" },
+          });
+
+          timeline
+            .from(titleLines, {
+              autoAlpha: 0,
+              y: 42,
+              duration: 0.82,
+              stagger: 0.09,
+            })
+            .to(
+              ".underline-path",
+              {
+                strokeDashoffset: 0,
+                duration: 0.72,
+                ease: "power2.inOut",
+              },
+              "-=0.18"
+            )
+            .to(
+              ".arrow-path",
+              {
+                strokeDashoffset: 0,
+                duration: 1.08,
+                ease: "power2.inOut",
+              },
+              "-=0.04"
+            )
+            .from(
+              screenshotInners,
+              {
+                autoAlpha: 0,
+                x: 86,
+                y: 54,
+                scale: 0.92,
+                rotation: 6,
+                duration: 0.72,
+                stagger: 0.14,
+              },
+              "-=0.28"
+            );
+
           return undefined;
         }
-
-        let geometry = null;
-
-        const measure = () => {
-          const from = getLocalRect(cards[0], section);
-          const to = getLocalRect(monitorScreen, section);
-
-          geometry = {
-            from,
-            to,
-            midX: from.x + (to.x - from.x) * 0.48 - 70,
-            midY: from.y + (to.y - from.y) * 0.5,
-            scaleX: to.width / from.width,
-            scaleY: to.height / from.height,
-          };
-
-          gsap.set(overlay, {
-            width: from.width,
-            height: from.height,
-            x: from.x,
-            y: from.y,
-            scaleX: 1,
-            scaleY: 1,
-            rotation: heroStackRotations[0],
-            borderRadius: "30px",
-            "--liquid-glow": 0,
-          });
-        };
-
-        measure();
-
-        const timeline = gsap.timeline({
-          defaults: { ease: "power2.inOut" },
-          scrollTrigger: {
-            trigger: section,
-            start: "top top",
-            endTrigger: monitorScreen,
-            end: "center center",
-            scrub: 0.9,
-            invalidateOnRefresh: true,
-            onRefreshInit: measure,
-            onRefresh: measure,
-          },
-        });
-
-        timeline
-          .to(
-            cards.slice(1),
-            {
-              x: (_, target) => cards[0].offsetLeft - target.offsetLeft,
-              y: (_, target) => cards[0].offsetTop - target.offsetTop,
-              rotation: 0,
-              scale: 0.95,
-              autoAlpha: 0,
-              duration: 0.2,
-              stagger: 0.018,
-            },
-            0
-          )
-          .set(
-            overlay,
-            {
-              autoAlpha: 1,
-              x: () => geometry.from.x,
-              y: () => geometry.from.y,
-              width: () => geometry.from.width,
-              height: () => geometry.from.height,
-            },
-            0.08
-          )
-          .to(cards[0], { autoAlpha: 0, duration: 0.12 }, 0.12)
-          .to(
-            overlay,
-            {
-              borderRadius: "42% 58% 54% 46% / 50% 42% 58% 50%",
-              scaleX: 0.82,
-              scaleY: 0.8,
-              rotation: -4,
-              skewX: -3,
-              "--liquid-glow": 1,
-              duration: 0.22,
-            },
-            0.2
-          )
-          .to(
-            overlay,
-            {
-              x: () => geometry.midX,
-              y: () => geometry.midY,
-              scaleX: () => Math.max(geometry.scaleX * 0.82, 0.62),
-              scaleY: () => Math.max(geometry.scaleY * 0.86, 0.56),
-              rotation: -1.5,
-              skewX: 4,
-              borderRadius: "48% 52% 62% 38% / 42% 56% 44% 58%",
-              duration: 0.34,
-              ease: "power1.inOut",
-            },
-            0.38
-          )
-          .to(
-            overlay,
-            {
-              x: () => geometry.to.x,
-              y: () => geometry.to.y,
-              scaleX: () => geometry.scaleX,
-              scaleY: () => geometry.scaleY,
-              rotation: 0,
-              skewX: 0,
-              borderRadius: "18px",
-              "--liquid-glow": 0.18,
-              duration: 0.28,
-              ease: "power2.inOut",
-            },
-            0.68
-          )
-          .to(
-            monitorContent,
-            {
-              autoAlpha: 1,
-              scale: 1,
-              duration: 0.08,
-              ease: "power2.out",
-            },
-            0.9
-          )
-          .to(overlay, { autoAlpha: 0, duration: 0.08 }, 0.94);
-
-        window.addEventListener("load", ScrollTrigger.refresh);
-
-        return () => {
-          window.removeEventListener("load", ScrollTrigger.refresh);
-          timeline.kill();
-        };
-      });
-
-      mm.add("(max-width: 899px)", () => {
-        gsap.set(overlay, { autoAlpha: 0 });
-        gsap.set(cards, { autoAlpha: 1, clearProps: "x,y,scale,skewX" });
-        gsap.set(monitorContent, { autoAlpha: 1, scale: 1 });
-      });
+      );
 
       return () => mm.revert();
     },
-    { scope: sectionRef, dependencies: [reducedMotion], revertOnUpdate: true }
+    { scope: heroRef }
   );
 
   return (
-    <section className="project-story" id="accueil" ref={sectionRef}>
-      <section className="hero" ref={heroRef} aria-labelledby="hero-title">
-        <div className="section-wrap hero-layout">
-          <div className="hero-copy">
-            <h1 id="hero-title" className="hero-title">
-              <span>On transforme vos projets</span>
-              <span>en sites web et apps mobiles</span>
-              <span className="hero-memory">
-                dont les gens se souviennent.
-                <HandDrawnUnderline />
-              </span>
-            </h1>
-          </div>
-
-          <HandDrawnArrow />
-
-          <div className="hero-stage" aria-hidden="true">
-            <div className="hero-card-stack">
-              {projects.map((project, index) => (
-                <div
-                  className={`hero-stack-card hero-stack-card-${index}`}
-                  key={project.id}
-                  ref={(node) => {
-                    cardsRef.current[index] = node;
-                  }}
-                >
-                  <ProjectMiniScreen project={project} />
-                </div>
-              ))}
-            </div>
-          </div>
+    <section className="hero-section" id="accueil" ref={heroRef} aria-labelledby="hero-title">
+      <div className="section-wrap hero-layout">
+        <div className="hero-copy">
+          <h1 id="hero-title" className="hero-title">
+            <span className="hero-title-line">On transforme vos projets</span>
+            <span className="hero-title-line">en sites web et apps mobiles</span>
+            <span className="hero-title-line hero-memory">
+              dont les gens se souviennent.
+              <HandDrawnUnderline />
+            </span>
+          </h1>
         </div>
-      </section>
 
-      <ProofMetrics />
-
-      <PortfolioMonitor
-        monitorContentRef={monitorContentRef}
-        monitorScreenRef={monitorScreenRef}
-        onImageLoad={() => ScrollTrigger.refresh()}
-        onProjectSelect={setSelectedProjectId}
-        selectedProject={selectedProject}
-        selectedProjectId={selectedProjectId}
-      />
-
-      <div className="transition-overlay-card" ref={overlayRef} aria-hidden="true">
-        <ProjectMiniScreen project={projects[0]} />
+        <HandDrawnArrow />
+        <ScreenshotStack />
       </div>
     </section>
   );
@@ -367,19 +198,19 @@ function HandDrawnUnderline() {
   return (
     <svg
       className="hero-underline"
-      viewBox="0 0 900 62"
+      viewBox="0 0 900 72"
       preserveAspectRatio="none"
       aria-hidden="true"
     >
       <path
-        className="draw-path"
+        className="draw-path underline-path"
         pathLength="1"
-        d="M22 39 C146 47 276 31 402 39 C562 49 690 28 878 37"
+        d="M20 44 C146 58 266 33 402 44 C554 57 706 28 880 40"
         fill="none"
         stroke="currentColor"
         strokeLinecap="round"
         strokeLinejoin="round"
-        strokeWidth="18"
+        strokeWidth="16"
       />
     </svg>
   );
@@ -387,73 +218,91 @@ function HandDrawnUnderline() {
 
 function HandDrawnArrow() {
   return (
-    <svg
-      className="hero-arrow"
-      viewBox="0 0 360 210"
-      aria-hidden="true"
-    >
+    <svg className="hero-arrow" viewBox="0 0 430 250" aria-hidden="true">
       <path
-        className="draw-path"
+        className="draw-path arrow-path"
         pathLength="1"
-        d="M28 136 C76 78 148 72 204 112 C226 128 254 126 294 96 M258 72 C276 83 288 92 294 96 C276 101 258 108 240 119"
+        d="M28 172 C86 86 182 64 238 122 C270 154 238 198 202 174 C166 150 192 82 272 82 C334 82 383 112 406 154 M360 124 C384 136 398 147 406 154 C386 156 363 157 340 162"
         fill="none"
         stroke="currentColor"
         strokeLinecap="round"
         strokeLinejoin="round"
-        strokeWidth="12"
+        strokeWidth="16"
       />
     </svg>
   );
 }
 
-function ProjectMiniScreen({ project }) {
+function ScreenshotStack() {
   return (
-    <article
-      className={`project-mini-screen project-mini-screen-${project.id}`}
-      aria-label={project.label}
-      style={{
-        "--card-color": project.color,
-        "--card-color-end": project.colorEnd,
-        "--card-ink": project.ink,
-      }}
-    >
-      <div className="mini-screen-frame">
-        <div className="mini-screen-toolbar" aria-hidden="true">
-          <i />
-          <i />
-          <i />
-        </div>
-        <div className="mini-screen-preview" aria-hidden="true">
-          <span />
-          <span />
-          <span />
-          <b />
-        </div>
-      </div>
-    </article>
-  );
-}
+    <div className="hero-screenshot-stack" aria-label="Aperçus de projets SOLIS">
+      {projects.map((project, index) => {
+        const item = stackLayout[index];
 
-function ProjectScreenPreview({ project }) {
-  return (
-    <div
-      className={`screen-project screen-project-${project.id}`}
-      style={{
-        "--card-color": project.color,
-        "--card-color-end": project.colorEnd,
-        "--card-ink": project.ink,
-      }}
-    >
-      <div className="screen-project-inner">
-        <span>{project.label}</span>
-      </div>
+        return (
+          <figure
+            className="screenshot-card"
+            key={project.id}
+            style={{
+              "--stack-x": item.x,
+              "--stack-y": item.y,
+              "--stack-rotation": item.rotation,
+              "--stack-scale": item.scale,
+              zIndex: item.z,
+            }}
+          >
+            <div className="screenshot-card-inner">
+              <img src={project.image} alt={`Aperçu ${project.title}`} />
+            </div>
+          </figure>
+        );
+      })}
     </div>
   );
 }
 
 function ProofMetrics() {
+  const sectionRef = useRef(null);
+
+  useGSAP(
+    () => {
+      const metrics = gsap.utils.toArray(".metric");
+      const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+      if (reduceMotion) {
+        gsap.set(metrics, { autoAlpha: 1, y: 0 });
+        return undefined;
+      }
+
+      gsap.set(metrics, { autoAlpha: 0, y: 28 });
+
+      const observer = new IntersectionObserver(
+        ([entry]) => {
+          if (!entry.isIntersecting) {
+            return;
+          }
+
+          gsap.to(metrics, {
+            autoAlpha: 1,
+            y: 0,
+            duration: 0.58,
+            ease: "power3.out",
+            stagger: 0.08,
+          });
+          observer.disconnect();
+        },
+        { threshold: 0.28 }
+      );
+
+      observer.observe(sectionRef.current);
+
+      return () => observer.disconnect();
+    },
+    { scope: sectionRef }
+  );
+
   return (
-    <section className="proof-section" id="services" aria-label="Indicateurs de confiance">
+    <section className="proof-section" id="services" ref={sectionRef} aria-label="Indicateurs de confiance">
       <div className="section-wrap proof-grid">
         <Metric>
           <Counter prefix="+" target={100} />
@@ -481,57 +330,55 @@ function Metric({ children, className = "" }) {
 }
 
 function Counter({ prefix = "", suffix = "", target }) {
-  const ref = useRef(null);
-  const [value, setValue] = useState(0);
+  const counterRef = useRef(null);
+  const reducedMotion = usePrefersReducedMotion();
+  const [value, setValue] = useState(reducedMotion ? target : 0);
 
-  useEffect(() => {
-    const node = ref.current;
+  useGSAP(
+    (context, contextSafe) => {
+      const node = counterRef.current;
 
-    if (!node) {
-      return undefined;
-    }
+      if (!node) {
+        return undefined;
+      }
 
-    let frame = 0;
-    let started = false;
+      if (reducedMotion) {
+        setValue(target);
+        return undefined;
+      }
 
-    const animate = () => {
-      const duration = 1250;
-      const start = performance.now();
+      const counterState = { value: 0 };
+      setValue(0);
 
-      const tick = (now) => {
-        const progress = Math.min((now - start) / duration, 1);
-        const eased = 1 - Math.pow(1 - progress, 3);
-        setValue(Math.round(target * eased));
+      const runCounter = contextSafe(() => {
+        gsap.to(counterState, {
+          value: target,
+          duration: 1.35,
+          ease: "power3.out",
+          onUpdate: () => setValue(Math.round(counterState.value)),
+          onComplete: () => setValue(target),
+        });
+      });
 
-        if (progress < 1) {
-          frame = requestAnimationFrame(tick);
-        }
-      };
+      const observer = new IntersectionObserver(
+        ([entry]) => {
+          if (entry.isIntersecting) {
+            runCounter();
+            observer.disconnect();
+          }
+        },
+        { threshold: 0.42 }
+      );
 
-      frame = requestAnimationFrame(tick);
-    };
+      observer.observe(node);
 
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting && !started) {
-          started = true;
-          animate();
-          observer.disconnect();
-        }
-      },
-      { threshold: 0.4 }
-    );
-
-    observer.observe(node);
-
-    return () => {
-      cancelAnimationFrame(frame);
-      observer.disconnect();
-    };
-  }, [target]);
+      return () => observer.disconnect();
+    },
+    { scope: counterRef, dependencies: [reducedMotion, target], revertOnUpdate: true }
+  );
 
   return (
-    <strong ref={ref}>
+    <strong ref={counterRef}>
       {prefix}
       {formatMetricNumber(value)}
       {suffix}
@@ -539,40 +386,128 @@ function Counter({ prefix = "", suffix = "", target }) {
   );
 }
 
-function PortfolioMonitor({
-  monitorContentRef,
-  monitorScreenRef,
-  onImageLoad,
-  onProjectSelect,
-  selectedProject,
-  selectedProjectId,
-}) {
+function PortfolioDisplay() {
+  const [selectedProjectId, setSelectedProjectId] = useState(projects[0].id);
+  const containerRef = useRef(null);
+  const previewRef = useRef(null);
+  const hasAnimatedPreview = useRef(false);
+  const reducedMotion = usePrefersReducedMotion();
+  const selectedProject =
+    projects.find((project) => project.id === selectedProjectId) || projects[0];
+  const { contextSafe } = useGSAP({ scope: containerRef });
+
+  useGSAP(
+    () => {
+      const revealItems = gsap.utils.toArray(".portfolio-reveal");
+      const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+      if (reduceMotion) {
+        gsap.set(revealItems, { autoAlpha: 1, y: 0 });
+        return undefined;
+      }
+
+      gsap.set(revealItems, { autoAlpha: 0, y: 34 });
+
+      const observer = new IntersectionObserver(
+        ([entry]) => {
+          if (!entry.isIntersecting) {
+            return;
+          }
+
+          gsap.to(revealItems, {
+            autoAlpha: 1,
+            y: 0,
+            duration: 0.72,
+            ease: "power3.out",
+            stagger: 0.12,
+          });
+          observer.disconnect();
+        },
+        { threshold: 0.22 }
+      );
+
+      observer.observe(containerRef.current);
+
+      return () => observer.disconnect();
+    },
+    { scope: containerRef }
+  );
+
+  useGSAP(
+    () => {
+      const preview = previewRef.current;
+
+      if (!preview) {
+        return undefined;
+      }
+
+      if (!hasAnimatedPreview.current || reducedMotion) {
+        hasAnimatedPreview.current = true;
+        gsap.set(preview, { autoAlpha: 1, scale: 1 });
+        return undefined;
+      }
+
+      gsap.fromTo(
+        preview,
+        { autoAlpha: 0, scale: 1.012 },
+        {
+          autoAlpha: 1,
+          scale: 1,
+          duration: 0.38,
+          ease: "power3.out",
+        }
+      );
+
+      return undefined;
+    },
+    {
+      scope: containerRef,
+      dependencies: [selectedProjectId, reducedMotion],
+      revertOnUpdate: false,
+    }
+  );
+
+  const handleProjectSelect = contextSafe((projectId) => {
+    if (projectId === selectedProjectId) {
+      return;
+    }
+
+    if (reducedMotion || !previewRef.current) {
+      setSelectedProjectId(projectId);
+      return;
+    }
+
+    gsap.killTweensOf(previewRef.current);
+    gsap.to(previewRef.current, {
+      autoAlpha: 0,
+      scale: 0.986,
+      duration: 0.16,
+      ease: "power1.in",
+      onComplete: () => setSelectedProjectId(projectId),
+    });
+  });
+
   return (
-    <section className="portfolio-section" id="realisations" aria-labelledby="portfolio-title">
+    <section
+      className="portfolio-section"
+      id="realisations"
+      ref={containerRef}
+      aria-labelledby="portfolio-title"
+    >
       <div className="section-wrap portfolio-layout">
-        <div className="project-index">
-          <p className="portfolio-kicker">Réalisations</p>
-          <h2 id="portfolio-title">Sélection</h2>
-          <div className="project-selector" aria-label="Sélection de projet">
-            {projects.map((project) => (
-              <button
-                aria-pressed={selectedProjectId === project.id}
-                className={selectedProjectId === project.id ? "is-selected" : undefined}
-                key={project.id}
-                onClick={() => onProjectSelect(project.id)}
-                type="button"
-              >
-                {project.label}
-              </button>
-            ))}
-          </div>
+        <div className="project-index portfolio-reveal">
+          <p className="portfolio-kicker">Projets phares 2025–2026</p>
+          <ProjectSelector
+            onProjectSelect={handleProjectSelect}
+            selectedProjectId={selectedProjectId}
+          />
         </div>
 
-        <div className="studio-display-shell" aria-label={`Aperçu ${selectedProject.label}`}>
-          <div className="studio-display">
-            <div className="studio-screen" ref={monitorScreenRef}>
-              <div className="monitor-final-content" ref={monitorContentRef}>
-                <ProjectScreenPreview project={selectedProject} />
+        <div className="studio-display-shell portfolio-reveal">
+          <div className="studio-display" aria-label={`Aperçu ${selectedProject.title}`}>
+            <div className="studio-display-screen">
+              <div className="monitor-preview" ref={previewRef}>
+                <img src={selectedProject.image} alt={`Aperçu ${selectedProject.title}`} />
               </div>
             </div>
             <img
@@ -580,7 +515,6 @@ function PortfolioMonitor({
               src={studioDisplay}
               alt=""
               aria-hidden="true"
-              onLoad={onImageLoad}
             />
           </div>
         </div>
@@ -589,34 +523,23 @@ function PortfolioMonitor({
   );
 }
 
-function useLenisScroll() {
-  useEffect(() => {
-    const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-
-    if (reduced) {
-      return undefined;
-    }
-
-    const lenis = new Lenis({
-      duration: 1.05,
-      easing: (value) => Math.min(1, 1.001 - Math.pow(2, -10 * value)),
-      smoothWheel: true,
-    });
-
-    let frame = 0;
-    const raf = (time) => {
-      lenis.raf(time);
-      frame = requestAnimationFrame(raf);
-    };
-
-    lenis.on("scroll", ScrollTrigger.update);
-    frame = requestAnimationFrame(raf);
-
-    return () => {
-      cancelAnimationFrame(frame);
-      lenis.destroy();
-    };
-  }, []);
+function ProjectSelector({ onProjectSelect, selectedProjectId }) {
+  return (
+    <div className="project-selector" aria-label="Sélection de projet">
+      {projects.map((project) => (
+        <button
+          aria-pressed={selectedProjectId === project.id}
+          className={selectedProjectId === project.id ? "is-selected" : undefined}
+          key={project.id}
+          onClick={() => onProjectSelect(project.id)}
+          type="button"
+        >
+          <span>{project.title}</span>
+          <small>{project.category}</small>
+        </button>
+      ))}
+    </div>
+  );
 }
 
 function useActiveSection() {
@@ -666,18 +589,6 @@ function usePrefersReducedMotion() {
   }, []);
 
   return reducedMotion;
-}
-
-function getLocalRect(element, container) {
-  const elementRect = element.getBoundingClientRect();
-  const containerRect = container.getBoundingClientRect();
-
-  return {
-    x: elementRect.left - containerRect.left,
-    y: elementRect.top - containerRect.top,
-    width: elementRect.width,
-    height: elementRect.height,
-  };
 }
 
 function formatMetricNumber(value) {

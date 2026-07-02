@@ -1,0 +1,51 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="1000" viewBox="0 0 1600 1000" role="img" aria-label="Capture de site pour application mobile">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#f6fbff"/>
+      <stop offset="0.52" stop-color="#dbeefa"/>
+      <stop offset="1" stop-color="#f8f1e8"/>
+    </linearGradient>
+    <linearGradient id="phone" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#121314"/>
+      <stop offset="1" stop-color="#3a3f43"/>
+    </linearGradient>
+    <filter id="softShadow" x="-20%" y="-20%" width="140%" height="150%">
+      <feDropShadow dx="0" dy="30" stdDeviation="42" flood-color="#1c2b35" flood-opacity="0.22"/>
+    </filter>
+  </defs>
+  <rect width="1600" height="1000" fill="url(#bg)"/>
+  <rect x="96" y="78" width="1408" height="844" rx="42" fill="#ffffff" opacity="0.86"/>
+  <g fill="#18191a" font-family="Inter, Helvetica, Arial, sans-serif">
+    <text x="152" y="148" font-size="28" font-weight="700">FIELDLY</text>
+    <text x="1118" y="148" font-size="19" font-weight="600">Fonctions</text>
+    <text x="1264" y="148" font-size="19" font-weight="600">Equipes</text>
+    <text x="1394" y="148" font-size="19" font-weight="600">Demo</text>
+    <text x="152" y="358" font-size="92" font-weight="750">Le terrain avance</text>
+    <text x="152" y="458" font-size="92" font-weight="750">avec vos donnees.</text>
+  </g>
+  <text x="156" y="538" fill="#68737d" font-family="Inter, Helvetica, Arial, sans-serif" font-size="29">Une application mobile concue pour coordonner les interventions,</text>
+  <text x="156" y="580" fill="#68737d" font-family="Inter, Helvetica, Arial, sans-serif" font-size="29">centraliser les rapports et garder chaque equipe synchronisee.</text>
+  <rect x="154" y="654" width="204" height="62" rx="31" fill="#18191a"/>
+  <text x="204" y="695" fill="#ffffff" font-family="Inter, Helvetica, Arial, sans-serif" font-size="22" font-weight="700">Voir l’app</text>
+  <rect x="390" y="654" width="234" height="62" rx="31" fill="none" stroke="#c9d7df" stroke-width="2"/>
+  <text x="434" y="695" fill="#263039" font-family="Inter, Helvetica, Arial, sans-serif" font-size="22" font-weight="700">Cas client</text>
+  <g filter="url(#softShadow)">
+    <rect x="930" y="240" width="272" height="552" rx="54" fill="url(#phone)"/>
+    <rect x="950" y="266" width="232" height="500" rx="38" fill="#f7f9fb"/>
+    <rect x="980" y="316" width="172" height="38" rx="19" fill="#dceaf4"/>
+    <rect x="980" y="386" width="172" height="132" rx="26" fill="#ee7c42"/>
+    <rect x="1006" y="420" width="116" height="14" rx="7" fill="#ffffff" opacity="0.82"/>
+    <rect x="1006" y="452" width="76" height="14" rx="7" fill="#ffffff" opacity="0.54"/>
+    <rect x="980" y="548" width="172" height="44" rx="22" fill="#222528"/>
+    <rect x="980" y="616" width="172" height="88" rx="24" fill="#e5edf2"/>
+  </g>
+  <g filter="url(#softShadow)" opacity="0.96">
+    <rect x="1162" y="190" width="256" height="512" rx="52" fill="#2b3034"/>
+    <rect x="1182" y="218" width="216" height="460" rx="34" fill="#fffaf3"/>
+    <rect x="1212" y="270" width="156" height="26" rx="13" fill="#ebded0"/>
+    <rect x="1212" y="336" width="156" height="156" rx="28" fill="#a8d4c8"/>
+    <rect x="1238" y="526" width="104" height="14" rx="7" fill="#22312e" opacity="0.75"/>
+    <rect x="1238" y="558" width="78" height="14" rx="7" fill="#22312e" opacity="0.42"/>
+    <rect x="1212" y="614" width="156" height="30" rx="15" fill="#ee7c42"/>
+  </g>
+</svg>
