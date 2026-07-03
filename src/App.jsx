@@ -24,7 +24,7 @@ const metrics = [
   {
     id: "websites",
     value: "+100",
-    descriptionLines: ["sites web et applications", "construits"],
+    descriptionLines: ["sites web et applications", "réalisés"],
     visual: "websites",
   },
   {
@@ -36,7 +36,7 @@ const metrics = [
   {
     id: "commerce",
     value: "500'000",
-    descriptionLines: ["CHF générés sur les sites", "e-commerce construits en 2025"],
+    descriptionLines: ["CHF générés sur les sites", "e-commerce réalisés en 2025"],
     visual: "commerce",
     variant: "commerce",
   },

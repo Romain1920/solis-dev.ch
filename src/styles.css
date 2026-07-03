@@ -407,6 +407,7 @@ a {
   min-width: 0;
   min-height: clamp(430px, 35vw, 510px);
   display: grid;
+  grid-template-columns: minmax(0, 1fr);
   grid-template-rows: minmax(210px, 1fr) 154px;
   align-items: stretch;
   gap: clamp(18px, 2vw, 30px);
@@ -459,9 +460,11 @@ a {
 .metric-visual {
   position: relative;
   z-index: 1;
+  width: 100%;
   min-height: 0;
   display: grid;
   place-items: center;
+  transform: translate3d(0, clamp(8px, 0.9vw, 14px), 0);
 }
 
 .metric-copy {
@@ -470,8 +473,9 @@ a {
   align-self: end;
   display: grid;
   grid-template-rows: calc(var(--metric-number-size) * 0.86) auto;
-  gap: clamp(13px, 1.25vw, 18px);
+  gap: clamp(9px, 0.95vw, 13px);
   min-height: 154px;
+  transform: translate3d(0, clamp(5px, 0.55vw, 9px), 0);
 }
 
 .metric-number {
@@ -487,14 +491,14 @@ a {
 
 .metric-description {
   display: grid;
-  gap: 2px;
+  gap: 0;
   width: max-content;
   max-width: 100%;
   margin: 0;
   color: rgba(255, 255, 255, 0.92);
   font-size: clamp(0.98rem, 1.04vw, 1.14rem);
   font-weight: 500;
-  line-height: 1.08;
+  line-height: 1.02;
   letter-spacing: 0;
 }
 
@@ -503,13 +507,19 @@ a {
   white-space: nowrap;
 }
 
+.metric-description span + span {
+  margin-top: -0.32em;
+}
+
 .website-carousel {
   --website-shot-gap: clamp(10px, 1.05vw, 16px);
+  --website-carousel-width: clamp(330px, 29vw, 430px);
   position: relative;
-  width: calc(100% + clamp(54px, 6.2vw, 96px));
+  justify-self: start;
+  width: var(--website-carousel-width);
   max-width: none;
+  margin-left: calc((100% - var(--website-carousel-width)) / 2);
   padding: clamp(4px, 0.6vw, 9px) 0;
-  transform: translate3d(0, -2px, 0);
 }
 
 .website-strip {
@@ -519,12 +529,12 @@ a {
 }
 
 .website-strip--top {
-  transform: translate3d(-2%, 0, 0);
+  transform: translate3d(0, 0, 0);
 }
 
 .website-strip--bottom {
   margin-top: clamp(8px, 1vw, 14px);
-  transform: translate3d(3%, 0, 0);
+  transform: translate3d(0, 0, 0);
 }
 
 .website-track {
@@ -770,7 +780,7 @@ a {
   }
 
   .website-carousel {
-    width: calc(100% + 82px);
+    --website-carousel-width: clamp(390px, 74vw, 560px);
   }
 
   .commerce-dashboard {
@@ -944,19 +954,19 @@ a {
 
   .metric-copy {
     min-height: 128px;
-    gap: 11px;
+    gap: 8px;
   }
 
   .metric-description {
     width: max-content;
     max-width: 100%;
     font-size: clamp(0.9rem, 3.9vw, 0.98rem);
-    line-height: 1.14;
+    line-height: 1.04;
   }
 
   .website-carousel {
     --website-shot-gap: 10px;
-    width: calc(100% + 56px);
+    --website-carousel-width: clamp(330px, 107vw, 416px);
   }
 
   .website-strip {
