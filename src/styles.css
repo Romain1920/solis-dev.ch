@@ -490,25 +490,25 @@ a {
 }
 
 .metric-description {
-  display: grid;
-  gap: 0;
+  display: block;
   width: max-content;
   max-width: 100%;
   margin: 0;
   color: rgba(255, 255, 255, 0.92);
-  font-size: clamp(0.98rem, 1.04vw, 1.14rem);
+  font-size: clamp(1rem, 1.08vw, 1.16rem);
   font-weight: 500;
-  line-height: 1.02;
+  line-height: 0.98;
   letter-spacing: 0;
 }
 
 .metric-description span {
-  display: block;
+  display: inline;
   white-space: nowrap;
 }
 
-.metric-description span + span {
-  margin-top: -0.32em;
+.metric-description span:not(:last-child)::after {
+  content: "\A";
+  white-space: pre;
 }
 
 .website-carousel {
@@ -960,8 +960,8 @@ a {
   .metric-description {
     width: max-content;
     max-width: 100%;
-    font-size: clamp(0.9rem, 3.9vw, 0.98rem);
-    line-height: 1.04;
+    font-size: clamp(0.92rem, 4vw, 1rem);
+    line-height: 0.98;
   }
 
   .website-carousel {
