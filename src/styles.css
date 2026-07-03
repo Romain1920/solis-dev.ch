@@ -488,29 +488,33 @@ a {
 .metric-description {
   display: grid;
   gap: 2px;
-  width: min(100%, 24ch);
+  width: max-content;
+  max-width: 100%;
   margin: 0;
   color: rgba(255, 255, 255, 0.92);
-  font-size: clamp(1.08rem, 1.16vw, 1.24rem);
+  font-size: clamp(0.98rem, 1.04vw, 1.14rem);
   font-weight: 500;
-  line-height: 1.1;
+  line-height: 1.08;
   letter-spacing: 0;
 }
 
 .metric-description span {
   display: block;
+  white-space: nowrap;
 }
 
 .website-carousel {
+  --website-shot-gap: clamp(10px, 1.05vw, 16px);
   position: relative;
-  width: calc(100% + clamp(72px, 8vw, 118px));
+  width: calc(100% + clamp(54px, 6.2vw, 96px));
   max-width: none;
-  transform: translate3d(0, -3px, 0);
+  padding: clamp(4px, 0.6vw, 9px) 0;
+  transform: translate3d(0, -2px, 0);
 }
 
 .website-strip {
   position: relative;
-  height: clamp(78px, 7.2vw, 100px);
+  height: clamp(90px, 7.6vw, 112px);
   overflow: hidden;
   -webkit-mask-image: linear-gradient(90deg, transparent 0%, #000000 12%, #000000 88%, transparent 100%);
   mask-image: linear-gradient(90deg, transparent 0%, #000000 12%, #000000 88%, transparent 100%);
@@ -521,7 +525,7 @@ a {
 }
 
 .website-strip--bottom {
-  margin-top: clamp(-30px, -2vw, -20px);
+  margin-top: clamp(8px, 1vw, 14px);
   transform: translate3d(3%, 0, 0);
 }
 
@@ -534,13 +538,21 @@ a {
   will-change: transform;
 }
 
+.website-track-set {
+  height: 100%;
+  display: flex;
+  align-items: center;
+  gap: var(--website-shot-gap);
+  padding-right: var(--website-shot-gap);
+}
+
 .website-strip--bottom .website-track {
   animation-name: metric-scroll-right;
   animation-duration: 46s;
 }
 
 .website-shot {
-  flex: 0 0 clamp(142px, 13.5vw, 184px);
+  flex: 0 0 clamp(136px, 12.2vw, 170px);
   aspect-ratio: 16 / 10;
   overflow: hidden;
   border: 1px solid rgba(255, 255, 255, 0.78);
@@ -552,16 +564,12 @@ a {
   transform: rotate(-2deg);
 }
 
-.website-shot + .website-shot {
-  margin-left: clamp(-42px, -3.2vw, -28px);
-}
-
 .website-shot:nth-child(3n + 2) {
-  transform: rotate(2deg) translateY(4px);
+  transform: rotate(1.6deg) translateY(3px);
 }
 
 .website-shot:nth-child(3n) {
-  transform: rotate(-1deg) translateY(-3px);
+  transform: rotate(-1deg) translateY(-2px);
 }
 
 .website-shot img {
@@ -576,29 +584,31 @@ a {
   position: relative;
   width: 100%;
   height: 100%;
-  min-height: clamp(188px, 16vw, 230px);
+  min-height: clamp(198px, 16.4vw, 236px);
   animation: tech-fan-drift 8s cubic-bezier(0.4, 0, 0.2, 1) infinite alternate;
 }
 
 .tech-card {
   position: absolute;
-  top: 33%;
+  top: 40%;
   left: 50%;
   z-index: var(--tech-z);
-  width: clamp(68px, 6.8vw, 92px);
+  width: clamp(62px, 5.9vw, 82px);
   aspect-ratio: 1;
   display: grid;
   place-items: center;
   border: 1px solid rgba(255, 255, 255, 0.74);
-  border-radius: 18px;
+  border-radius: 16px;
   background:
     linear-gradient(180deg, rgba(255, 255, 255, 0.96), rgba(255, 255, 255, 0.82)),
     rgba(255, 255, 255, 0.9);
   box-shadow:
-    0 17px 36px rgba(76, 19, 66, 0.16),
+    0 18px 34px rgba(76, 19, 66, 0.15),
+    0 5px 12px rgba(76, 19, 66, 0.1),
     inset 0 1px 0 rgba(255, 255, 255, 0.88);
   color: var(--tech-color);
   transform: translate3d(var(--tech-x), var(--tech-y), 0) rotate(var(--tech-rotate));
+  transform-origin: center 115%;
 }
 
 .tech-card svg {
@@ -618,7 +628,7 @@ a {
     0 18px 42px rgba(116, 44, 0, 0.16),
     0 0 48px rgba(255, 255, 255, 0.18),
     inset 0 0 0 1px rgba(9, 10, 10, 0.04);
-  transform: translate3d(0, -6px, 0);
+  transform: translate3d(0, 0, 0);
 }
 
 .commerce-dashboard img {
@@ -755,11 +765,11 @@ a {
   }
 
   .metric-description {
-    font-size: 1.05rem;
+    font-size: 1.02rem;
   }
 
   .website-carousel {
-    width: calc(100% + 96px);
+    width: calc(100% + 82px);
   }
 
   .commerce-dashboard {
@@ -937,21 +947,23 @@ a {
   }
 
   .metric-description {
-    width: min(100%, 28ch);
-    font-size: 0.98rem;
+    width: max-content;
+    max-width: 100%;
+    font-size: clamp(0.9rem, 3.9vw, 0.98rem);
     line-height: 1.14;
   }
 
   .website-carousel {
-    width: calc(100% + 72px);
+    --website-shot-gap: 10px;
+    width: calc(100% + 56px);
   }
 
   .website-strip {
-    height: 72px;
+    height: 78px;
   }
 
   .website-shot {
-    flex-basis: 132px;
+    flex-basis: 122px;
     border-radius: 10px;
   }
 
@@ -960,8 +972,8 @@ a {
   }
 
   .tech-card {
-    top: 29%;
-    width: clamp(62px, 18vw, 70px);
+    top: 38%;
+    width: clamp(58px, 17vw, 68px);
     border-radius: 15px;
   }
 
