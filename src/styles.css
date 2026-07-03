@@ -475,7 +475,7 @@ a {
   grid-template-rows: calc(var(--metric-number-size) * 0.86) auto;
   gap: clamp(9px, 0.95vw, 13px);
   min-height: 154px;
-  transform: translate3d(0, clamp(5px, 0.55vw, 9px), 0);
+  transform: translate3d(0, clamp(16px, 1.45vw, 23px), 0);
 }
 
 .metric-number {
