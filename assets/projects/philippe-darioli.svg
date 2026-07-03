@@ -1,0 +1,46 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="1000" viewBox="0 0 1600 1000" role="img" aria-label="Capture du site Philippe Darioli">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#fffaf8"/>
+      <stop offset="0.55" stop-color="#f5eee8"/>
+      <stop offset="1" stop-color="#ffffff"/>
+    </linearGradient>
+    <linearGradient id="wine" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#261214"/>
+      <stop offset="0.6" stop-color="#7a2630"/>
+      <stop offset="1" stop-color="#d79a50"/>
+    </linearGradient>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="150%">
+      <feDropShadow dx="0" dy="30" stdDeviation="42" flood-color="#301c1f" flood-opacity="0.15"/>
+    </filter>
+  </defs>
+  <rect width="1600" height="1000" fill="url(#bg)"/>
+  <rect x="88" y="72" width="1424" height="856" rx="38" fill="#ffffff" opacity="0.9"/>
+  <g font-family="Inter, Helvetica, Arial, sans-serif" fill="#171414">
+    <text x="146" y="146" font-size="30" font-weight="800">Philippe Darioli</text>
+    <text x="1014" y="146" font-size="18" font-weight="650">Domaine</text>
+    <text x="1160" y="146" font-size="18" font-weight="650">Vins</text>
+    <text x="1270" y="146" font-size="18" font-weight="650">Boutique</text>
+    <text x="146" y="348" font-size="78" font-weight="780">Le domaine</text>
+    <text x="146" y="432" font-size="78" font-weight="780">en ligne.</text>
+  </g>
+  <text x="150" y="518" fill="#766d6d" font-family="Inter, Helvetica, Arial, sans-serif" font-size="28">Site vitrine et e-commerce pour presenter le domaine,</text>
+  <text x="150" y="560" fill="#766d6d" font-family="Inter, Helvetica, Arial, sans-serif" font-size="28">raconter les crus et vendre les bouteilles simplement.</text>
+  <g filter="url(#shadow)">
+    <rect x="806" y="242" width="518" height="554" rx="38" fill="#f2e7dd"/>
+    <rect x="898" y="324" width="118" height="348" rx="44" fill="url(#wine)"/>
+    <rect x="930" y="268" width="54" height="78" rx="14" fill="#221316"/>
+    <rect x="916" y="456" width="82" height="112" rx="16" fill="#fff7ed" opacity="0.88"/>
+    <rect x="1088" y="356" width="118" height="316" rx="42" fill="#ffffff"/>
+    <rect x="1120" y="300" width="54" height="78" rx="14" fill="#221316"/>
+    <rect x="1106" y="486" width="82" height="82" rx="16" fill="#7a2630" opacity="0.88"/>
+  </g>
+  <g filter="url(#shadow)" font-family="Inter, Helvetica, Arial, sans-serif">
+    <rect x="146" y="682" width="250" height="132" rx="28" fill="#ffffff"/>
+    <text x="184" y="738" fill="#7c7373" font-size="18">Boutique</text>
+    <text x="184" y="790" fill="#171414" font-size="48" font-weight="760">Vin</text>
+    <rect x="430" y="682" width="250" height="132" rx="28" fill="#ffffff"/>
+    <text x="468" y="738" fill="#7c7373" font-size="18">Paiement</text>
+    <text x="468" y="790" fill="#171414" font-size="48" font-weight="760">CHF</text>
+  </g>
+</svg>

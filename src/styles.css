@@ -91,6 +91,16 @@ a {
   transform: translate3d(0, 0, 0);
 }
 
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
 .site-header {
   position: fixed;
   inset: 26px 0 auto;
@@ -390,7 +400,7 @@ a {
 .metrics-section {
   position: relative;
   overflow: hidden;
-  padding: clamp(28px, 4vw, 58px) 0 clamp(92px, 12vw, 170px);
+  padding: clamp(28px, 4vw, 58px) 0 clamp(58px, 7vw, 98px);
 }
 
 .metrics-shell {
@@ -650,6 +660,360 @@ a {
   filter: saturate(1.06) contrast(1.05);
 }
 
+.portfolio-section {
+  position: relative;
+  overflow: hidden;
+  scroll-margin-top: 116px;
+  background: #ffffff;
+  padding: clamp(82px, 10vw, 142px) 0 clamp(92px, 12vw, 168px);
+}
+
+.portfolio-shell {
+  position: relative;
+  width: min(1240px, calc(100vw - 56px));
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: minmax(214px, 0.34fr) minmax(0, 1fr);
+  align-items: start;
+  gap: clamp(44px, 6vw, 96px);
+}
+
+.portfolio-connection-layer {
+  position: absolute;
+  inset: 0;
+  z-index: 7;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  pointer-events: none;
+  color: rgba(238, 124, 66, 0.84);
+  filter: drop-shadow(0 5px 14px rgba(238, 124, 66, 0.18));
+}
+
+.portfolio-list-column {
+  position: relative;
+  z-index: 6;
+  min-width: 0;
+  padding-top: clamp(40px, 4.8vw, 78px);
+}
+
+.portfolio-project-list {
+  display: grid;
+  gap: clamp(14px, 1.6vw, 23px);
+  font-family: "SF Pro Display", "SF Pro Text", -apple-system, BlinkMacSystemFont,
+    "Segoe UI", sans-serif;
+}
+
+.portfolio-project-button {
+  position: relative;
+  width: fit-content;
+  max-width: 100%;
+  appearance: none;
+  border: 0;
+  border-radius: 999px;
+  background: transparent;
+  color: #151515;
+  padding: 13px 20px;
+  margin-left: -20px;
+  font: inherit;
+  font-size: clamp(1.05rem, 1.35vw, 1.42rem);
+  font-weight: 600;
+  line-height: 1.05;
+  letter-spacing: 0;
+  text-align: left;
+  cursor: pointer;
+  outline: none;
+}
+
+.portfolio-project-button::after {
+  content: "";
+  position: absolute;
+  inset: 5px 12px;
+  border-radius: inherit;
+  background: rgba(9, 10, 10, 0.035);
+  opacity: 0;
+  transform: scale3d(0.96, 0.86, 1);
+  transition:
+    opacity 180ms ease,
+    transform 180ms ease;
+}
+
+.portfolio-project-button:hover::after,
+.portfolio-project-button:focus-visible::after {
+  opacity: 1;
+  transform: scale3d(1, 1, 1);
+}
+
+.portfolio-project-button:focus-visible {
+  box-shadow: 0 0 0 3px rgba(238, 124, 66, 0.18);
+}
+
+.portfolio-active-pill {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  border: 1px solid rgba(9, 10, 10, 0.055);
+  border-radius: inherit;
+  background: #ffffff;
+  box-shadow:
+    0 10px 30px rgba(17, 18, 18, 0.08),
+    0 1px 0 rgba(255, 255, 255, 0.9) inset;
+}
+
+.portfolio-project-name {
+  position: relative;
+  z-index: 1;
+  display: block;
+  white-space: nowrap;
+}
+
+.portfolio-display-column {
+  position: relative;
+  z-index: 2;
+  min-width: 0;
+}
+
+.device-showcase {
+  position: relative;
+  width: min(100%, 910px);
+  aspect-ratio: 5400 / 4160;
+  margin-left: auto;
+  overflow: visible;
+  isolation: isolate;
+}
+
+.device-showcase[data-mode="mobile"] + .portfolio-info {
+  margin-top: clamp(34px, 3.8vw, 56px);
+}
+
+.studio-display-wrap {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  width: 100%;
+  transform-origin: center center;
+  will-change: transform, opacity, filter;
+}
+
+.studio-display-stage {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 5400 / 4160;
+  isolation: isolate;
+  transform: translate3d(0, 0, 0);
+  filter: drop-shadow(0 28px 54px rgba(16, 17, 18, 0.1));
+}
+
+.studio-screen {
+  position: absolute;
+  left: 2.5926%;
+  top: 3.3654%;
+  z-index: 1;
+  width: 94.8148%;
+  height: 68.75%;
+  overflow: hidden;
+  border-radius: 4px;
+  background: #f7f8f6;
+}
+
+.studio-screen::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+  background:
+    linear-gradient(120deg, rgba(255, 255, 255, 0.18), transparent 28%),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.12), transparent 44%);
+  mix-blend-mode: screen;
+}
+
+.studio-screen-shot {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: top center;
+  transform-origin: center;
+}
+
+.studio-injection {
+  position: absolute;
+  top: -8%;
+  bottom: -8%;
+  left: -12%;
+  z-index: 3;
+  width: 18%;
+  pointer-events: none;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.18) 18%,
+    rgba(238, 124, 66, 0.38) 50%,
+    rgba(255, 255, 255, 0.16) 76%,
+    transparent 100%
+  );
+  filter: blur(2px);
+  mix-blend-mode: screen;
+}
+
+.studio-display-image {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  pointer-events: none;
+  user-select: none;
+}
+
+.iphone-showcase {
+  position: absolute;
+  top: clamp(72px, 7vw, 104px);
+  right: clamp(14px, 3vw, 48px);
+  z-index: 4;
+  width: clamp(190px, 26vw, 292px);
+  max-width: 34%;
+  pointer-events: none;
+  transform-origin: center 58%;
+  will-change: transform, opacity, filter;
+}
+
+.iphone-device {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 1350 / 2760;
+  overflow: visible;
+  filter: drop-shadow(0 44px 78px rgba(15, 16, 18, 0.2))
+    drop-shadow(0 16px 28px rgba(15, 16, 18, 0.16));
+}
+
+.iphone-screen {
+  position: absolute;
+  left: 5.3333%;
+  top: 2.9%;
+  z-index: 1;
+  width: 89.3333%;
+  height: 94.35%;
+  overflow: hidden;
+  border-radius: 9.4% / 4.6%;
+  background: #f9faf8;
+}
+
+.iphone-screen-shot {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: top center;
+}
+
+.iphone-frame-image {
+  position: absolute;
+  z-index: 2;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  pointer-events: none;
+  user-select: none;
+}
+
+.portfolio-info {
+  width: min(760px, 100%);
+  margin: clamp(16px, 2.2vw, 26px) auto 0;
+  color: #111111;
+  font-family: "SF Pro Text", "SF Pro Display", -apple-system, BlinkMacSystemFont,
+    "Segoe UI", sans-serif;
+}
+
+.portfolio-category {
+  display: inline-flex;
+  align-items: center;
+  width: fit-content;
+  min-height: 30px;
+  border: 1px solid rgba(9, 10, 10, 0.08);
+  border-radius: 999px;
+  background: #fbfbfa;
+  color: rgba(17, 17, 17, 0.68);
+  padding: 0 12px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  line-height: 1;
+  letter-spacing: 0;
+}
+
+.portfolio-info h3 {
+  margin: 16px 0 10px;
+  color: #111111;
+  font-size: clamp(1.8rem, 2.7vw, 3rem);
+  font-weight: 650;
+  line-height: 1.02;
+  letter-spacing: 0;
+}
+
+.portfolio-info p {
+  max-width: 690px;
+  margin: 0;
+  color: rgba(17, 17, 17, 0.66);
+  font-size: clamp(1rem, 1.08vw, 1.14rem);
+  font-weight: 450;
+  line-height: 1.48;
+  letter-spacing: 0;
+}
+
+.portfolio-meta {
+  margin: 20px 0 0;
+  padding: 0;
+}
+
+.portfolio-meta div {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  min-width: 0;
+}
+
+.portfolio-meta dt {
+  color: rgba(17, 17, 17, 0.48);
+  font-size: 0.88rem;
+  font-weight: 600;
+}
+
+.portfolio-meta dd {
+  margin: 0;
+  color: #111111;
+  font-size: 0.98rem;
+  font-weight: 600;
+}
+
+.portfolio-tech-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 18px;
+}
+
+.portfolio-tech-chip {
+  display: inline-flex;
+  align-items: center;
+  min-height: 32px;
+  border: 1px solid rgba(9, 10, 10, 0.075);
+  border-radius: 999px;
+  background: #f7f7f5;
+  color: #141414;
+  padding: 0 12px;
+  font-size: 0.86rem;
+  font-weight: 600;
+  line-height: 1;
+  letter-spacing: 0;
+  white-space: nowrap;
+}
+
 @keyframes metric-scroll-left {
   0% {
     transform: translate3d(0, 0, 0);
@@ -785,6 +1149,43 @@ a {
 
   .commerce-dashboard {
     width: min(100%, 380px);
+  }
+
+  .portfolio-section {
+    padding: 78px 0 112px;
+  }
+
+  .portfolio-shell {
+    width: min(760px, calc(100vw - 40px));
+    grid-template-columns: 1fr;
+    gap: 36px;
+  }
+
+  .portfolio-list-column {
+    padding-top: 0;
+  }
+
+  .portfolio-project-list {
+    gap: 10px;
+  }
+
+  .portfolio-project-button {
+    margin-left: -14px;
+    padding: 11px 14px;
+  }
+
+  .device-showcase {
+    width: min(100%, 760px);
+    margin: 0 auto;
+  }
+
+  .portfolio-info {
+    width: min(680px, 100%);
+  }
+
+  .iphone-showcase {
+    top: clamp(36px, 6vw, 58px);
+    max-width: 38%;
   }
 }
 
@@ -992,6 +1393,84 @@ a {
     width: min(100%, 290px);
     border-radius: 14px;
   }
+
+  .portfolio-section {
+    padding: 62px 0 86px;
+  }
+
+  .portfolio-shell {
+    width: calc(100vw - 30px);
+    gap: 28px;
+  }
+
+  .portfolio-project-list {
+    gap: 8px;
+  }
+
+  .portfolio-project-button {
+    width: 100%;
+    padding: 11px 14px;
+    margin-left: 0;
+    font-size: clamp(1rem, 4.7vw, 1.24rem);
+  }
+
+  .portfolio-project-name {
+    white-space: normal;
+    overflow-wrap: anywhere;
+  }
+
+  .device-showcase {
+    width: min(100%, 560px);
+  }
+
+  .studio-display-stage {
+    filter: drop-shadow(0 18px 36px rgba(16, 17, 18, 0.09));
+  }
+
+  .portfolio-info {
+    margin-top: 16px;
+  }
+
+  .device-showcase[data-mode="mobile"] + .portfolio-info {
+    margin-top: 112px;
+  }
+
+  .iphone-showcase {
+    top: 18px;
+    right: 0;
+    width: clamp(156px, 48vw, 190px);
+    max-width: 54%;
+  }
+
+  .portfolio-category {
+    min-height: 28px;
+    font-size: 0.74rem;
+  }
+
+  .portfolio-info h3 {
+    margin-top: 14px;
+    font-size: clamp(1.55rem, 8.4vw, 2.18rem);
+  }
+
+  .portfolio-info p {
+    font-size: 0.98rem;
+    line-height: 1.45;
+  }
+
+  .portfolio-meta div {
+    display: grid;
+    gap: 4px;
+  }
+
+  .portfolio-tech-list {
+    gap: 7px;
+  }
+
+  .portfolio-tech-chip {
+    min-height: 30px;
+    padding: 0 11px;
+    font-size: 0.82rem;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -1013,5 +1492,10 @@ a {
   .tech-fan {
     animation: none !important;
     transform: translate3d(0, 0, 0) !important;
+  }
+
+  .portfolio-connection-layer,
+  .studio-injection {
+    display: none !important;
   }
 }

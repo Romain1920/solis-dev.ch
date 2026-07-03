@@ -1,9 +1,12 @@
 import { useEffect, useMemo, useRef, useState } from "react";
+import { AnimatePresence, LayoutGroup, motion, useReducedMotion } from "framer-motion";
 import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import ReactLenis from "lenis/react";
-import { projects } from "./data/projects";
+import iphoneFrameImage from "../assets/iphone-17-black-portrait.png";
+import studioDisplayImage from "../assets/studio-display-light.png";
+import { portfolioProjects, projects } from "./data/projects";
 
 gsap.registerPlugin(useGSAP, ScrollTrigger);
 
@@ -111,6 +114,7 @@ function App() {
       <main id="contenu">
         <Hero />
         <MetricsSection />
+        <PortfolioSection />
       </main>
     </ReactLenis>
   );
@@ -409,6 +413,373 @@ function MetricsSection() {
             </div>
           </article>
         ))}
+      </div>
+    </section>
+  );
+}
+
+function PortfolioSection() {
+  const [selectedId, setSelectedId] = useState(portfolioProjects[0].id);
+  const [displayId, setDisplayId] = useState(portfolioProjects[0].id);
+  const [connection, setConnection] = useState(null);
+  const [injectingKey, setInjectingKey] = useState(null);
+  const sectionRef = useRef(null);
+  const screenRef = useRef(null);
+  const timersRef = useRef([]);
+  const reducedMotion = useReducedMotion();
+
+  const selectedProject = portfolioProjects.find((project) => project.id === selectedId);
+  const displayProject = portfolioProjects.find((project) => project.id === displayId);
+  const isMobileShowcase = displayProject.type === "mobile";
+  const phonePreview = displayProject.mobileSrc ?? displayProject.src;
+  const deviceTransition = reducedMotion
+    ? { duration: 0 }
+    : { type: "spring", stiffness: 86, damping: 24, mass: 1.08 };
+
+  useEffect(
+    () => () => {
+      timersRef.current.forEach((timer) => window.clearTimeout(timer));
+    },
+    []
+  );
+
+  const clearTimers = () => {
+    timersRef.current.forEach((timer) => window.clearTimeout(timer));
+    timersRef.current = [];
+  };
+
+  const buildConnection = (event, projectId) => {
+    const section = sectionRef.current;
+    const screen = screenRef.current;
+
+    if (!section || !screen) {
+      return null;
+    }
+
+    const sectionRect = section.getBoundingClientRect();
+    const sourceRect = event.currentTarget.getBoundingClientRect();
+    const screenRect = screen.getBoundingClientRect();
+    const startX = sourceRect.right - sectionRect.left - 4;
+    const startY = sourceRect.top + sourceRect.height / 2 - sectionRect.top;
+    const endX = screenRect.left + screenRect.width * 0.08 - sectionRect.left;
+    const endY = screenRect.top + screenRect.height * 0.5 - sectionRect.top;
+    const distance = Math.max(120, Math.abs(endX - startX));
+    const direction = endX >= startX ? 1 : -1;
+    const path = [
+      `M ${startX} ${startY}`,
+      `C ${startX + direction * distance * 0.32} ${startY}`,
+      `${endX - direction * distance * 0.32} ${endY}`,
+      `${endX} ${endY}`,
+    ].join(" ");
+
+    return {
+      id: `${projectId}-${Date.now()}`,
+      path,
+      startX,
+      startY,
+      endX,
+      endY,
+      width: sectionRect.width,
+      height: sectionRect.height,
+    };
+  };
+
+  const handleProjectSelect = (project, event) => {
+    if (project.id === selectedId) {
+      return;
+    }
+
+    clearTimers();
+    setSelectedId(project.id);
+
+    if (reducedMotion) {
+      setDisplayId(project.id);
+      setConnection(null);
+      setInjectingKey(null);
+      return;
+    }
+
+    const nextConnection = buildConnection(event, project.id);
+    setConnection(nextConnection);
+    setInjectingKey(null);
+
+    timersRef.current = [
+      window.setTimeout(() => {
+        setInjectingKey(`${project.id}-inject-${Date.now()}`);
+        setDisplayId(project.id);
+      }, 560),
+      window.setTimeout(() => {
+        setConnection(null);
+      }, 1150),
+      window.setTimeout(() => {
+        setInjectingKey(null);
+      }, 1260),
+    ];
+  };
+
+  return (
+    <section
+      className="portfolio-section"
+      id="projets"
+      aria-labelledby="portfolio-title"
+    >
+      <h2 id="portfolio-title" className="visually-hidden">
+        Portfolio
+      </h2>
+
+      <div className="portfolio-shell" ref={sectionRef}>
+        <AnimatePresence>
+          {connection ? (
+            <motion.svg
+              className="portfolio-connection-layer"
+              key={connection.id}
+              aria-hidden="true"
+              viewBox={`0 0 ${connection.width} ${connection.height}`}
+              preserveAspectRatio="none"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.18 }}
+            >
+              <motion.path
+                d={connection.path}
+                fill="none"
+                stroke="currentColor"
+                strokeLinecap="round"
+                strokeWidth="1.7"
+                initial={{ pathLength: 0, opacity: 0 }}
+                animate={{ pathLength: 1, opacity: [0, 0.85, 0.85, 0] }}
+                transition={{ duration: 1.04, ease: [0.22, 1, 0.36, 1] }}
+              />
+              <motion.circle
+                r="3.2"
+                fill="currentColor"
+                initial={{
+                  cx: connection.startX,
+                  cy: connection.startY,
+                  opacity: 0,
+                  scale: 0.82,
+                }}
+                animate={{
+                  cx: connection.endX,
+                  cy: connection.endY,
+                  opacity: [0, 0.92, 0.92, 0],
+                  scale: [0.82, 1, 1, 0.76],
+                }}
+                transition={{ duration: 0.72, ease: [0.22, 1, 0.36, 1] }}
+              />
+            </motion.svg>
+          ) : null}
+        </AnimatePresence>
+
+        <div className="portfolio-list-column">
+          <LayoutGroup id="portfolio-list">
+            <nav className="portfolio-project-list" aria-label="Projets du portfolio">
+              {portfolioProjects.map((project) => {
+                const isSelected = project.id === selectedProject.id;
+
+                return (
+                  <motion.button
+                    className="portfolio-project-button"
+                    type="button"
+                    key={project.id}
+                    aria-pressed={isSelected}
+                    onClick={(event) => handleProjectSelect(project, event)}
+                    whileHover={reducedMotion ? undefined : { x: 6 }}
+                    whileTap={reducedMotion ? undefined : { scale: 0.985 }}
+                    transition={{ type: "spring", stiffness: 380, damping: 34 }}
+                  >
+                    {isSelected ? (
+                      <motion.span
+                        className="portfolio-active-pill"
+                        layoutId="portfolio-active-pill"
+                        transition={{
+                          type: "spring",
+                          stiffness: 440,
+                          damping: 38,
+                          mass: 0.9,
+                        }}
+                      />
+                    ) : null}
+                    <span className="portfolio-project-name">{project.name}</span>
+                  </motion.button>
+                );
+              })}
+            </nav>
+          </LayoutGroup>
+        </div>
+
+        <div className="portfolio-display-column">
+          <div className="device-showcase" data-mode={isMobileShowcase ? "mobile" : "web"} aria-live="polite">
+            <motion.div
+              className="studio-display-wrap"
+              animate={
+                isMobileShowcase
+                  ? {
+                      x: "-10%",
+                      y: -18,
+                      scale: 0.74,
+                      opacity: 0.58,
+                      filter: "blur(0.8px) saturate(0.9)",
+                    }
+                  : {
+                      x: "0%",
+                      y: 0,
+                      scale: 1,
+                      opacity: 1,
+                      filter: "blur(0px) saturate(1)",
+                    }
+              }
+              transition={deviceTransition}
+            >
+              <div className="studio-display-stage">
+                <div className="studio-screen" ref={screenRef}>
+                  <AnimatePresence mode="wait">
+                    <motion.img
+                      className="studio-screen-shot"
+                      key={displayProject.id}
+                      src={displayProject.src}
+                      alt={`Aperçu du projet ${displayProject.title}`}
+                      initial={
+                        reducedMotion
+                          ? false
+                          : { opacity: 0, scale: 1.035, filter: "blur(10px)" }
+                      }
+                      animate={{
+                        opacity: isMobileShowcase ? 0.72 : 1,
+                        scale: 1,
+                        filter: isMobileShowcase ? "blur(1.2px)" : "blur(0px)",
+                      }}
+                      exit={
+                        reducedMotion
+                          ? { opacity: 0 }
+                          : { opacity: 0, scale: 0.985, filter: "blur(8px)" }
+                      }
+                      transition={{ duration: 0.48, ease: [0.22, 1, 0.36, 1] }}
+                    />
+                  </AnimatePresence>
+
+                  <AnimatePresence>
+                    {injectingKey && !reducedMotion ? (
+                      <motion.span
+                        className="studio-injection"
+                        key={injectingKey}
+                        initial={{ x: "-12%", opacity: 0 }}
+                        animate={{ x: "112%", opacity: [0, 0.64, 0] }}
+                        exit={{ opacity: 0 }}
+                        transition={{ duration: 0.62, ease: [0.22, 1, 0.36, 1] }}
+                      />
+                    ) : null}
+                  </AnimatePresence>
+                </div>
+
+                <img
+                  className="studio-display-image"
+                  src={studioDisplayImage}
+                  alt=""
+                  aria-hidden="true"
+                />
+              </div>
+            </motion.div>
+
+            <motion.div
+              className="iphone-showcase"
+              aria-hidden={!isMobileShowcase}
+              animate={
+                isMobileShowcase
+                  ? {
+                      x: "0%",
+                      y: "0%",
+                      scale: 1,
+                      opacity: 1,
+                      filter: "blur(0px)",
+                    }
+                  : {
+                      x: "38%",
+                      y: "5%",
+                      scale: 0.88,
+                      opacity: 0,
+                      filter: "blur(10px)",
+                    }
+              }
+              initial={false}
+              transition={deviceTransition}
+            >
+              <div className="iphone-device">
+                <div className="iphone-screen">
+                  <AnimatePresence mode="wait">
+                    <motion.img
+                      className="iphone-screen-shot"
+                      key={`${displayProject.id}-phone`}
+                      src={phonePreview}
+                      alt={isMobileShowcase ? `Aperçu mobile du projet ${displayProject.title}` : ""}
+                      initial={
+                        reducedMotion
+                          ? false
+                          : { opacity: 0, y: 24, scale: 1.03, filter: "blur(8px)" }
+                      }
+                      animate={{ opacity: 1, y: 0, scale: 1, filter: "blur(0px)" }}
+                      exit={
+                        reducedMotion
+                          ? { opacity: 0 }
+                          : { opacity: 0, y: -18, scale: 0.985, filter: "blur(8px)" }
+                      }
+                      transition={{ duration: 0.46, ease: [0.22, 1, 0.36, 1] }}
+                    />
+                  </AnimatePresence>
+                </div>
+                <img
+                  className="iphone-frame-image"
+                  src={iphoneFrameImage}
+                  alt=""
+                  aria-hidden="true"
+                />
+              </div>
+            </motion.div>
+          </div>
+
+          <AnimatePresence mode="wait">
+            <motion.article
+              className="portfolio-info"
+              key={displayProject.id}
+              initial={reducedMotion ? false : { opacity: 0, y: 18, filter: "blur(8px)" }}
+              animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+              exit={
+                reducedMotion
+                  ? { opacity: 0 }
+                  : { opacity: 0, y: -12, filter: "blur(8px)" }
+              }
+              transition={{ duration: 0.42, ease: [0.22, 1, 0.36, 1] }}
+            >
+              <span className="portfolio-category">{displayProject.category}</span>
+              <h3>{displayProject.title}</h3>
+              <p>{displayProject.description}</p>
+              <dl className="portfolio-meta">
+                <div>
+                  <dt>Client</dt>
+                  <dd>{displayProject.client}</dd>
+                </div>
+              </dl>
+              <div className="portfolio-tech-list" aria-label="Technologies utilisees">
+                {displayProject.technologies.map((technology, index) => (
+                  <motion.span
+                    className="portfolio-tech-chip"
+                    key={technology}
+                    initial={reducedMotion ? false : { opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{
+                      duration: 0.34,
+                      ease: [0.22, 1, 0.36, 1],
+                      delay: reducedMotion ? 0 : index * 0.035,
+                    }}
+                  >
+                    {technology}
+                  </motion.span>
+                ))}
+              </div>
+            </motion.article>
+          </AnimatePresence>
+        </div>
       </div>
     </section>
   );
