@@ -30,12 +30,12 @@ const metrics = [
   {
     id: "experience",
     value: "+10",
-    descriptionLines: ["années d'expérience"],
+    descriptionLines: ["années d'expérience", "depuis notre création"],
     visual: "tech",
   },
   {
     id: "commerce",
-    value: "+500'000",
+    value: "500'000",
     descriptionLines: ["CHF générés sur les sites", "e-commerce construits en 2025"],
     visual: "commerce",
     variant: "commerce",

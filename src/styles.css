@@ -516,8 +516,6 @@ a {
   position: relative;
   height: clamp(90px, 7.6vw, 112px);
   overflow: hidden;
-  -webkit-mask-image: linear-gradient(90deg, transparent 0%, #000000 12%, #000000 88%, transparent 100%);
-  mask-image: linear-gradient(90deg, transparent 0%, #000000 12%, #000000 88%, transparent 100%);
 }
 
 .website-strip--top {
@@ -577,7 +575,7 @@ a {
   height: 100%;
   object-fit: cover;
   object-position: top center;
-  filter: saturate(1.08) contrast(1.08);
+  filter: none;
 }
 
 .tech-fan {
@@ -618,7 +616,10 @@ a {
 }
 
 .commerce-dashboard {
-  width: min(100%, clamp(260px, 25vw, 340px));
+  width: min(calc(100% - clamp(12px, 1.4vw, 20px)), clamp(250px, 23.8vw, 326px));
+  justify-self: center;
+  align-self: center;
+  margin-inline: auto;
   aspect-ratio: 16 / 9;
   overflow: hidden;
   border: 1px solid rgba(255, 255, 255, 0.74);
