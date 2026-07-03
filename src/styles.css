@@ -665,17 +665,22 @@ a {
   overflow: hidden;
   scroll-margin-top: 116px;
   background: #ffffff;
-  padding: clamp(82px, 10vw, 142px) 0 clamp(92px, 12vw, 168px);
+  min-height: 100svh;
+  height: 100svh;
+  display: flex;
+  align-items: center;
+  padding: clamp(70px, 9svh, 104px) 0 clamp(24px, 4svh, 44px);
 }
 
 .portfolio-shell {
   position: relative;
-  width: min(1240px, calc(100vw - 56px));
+  width: min(1280px, calc(100vw - 56px));
+  height: min(760px, calc(100svh - 118px));
   margin: 0 auto;
   display: grid;
-  grid-template-columns: minmax(214px, 0.34fr) minmax(0, 1fr);
-  align-items: start;
-  gap: clamp(44px, 6vw, 96px);
+  grid-template-columns: minmax(250px, 0.37fr) minmax(0, 1fr);
+  align-items: center;
+  gap: clamp(36px, 5.8vw, 94px);
 }
 
 .portfolio-connection-layer {
@@ -690,100 +695,203 @@ a {
   filter: drop-shadow(0 5px 14px rgba(238, 124, 66, 0.18));
 }
 
+.portfolio-connection-layer svg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+
+.portfolio-transfer-particle {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 1;
+  color: rgba(238, 124, 66, 0.92);
+  font-family: "SFMono-Regular", "SF Mono", ui-monospace, monospace;
+  font-size: 0.68rem;
+  font-weight: 700;
+  line-height: 1;
+  text-shadow:
+    0 0 12px rgba(238, 124, 66, 0.2),
+    0 0 2px rgba(255, 255, 255, 0.72);
+  will-change: transform, opacity;
+}
+
 .portfolio-list-column {
   position: relative;
   z-index: 6;
   min-width: 0;
-  padding-top: clamp(40px, 4.8vw, 78px);
-}
-
-.portfolio-project-list {
+  align-self: center;
   display: grid;
-  gap: clamp(14px, 1.6vw, 23px);
+  gap: clamp(22px, 3svh, 32px);
   font-family: "SF Pro Display", "SF Pro Text", -apple-system, BlinkMacSystemFont,
     "Segoe UI", sans-serif;
 }
 
-.portfolio-project-button {
+.portfolio-segment-control {
   position: relative;
-  width: fit-content;
+  display: inline-grid;
+  grid-template-columns: repeat(2, minmax(86px, 1fr));
+  width: min(214px, 100%);
+  padding: 3px;
+  border: 1px solid rgba(9, 10, 10, 0.06);
+  border-radius: 999px;
+  background: #f6f6f4;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.82);
+}
+
+.portfolio-segment-button {
+  position: relative;
+  appearance: none;
+  border: 0;
+  border-radius: 999px;
+  background: transparent;
+  color: rgba(17, 17, 17, 0.52);
+  padding: 9px 16px;
+  font: inherit;
+  font-size: 0.82rem;
+  font-weight: 650;
+  line-height: 1;
+  letter-spacing: 0;
+  text-align: center;
+  cursor: pointer;
+  outline: none;
+}
+
+.portfolio-segment-button span {
+  position: relative;
+  z-index: 1;
+}
+
+.portfolio-segment-button[aria-pressed="true"] {
+  color: #111111;
+}
+
+.portfolio-segment-button:focus-visible {
+  box-shadow: 0 0 0 3px rgba(238, 124, 66, 0.18);
+}
+
+.portfolio-segment-indicator {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  border-radius: inherit;
+  background: #ffffff;
+  box-shadow:
+    0 7px 18px rgba(17, 18, 18, 0.08),
+    inset 0 1px 0 rgba(255, 255, 255, 0.92);
+}
+
+.portfolio-wheel {
+  position: relative;
+  width: min(100%, 330px);
+  height: clamp(238px, 34svh, 330px);
+  overflow: hidden;
+  perspective: 920px;
+  transform-style: preserve-3d;
+  outline: none;
+  touch-action: pan-y;
+}
+
+.portfolio-wheel::before,
+.portfolio-wheel::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  z-index: 3;
+  height: 30%;
+  pointer-events: none;
+}
+
+.portfolio-wheel::before {
+  top: 0;
+  background: linear-gradient(180deg, #ffffff 0%, rgba(255, 255, 255, 0));
+}
+
+.portfolio-wheel::after {
+  bottom: 0;
+  background: linear-gradient(0deg, #ffffff 0%, rgba(255, 255, 255, 0));
+}
+
+.portfolio-wheel-stack {
+  position: absolute;
+  inset: 0;
+  transform-style: preserve-3d;
+}
+
+.portfolio-wheel-item {
+  position: absolute;
+  top: calc(50% - 24px);
+  left: 0;
   max-width: 100%;
   appearance: none;
   border: 0;
   border-radius: 999px;
   background: transparent;
-  color: #151515;
-  padding: 13px 20px;
-  margin-left: -20px;
+  color: #111111;
+  padding: 14px 21px;
+  margin-left: -21px;
   font: inherit;
-  font-size: clamp(1.05rem, 1.35vw, 1.42rem);
-  font-weight: 600;
-  line-height: 1.05;
+  font-size: clamp(1.06rem, 1.42vw, 1.45rem);
+  font-weight: 650;
+  line-height: 1.02;
   letter-spacing: 0;
   text-align: left;
+  white-space: nowrap;
   cursor: pointer;
   outline: none;
+  backface-visibility: hidden;
+  transform-style: preserve-3d;
+  transform-origin: center center;
+  will-change: transform, opacity, filter;
 }
 
-.portfolio-project-button::after {
-  content: "";
-  position: absolute;
-  inset: 5px 12px;
-  border-radius: inherit;
-  background: rgba(9, 10, 10, 0.035);
-  opacity: 0;
-  transform: scale3d(0.96, 0.86, 1);
-  transition:
-    opacity 180ms ease,
-    transform 180ms ease;
-}
-
-.portfolio-project-button:hover::after,
-.portfolio-project-button:focus-visible::after {
-  opacity: 1;
-  transform: scale3d(1, 1, 1);
-}
-
-.portfolio-project-button:focus-visible {
-  box-shadow: 0 0 0 3px rgba(238, 124, 66, 0.18);
-}
-
-.portfolio-active-pill {
-  position: absolute;
-  inset: 0;
-  z-index: 0;
-  border: 1px solid rgba(9, 10, 10, 0.055);
-  border-radius: inherit;
-  background: #ffffff;
-  box-shadow:
-    0 10px 30px rgba(17, 18, 18, 0.08),
-    0 1px 0 rgba(255, 255, 255, 0.9) inset;
-}
-
-.portfolio-project-name {
+.portfolio-wheel-item span {
   position: relative;
   z-index: 1;
   display: block;
-  white-space: nowrap;
+}
+
+.portfolio-wheel-item[aria-pressed="true"] {
+  background: #ffffff;
+  box-shadow:
+    0 12px 32px rgba(17, 18, 18, 0.08),
+    0 1px 0 rgba(255, 255, 255, 0.9) inset;
+}
+
+.portfolio-wheel-item:focus-visible {
+  box-shadow:
+    0 0 0 3px rgba(238, 124, 66, 0.16),
+    0 12px 32px rgba(17, 18, 18, 0.08);
 }
 
 .portfolio-display-column {
   position: relative;
   z-index: 2;
   min-width: 0;
+  height: 100%;
+  display: grid;
+  grid-template-rows: minmax(0, 1fr) auto;
+  align-items: end;
+  align-self: stretch;
 }
 
 .device-showcase {
   position: relative;
-  width: min(100%, 910px);
+  width: min(740px, 56vw, calc(100svh - 162px));
   aspect-ratio: 5400 / 4160;
   margin-left: auto;
+  margin-right: clamp(-52px, -3vw, -24px);
   overflow: visible;
   isolation: isolate;
+  align-self: end;
 }
 
 .device-showcase[data-mode="mobile"] + .portfolio-info {
-  margin-top: clamp(34px, 3.8vw, 56px);
+  margin-top: clamp(8px, 1.2svh, 14px);
 }
 
 .studio-display-wrap {
@@ -801,7 +909,7 @@ a {
   aspect-ratio: 5400 / 4160;
   isolation: isolate;
   transform: translate3d(0, 0, 0);
-  filter: drop-shadow(0 28px 54px rgba(16, 17, 18, 0.1));
+  filter: drop-shadow(0 22px 44px rgba(16, 17, 18, 0.09));
 }
 
 .studio-screen {
@@ -859,6 +967,26 @@ a {
   mix-blend-mode: screen;
 }
 
+.iphone-injection {
+  position: absolute;
+  top: -8%;
+  bottom: -8%;
+  left: -16%;
+  z-index: 3;
+  width: 30%;
+  pointer-events: none;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.2) 18%,
+    rgba(238, 124, 66, 0.34) 52%,
+    rgba(255, 255, 255, 0.16) 78%,
+    transparent 100%
+  );
+  filter: blur(2px);
+  mix-blend-mode: screen;
+}
+
 .studio-display-image {
   position: absolute;
   inset: 0;
@@ -872,11 +1000,11 @@ a {
 
 .iphone-showcase {
   position: absolute;
-  top: clamp(72px, 7vw, 104px);
-  right: clamp(14px, 3vw, 48px);
+  top: clamp(48px, 5vw, 78px);
+  right: clamp(16px, 2.4vw, 38px);
   z-index: 4;
-  width: clamp(190px, 26vw, 292px);
-  max-width: 34%;
+  width: clamp(164px, 20vw, 246px);
+  max-width: 32%;
   pointer-events: none;
   transform-origin: center 58%;
   will-change: transform, opacity, filter;
@@ -887,8 +1015,8 @@ a {
   width: 100%;
   aspect-ratio: 1350 / 2760;
   overflow: visible;
-  filter: drop-shadow(0 44px 78px rgba(15, 16, 18, 0.2))
-    drop-shadow(0 16px 28px rgba(15, 16, 18, 0.16));
+  filter: drop-shadow(0 34px 66px rgba(15, 16, 18, 0.18))
+    drop-shadow(0 12px 24px rgba(15, 16, 18, 0.14));
 }
 
 .iphone-screen {
@@ -924,8 +1052,8 @@ a {
 }
 
 .portfolio-info {
-  width: min(760px, 100%);
-  margin: clamp(16px, 2.2vw, 26px) auto 0;
+  width: min(700px, 100%);
+  margin: clamp(8px, 1.2svh, 14px) -20px 0 auto;
   color: #111111;
   font-family: "SF Pro Text", "SF Pro Display", -apple-system, BlinkMacSystemFont,
     "Segoe UI", sans-serif;
@@ -935,39 +1063,39 @@ a {
   display: inline-flex;
   align-items: center;
   width: fit-content;
-  min-height: 30px;
+  min-height: 24px;
   border: 1px solid rgba(9, 10, 10, 0.08);
   border-radius: 999px;
   background: #fbfbfa;
   color: rgba(17, 17, 17, 0.68);
-  padding: 0 12px;
-  font-size: 0.78rem;
+  padding: 0 10px;
+  font-size: 0.72rem;
   font-weight: 600;
   line-height: 1;
   letter-spacing: 0;
 }
 
 .portfolio-info h3 {
-  margin: 16px 0 10px;
+  margin: 8px 0 5px;
   color: #111111;
-  font-size: clamp(1.8rem, 2.7vw, 3rem);
+  font-size: clamp(1.45rem, 2.1vw, 2.22rem);
   font-weight: 650;
   line-height: 1.02;
   letter-spacing: 0;
 }
 
 .portfolio-info p {
-  max-width: 690px;
+  max-width: 650px;
   margin: 0;
   color: rgba(17, 17, 17, 0.66);
-  font-size: clamp(1rem, 1.08vw, 1.14rem);
+  font-size: clamp(0.86rem, 0.96vw, 1rem);
   font-weight: 450;
-  line-height: 1.48;
+  line-height: 1.36;
   letter-spacing: 0;
 }
 
 .portfolio-meta {
-  margin: 20px 0 0;
+  margin: 8px 0 0;
   padding: 0;
 }
 
@@ -980,34 +1108,44 @@ a {
 
 .portfolio-meta dt {
   color: rgba(17, 17, 17, 0.48);
-  font-size: 0.88rem;
+  font-size: 0.78rem;
   font-weight: 600;
 }
 
 .portfolio-meta dd {
   margin: 0;
   color: #111111;
-  font-size: 0.98rem;
+  font-size: 0.86rem;
   font-weight: 600;
+}
+
+.portfolio-testimonial {
+  max-width: 650px;
+  margin: 8px 0 0;
+  color: rgba(17, 17, 17, 0.56);
+  font-size: clamp(0.82rem, 0.9vw, 0.95rem);
+  font-weight: 500;
+  line-height: 1.34;
+  letter-spacing: 0;
 }
 
 .portfolio-tech-list {
   display: flex;
   flex-wrap: wrap;
-  gap: 8px;
-  margin-top: 18px;
+  gap: 7px;
+  margin-top: 9px;
 }
 
 .portfolio-tech-chip {
   display: inline-flex;
   align-items: center;
-  min-height: 32px;
+  min-height: 27px;
   border: 1px solid rgba(9, 10, 10, 0.075);
   border-radius: 999px;
   background: #f7f7f5;
   color: #141414;
-  padding: 0 12px;
-  font-size: 0.86rem;
+  padding: 0 10px;
+  font-size: 0.78rem;
   font-weight: 600;
   line-height: 1;
   letter-spacing: 0;
@@ -1152,40 +1290,52 @@ a {
   }
 
   .portfolio-section {
-    padding: 78px 0 112px;
+    min-height: 100svh;
+    height: 100svh;
+    padding: 72px 0 30px;
   }
 
   .portfolio-shell {
-    width: min(760px, calc(100vw - 40px));
-    grid-template-columns: 1fr;
-    gap: 36px;
+    width: min(900px, calc(100vw - 34px));
+    height: min(680px, calc(100svh - 102px));
+    grid-template-columns: minmax(214px, 0.36fr) minmax(0, 1fr);
+    gap: 24px;
   }
 
   .portfolio-list-column {
-    padding-top: 0;
+    gap: 18px;
   }
 
-  .portfolio-project-list {
-    gap: 10px;
+  .portfolio-segment-control {
+    width: min(204px, 100%);
   }
 
-  .portfolio-project-button {
-    margin-left: -14px;
-    padding: 11px 14px;
+  .portfolio-wheel {
+    width: min(100%, 300px);
+    height: clamp(218px, 32svh, 290px);
+  }
+
+  .portfolio-wheel-item {
+    top: calc(50% - 21px);
+    padding: 12px 16px;
+    margin-left: -16px;
+    font-size: clamp(0.98rem, 2.1vw, 1.16rem);
   }
 
   .device-showcase {
-    width: min(100%, 760px);
-    margin: 0 auto;
+    width: min(610px, 55vw, calc(100svh - 174px));
+    margin-right: -20px;
   }
 
   .portfolio-info {
-    width: min(680px, 100%);
+    width: min(610px, 100%);
+    margin-right: 0;
   }
 
   .iphone-showcase {
-    top: clamp(36px, 6vw, 58px);
-    max-width: 38%;
+    top: clamp(34px, 5vw, 56px);
+    width: clamp(136px, 19vw, 198px);
+    max-width: 34%;
   }
 }
 
@@ -1395,32 +1545,49 @@ a {
   }
 
   .portfolio-section {
+    min-height: auto;
+    height: auto;
     padding: 62px 0 86px;
   }
 
   .portfolio-shell {
     width: calc(100vw - 30px);
+    height: auto;
+    grid-template-columns: 1fr;
     gap: 28px;
   }
 
-  .portfolio-project-list {
-    gap: 8px;
+  .portfolio-list-column {
+    gap: 16px;
   }
 
-  .portfolio-project-button {
-    width: 100%;
-    padding: 11px 14px;
+  .portfolio-segment-control {
+    width: min(100%, 320px);
+  }
+
+  .portfolio-wheel {
+    width: min(100%, 360px);
+    height: 258px;
+  }
+
+  .portfolio-wheel-item {
+    width: max-content;
+    max-width: calc(100vw - 52px);
+    padding: 11px 15px;
     margin-left: 0;
-    font-size: clamp(1rem, 4.7vw, 1.24rem);
-  }
-
-  .portfolio-project-name {
+    font-size: clamp(1rem, 4.7vw, 1.22rem);
     white-space: normal;
     overflow-wrap: anywhere;
   }
 
+  .portfolio-display-column {
+    height: auto;
+    display: block;
+  }
+
   .device-showcase {
     width: min(100%, 560px);
+    margin: 0 auto;
   }
 
   .studio-display-stage {
@@ -1428,11 +1595,12 @@ a {
   }
 
   .portfolio-info {
-    margin-top: 16px;
+    width: 100%;
+    margin: 16px 0 0;
   }
 
   .device-showcase[data-mode="mobile"] + .portfolio-info {
-    margin-top: 112px;
+    margin-top: 18px;
   }
 
   .iphone-showcase {
@@ -1495,7 +1663,9 @@ a {
   }
 
   .portfolio-connection-layer,
-  .studio-injection {
+  .portfolio-transfer-particle,
+  .studio-injection,
+  .iphone-injection {
     display: none !important;
   }
 }
