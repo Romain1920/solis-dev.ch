@@ -539,15 +539,8 @@ function PortfolioSection() {
       project.type === "mobile"
         ? Math.min(screenRect.height * 0.18, 112)
         : Math.min(screenRect.height * 0.05, 18);
-    const targetOverscan = project.type === "mobile" ? 0 : 1;
-    const targetWidth =
-      project.type === "mobile"
-        ? screenRect.width
-        : Math.ceil(screenRect.width) + targetOverscan * 2;
-    const targetHeight =
-      project.type === "mobile"
-        ? screenRect.height
-        : Math.ceil(screenRect.height) + targetOverscan * 2;
+    const targetWidth = screenRect.width;
+    const targetHeight = screenRect.height;
     const targetRadius =
       project.type === "mobile"
         ? targetStyles.borderRadius || `${Math.max(18, screenRect.width * 0.1)}px`
@@ -581,7 +574,6 @@ function PortfolioSection() {
       targetWidth,
       targetHeight,
       targetRadius,
-      targetOverscan,
       startClipPath,
       finalClipPath,
       startRotation,
@@ -681,16 +673,16 @@ function PortfolioSection() {
           });
         },
         [],
-        0.84
+        0.88
       )
       .to(
         plane,
         {
           autoAlpha: 0,
-          duration: 0.06,
+          duration: 0.04,
           ease: "power1.out",
         },
-        0.94
+        0.89
       );
 
     return () => {
