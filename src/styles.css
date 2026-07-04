@@ -744,11 +744,11 @@ a {
 
 .portfolio-load-plane[data-device="mobile"]::after {
   inset: auto;
-  top: 1.7%;
+  top: 1.55%;
   left: 50%;
   z-index: 4;
-  width: 34%;
-  height: 4.8%;
+  width: 35.5%;
+  height: 4.95%;
   transform: translateX(-50%);
   border: 0;
   border-radius: 999px;
@@ -766,6 +766,7 @@ a {
   position: absolute;
   inset: 0;
   z-index: 1;
+  display: block;
   width: 100%;
   height: 100%;
   object-fit: cover;
@@ -1064,6 +1065,7 @@ a {
   position: absolute;
   inset: 0;
   z-index: 1;
+  display: block;
   width: 100%;
   height: 100%;
   object-fit: cover;
@@ -1127,6 +1129,7 @@ a {
 .iphone-screen-shot {
   position: absolute;
   inset: 0;
+  display: block;
   width: 100%;
   height: 100%;
   object-fit: cover;

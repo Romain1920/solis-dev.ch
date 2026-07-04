@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
+import { flushSync } from "react-dom";
 import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
@@ -538,17 +539,26 @@ function PortfolioSection() {
       project.type === "mobile"
         ? Math.min(screenRect.height * 0.18, 112)
         : Math.min(screenRect.height * 0.05, 18);
-    const finalRadius =
+    const targetOverscan = project.type === "mobile" ? 0 : 1;
+    const targetWidth =
+      project.type === "mobile"
+        ? screenRect.width
+        : Math.ceil(screenRect.width) + targetOverscan * 2;
+    const targetHeight =
+      project.type === "mobile"
+        ? screenRect.height
+        : Math.ceil(screenRect.height) + targetOverscan * 2;
+    const targetRadius =
       project.type === "mobile"
         ? targetStyles.borderRadius || `${Math.max(18, screenRect.width * 0.1)}px`
         : `${Math.max(3, screenRect.width * 0.006)}px`;
     const startClipPath =
       project.type === "mobile"
-        ? `inset(0% 18% 0% 18% round ${finalRadius})`
+        ? `inset(0% 18% 0% 18% round ${targetRadius})`
         : "polygon(0% 46%, 72% 14%, 100% 50%, 72% 86%, 0% 54%)";
     const finalClipPath =
       project.type === "mobile"
-        ? `inset(0% round ${finalRadius})`
+        ? `inset(0% round ${targetRadius})`
         : "polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%, 0% 0%)";
     const startRotation = project.type === "mobile" ? 4 : -5;
     const startSkewX = project.type === "mobile" ? -8 : 10;
@@ -568,7 +578,10 @@ function PortfolioSection() {
       startHeight,
       screenWidth: screenRect.width,
       screenHeight: screenRect.height,
-      finalRadius,
+      targetWidth,
+      targetHeight,
+      targetRadius,
+      targetOverscan,
       startClipPath,
       finalClipPath,
       startRotation,
@@ -592,13 +605,13 @@ function PortfolioSection() {
 
     transferTimelineRef.current?.kill();
 
-    const startScaleX = transfer.startWidth / transfer.screenWidth;
-    const startScaleY = transfer.startHeight / transfer.screenHeight;
+    const startScaleX = transfer.startWidth / transfer.targetWidth;
+    const startScaleY = transfer.startHeight / transfer.targetHeight;
 
     gsap.set(plane, {
       autoAlpha: 1,
-      width: transfer.screenWidth,
-      height: transfer.screenHeight,
+      width: transfer.targetWidth,
+      height: transfer.targetHeight,
       xPercent: -50,
       yPercent: -50,
       x: transfer.startX,
@@ -607,7 +620,7 @@ function PortfolioSection() {
       scaleY: startScaleY,
       rotation: transfer.startRotation,
       skewX: transfer.startSkewX,
-      borderRadius: transfer.finalRadius,
+      borderRadius: transfer.targetRadius,
       clipPath: transfer.startClipPath,
       "--liquid-sheen-opacity": 0.72,
       "--liquid-edge-opacity": 0.62,
@@ -644,7 +657,7 @@ function PortfolioSection() {
           scaleY: 1,
           rotation: 0,
           skewX: 0,
-          borderRadius: transfer.finalRadius,
+          borderRadius: transfer.targetRadius,
           clipPath: transfer.finalClipPath,
           "--liquid-sheen-opacity": 0.18,
           "--liquid-edge-opacity": 0.08,
@@ -662,11 +675,13 @@ function PortfolioSection() {
       )
       .call(
         () => {
-          setInstantRevealId(transfer.project.id);
-          setDisplayId(transfer.project.id);
+          flushSync(() => {
+            setInstantRevealId(transfer.project.id);
+            setDisplayId(transfer.project.id);
+          });
         },
         [],
-        0.86
+        0.84
       )
       .to(
         plane,
@@ -675,7 +690,7 @@ function PortfolioSection() {
           duration: 0.06,
           ease: "power1.out",
         },
-        0.92
+        0.94
       );
 
     return () => {
