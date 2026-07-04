@@ -346,7 +346,7 @@ function Hero() {
               Nous vous préparons une maquette sur mesure, sans engagement, pour imaginer un site unique, marquant et original, mais surtout un véritable outil : sans template, pensé pour être performant sur Google, attirer des visiteurs et convertir davantage de clients.
             </span>
             <small>
-              Le premier rendez-vous pour préparer votre maquette offerte est également à notre charge, sans engagement. Et le café est pour nous 😉
+              Le premier rendez-vous pour préparer votre maquette est également à notre charge, sans engagement. Et le café est pour nous 😉
             </small>
           </span>
         </a>
