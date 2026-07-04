@@ -7,6 +7,7 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 import ReactLenis from "lenis/react";
 import iphoneFrameImage from "../assets/iphone-17-black-portrait.png";
 import macBookFrameImage from "../assets/macbook-pro-m5.png";
+import solisLogoDark from "../assets/solis-logo-dark.png";
 import solisLogoNav from "../assets/solis-logo-nav.png";
 import studioDisplayImage from "../assets/studio-display-light.png";
 import { portfolioProjects, projects } from "./data/projects";
@@ -15,6 +16,7 @@ gsap.registerPlugin(useGSAP, ScrollTrigger);
 
 const contactHref =
   "mailto:info@solis.li?subject=Maquette%20interactive%20offerte";
+const linkedInHref = "https://www.linkedin.com/company/solis-d%C3%A9veloppement-informatique/";
 
 const homeMenuItems = [
   {
@@ -156,6 +158,8 @@ function App() {
           <PortfolioSection />
         </div>
       </main>
+
+      <Footer />
     </ReactLenis>
   );
 }
@@ -1331,6 +1335,45 @@ function CommerceDashboardVisual() {
     <div className="commerce-dashboard">
       <img src={commerceProject.src} alt="" />
     </div>
+  );
+}
+
+function Footer() {
+  return (
+    <footer className="site-footer" id="footer" aria-labelledby="footer-title">
+      <div className="footer-shell">
+        <div className="footer-brand">
+          <a className="footer-logo" href="#accueil" aria-label="SOLIS">
+            <img src={solisLogoDark} alt="" aria-hidden="true" />
+          </a>
+          <p id="footer-title" className="footer-description">
+            SOLIS Développement Informatique est une marque suisse, propriété de
+            l'entreprise AAR Sàrl
+          </p>
+          <a
+            className="footer-social-link"
+            href={linkedInHref}
+            target="_blank"
+            rel="noreferrer"
+            aria-label="SOLIS sur LinkedIn"
+          >
+            <span aria-hidden="true">in</span>
+          </a>
+        </div>
+
+        <address className="footer-address">
+          <strong>SOLIS</strong>
+          <span>Rue du Simplon 86</span>
+          <span>1920 Martigny</span>
+          <span>Valais / Suisse</span>
+          <a href="tel:+41798401663">+41 79 840 16 63</a>
+        </address>
+      </div>
+
+      <div className="footer-bottom">
+        <p>©2026 - SOLIS Développement Informatique</p>
+      </div>
+    </footer>
   );
 }
 
