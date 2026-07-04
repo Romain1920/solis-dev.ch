@@ -1385,23 +1385,14 @@ a {
 .site-footer {
   position: relative;
   overflow: hidden;
-  background:
-    linear-gradient(180deg, #ffffff 0%, rgba(246, 251, 252, 0.96) 100%),
-    #ffffff;
+  background: #ffffff;
   border-top: 1px solid var(--line);
   color: var(--ink);
   padding: clamp(54px, 7vw, 96px) 0 clamp(26px, 3.2vw, 42px);
 }
 
 .site-footer::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  background:
-    radial-gradient(circle at 12% 10%, rgba(238, 124, 66, 0.11), transparent 28%),
-    radial-gradient(circle at 88% 18%, rgba(159, 231, 255, 0.2), transparent 30%);
-  opacity: 0.82;
+  content: none;
 }
 
 .footer-shell,
