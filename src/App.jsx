@@ -50,11 +50,6 @@ const portfolioSegmentOptions = [
   { id: "mobile", label: "Références applications mobiles" },
 ];
 
-const defaultPortfolioSelection = {
-  desktop: "jul-terrassement",
-  mobile: "kinn",
-};
-
 const transferParticles = ["0", "1", ".", "1", "0", ".", "1", "0", ".", "1", "0", "1"];
 
 const techLogos = [
@@ -432,8 +427,8 @@ function MetricsSection() {
 
 function PortfolioSection() {
   const [activeSegment, setActiveSegment] = useState("desktop");
-  const [selectedBySegment, setSelectedBySegment] = useState(defaultPortfolioSelection);
-  const [displayId, setDisplayId] = useState(defaultPortfolioSelection.desktop);
+  const [selectedId, setSelectedId] = useState(null);
+  const [displayId, setDisplayId] = useState(null);
   const [connection, setConnection] = useState(null);
   const [injectingKey, setInjectingKey] = useState(null);
   const sectionRef = useRef(null);
@@ -451,13 +446,13 @@ function PortfolioSection() {
         .sort((first, second) => first.order - second.order),
     [activeSegment]
   );
-  const selectedId = selectedBySegment[activeSegment] ?? segmentProjects[0]?.id;
   const selectedProject =
-    portfolioProjects.find((project) => project.id === selectedId) ?? segmentProjects[0];
+    segmentProjects.find((project) => project.id === selectedId) ?? null;
   const displayProject =
-    portfolioProjects.find((project) => project.id === displayId) ?? selectedProject;
-  const isMobileShowcase = selectedProject?.type === "mobile";
-  const displayedPhoneProject = displayProject?.type === "mobile" ? displayProject : null;
+    portfolioProjects.find((project) => project.id === displayId) ?? null;
+  const isMobileShowcase = activeSegment === "mobile";
+  const displayedPhoneProject =
+    isMobileShowcase && displayProject?.type === "mobile" ? displayProject : null;
   const phonePreview = displayedPhoneProject?.mobileSrc ?? displayedPhoneProject?.src;
   const deviceTransition = reducedMotion
     ? { duration: 0 }
@@ -520,16 +515,21 @@ function PortfolioSection() {
     };
   };
 
+  const collapseProjectSelection = () => {
+    clearTimers();
+    setSelectedId(null);
+    setDisplayId(null);
+    setConnection(null);
+    setInjectingKey(null);
+  };
+
   const commitProjectSelection = (project, sourceElement) => {
-    if (!project || project.id === selectedId) {
+    if (!project) {
       return;
     }
 
     clearTimers();
-    setSelectedBySegment((currentSelection) => ({
-      ...currentSelection,
-      [project.segment]: project.id,
-    }));
+    setSelectedId(project.id);
 
     if (reducedMotion) {
       setDisplayId(project.id);
@@ -557,27 +557,25 @@ function PortfolioSection() {
   };
 
   const handleProjectSelect = (project, event) => {
+    if (project.id === selectedId) {
+      collapseProjectSelection();
+      return;
+    }
+
     commitProjectSelection(project, event.currentTarget);
   };
 
-  const handleSegmentChange = (segment, event) => {
+  const handleSegmentChange = (segment) => {
     if (segment === activeSegment) {
       return;
     }
 
-    const sourceElement = event.currentTarget;
-    const nextProjects = portfolioProjects
-      .filter((project) => project.segment === segment)
-      .slice()
-      .sort((first, second) => first.order - second.order);
-    const nextProject =
-      nextProjects.find((project) => project.id === selectedBySegment[segment]) ?? nextProjects[0];
-
+    clearTimers();
     setActiveSegment(segment);
-
-    window.requestAnimationFrame(() => {
-      commitProjectSelection(nextProject, sourceElement);
-    });
+    setSelectedId(null);
+    setDisplayId(null);
+    setConnection(null);
+    setInjectingKey(null);
   };
 
   return (
@@ -658,7 +656,7 @@ function PortfolioSection() {
                   type="button"
                   key={segment.id}
                   aria-pressed={isActive}
-                  onClick={(event) => handleSegmentChange(segment.id, event)}
+                  onClick={() => handleSegmentChange(segment.id)}
                 >
                   {isActive ? (
                     <motion.span
@@ -681,7 +679,7 @@ function PortfolioSection() {
           <ProjectReferences
             activeSegment={activeSegment}
             projects={segmentProjects}
-            selectedId={selectedProject?.id}
+            selectedId={selectedProject?.id ?? null}
             selectorRef={selectorRef}
             reducedMotion={reducedMotion}
             onSelect={handleProjectSelect}
@@ -881,10 +879,12 @@ function ProjectReferences({
   };
 
   useEffect(() => {
-    activeItemRef.current?.scrollIntoView({
-      behavior: reducedMotion ? "auto" : "smooth",
-      block: "center",
-    });
+    if (selectedId) {
+      activeItemRef.current?.scrollIntoView({
+        behavior: reducedMotion ? "auto" : "smooth",
+        block: "center",
+      });
+    }
 
     window.requestAnimationFrame(updateScrollState);
   }, [activeSegment, reducedMotion, selectedId]);
@@ -1022,11 +1022,16 @@ function ProjectReferences({
                         exit={reducedMotion ? { opacity: 0 } : { opacity: 0, y: -6 }}
                         transition={{ duration: 0.34, ease: [0.22, 1, 0.36, 1] }}
                       >
+                        <p className="portfolio-reference-label">Description</p>
                         <p className="portfolio-reference-description">
                           {project.description}
                         </p>
+                        <p className="portfolio-reference-label">Retour client</p>
                         <blockquote className="portfolio-reference-testimonial">
                           “{project.testimonial}”
+                          <footer>
+                            — {project.testimonialAuthor ?? project.client ?? project.name}
+                          </footer>
                         </blockquote>
                       </motion.div>
                     </motion.div>
