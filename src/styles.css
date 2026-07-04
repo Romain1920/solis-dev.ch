@@ -695,12 +695,26 @@ a {
   pointer-events: none;
 }
 
+.portfolio-shell[data-transfer-device="mobile"] .portfolio-transfer-layer {
+  z-index: 9;
+}
+
 .portfolio-shell[data-transfer-device] .portfolio-list-column {
   z-index: 9;
 }
 
 .portfolio-shell[data-transfer-device] .portfolio-display-column {
   z-index: 8;
+}
+
+.portfolio-shell[data-transfer-device="web"] .studio-screen,
+.portfolio-shell[data-transfer-device="mobile"] .iphone-screen {
+  background: transparent;
+}
+
+.portfolio-shell[data-transfer-device="web"] .studio-screen-blank {
+  opacity: 0 !important;
+  visibility: hidden !important;
 }
 
 .portfolio-load-plane {
@@ -751,16 +765,35 @@ a {
 }
 
 .portfolio-load-plane[data-device="mobile"]::after {
-  display: none;
+  inset: auto;
+  left: 50%;
+  top: 2.6%;
+  z-index: 4;
+  width: 31%;
+  height: 3.7%;
+  border: 0;
+  border-radius: 999px;
+  background:
+    radial-gradient(circle at 82% 50%, rgba(14, 42, 74, 0.62) 0 7%, transparent 8%),
+    #050506;
+  box-shadow:
+    0 1px 2px rgba(255, 255, 255, 0.12),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.03);
+  opacity: 1;
+  transform: translateX(-50%);
 }
 
 .portfolio-load-plane-image {
   position: absolute;
-  inset: -2px;
+  left: -3px;
+  top: -3px;
+  right: auto;
+  bottom: auto;
   z-index: 1;
   display: block;
-  width: calc(100% + 4px);
-  height: calc(100% + 4px);
+  width: calc(100% + 6px);
+  height: calc(100% + 6px);
+  max-width: none;
   object-fit: cover;
   object-position: top center;
   transform-origin: center center;
@@ -769,7 +802,10 @@ a {
 }
 
 .portfolio-load-plane[data-device="mobile"] .portfolio-load-plane-image {
-  inset: 0;
+  left: 0;
+  top: 0;
+  right: auto;
+  bottom: auto;
   width: 100%;
   height: 100%;
 }
@@ -1061,11 +1097,15 @@ a {
 
 .studio-screen-shot {
   position: absolute;
-  inset: -2px;
+  left: -3px;
+  top: -3px;
+  right: auto;
+  bottom: auto;
   z-index: 1;
   display: block;
-  width: calc(100% + 4px);
-  height: calc(100% + 4px);
+  width: calc(100% + 6px);
+  height: calc(100% + 6px);
+  max-width: none;
   object-fit: cover;
   object-position: top center;
   transform-origin: center;

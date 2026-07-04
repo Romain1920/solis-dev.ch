@@ -517,8 +517,7 @@ function PortfolioSection() {
     const originRect = sourceLabel?.getBoundingClientRect() ?? sourceRect;
     const startX = originRect.right - sectionRect.left + 12;
     const startY = originRect.top + originRect.height / 2 - sectionRect.top;
-    const entryInset = project.type === "mobile" ? 18 : 26;
-    const centerX = screenRect.left + entryInset - sectionRect.left;
+    const centerX = screenRect.left + screenRect.width * 0.5 - sectionRect.left;
     const centerY = screenRect.top + screenRect.height * 0.5 - sectionRect.top;
     const vectorX = centerX - startX;
     const vectorY = centerY - startY;
@@ -531,13 +530,13 @@ function PortfolioSection() {
       `${centerX} ${centerY}`,
     ].join(" ");
     const previewSrc = project.type === "mobile" ? project.mobileSrc ?? project.src : project.src;
-    const targetOverscan = project.type === "mobile" ? 0 : 3;
+    const targetOverscan = project.type === "mobile" ? 2 : 3;
     const targetWidth = screenRect.width + targetOverscan * 2;
     const targetHeight = screenRect.height + targetOverscan * 2;
     const targetRadius =
-      project.type === "mobile"
-        ? targetStyles.borderRadius || `${Math.max(18, screenRect.width * 0.1)}px`
-        : `${Math.max(3, screenRect.width * 0.006)}px`;
+      targetStyles.borderRadius ||
+      targetStyles.borderTopLeftRadius ||
+      `${Math.max(3, screenRect.width * (project.type === "mobile" ? 0.1 : 0.006))}px`;
     const startWidth =
       project.type === "mobile"
         ? Math.min(screenRect.width * 0.18, 52)
@@ -553,11 +552,11 @@ function PortfolioSection() {
         ? `inset(0% 18% 0% 18% round ${targetRadius})`
         : "polygon(0% 46%, 72% 14%, 100% 50%, 72% 86%, 0% 54%)";
     const finalClipPath =
-      "polygon(0% 36%, 76% 12%, 100% 50%, 76% 88%, 0% 64%)";
+      project.type === "mobile"
+        ? `inset(0% round ${targetRadius})`
+        : "polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%, 0% 0%)";
     const startRotation = project.type === "mobile" ? 4 : -5;
     const startSkewX = project.type === "mobile" ? -8 : 10;
-    const endScaleX = project.type === "mobile" ? 0.34 : 0.44;
-    const endScaleY = project.type === "mobile" ? 0.2 : 0.2;
 
     return {
       id: `${project.id}-${Date.now()}`,
@@ -574,9 +573,6 @@ function PortfolioSection() {
       startHeight,
       startScaleX,
       startScaleY,
-      endScaleX,
-      endScaleY,
-      entryInset,
       screenWidth: screenRect.width,
       screenHeight: screenRect.height,
       targetWidth,
@@ -608,12 +604,14 @@ function PortfolioSection() {
 
     const startScaleX = transfer.startScaleX ?? transfer.startWidth / transfer.targetWidth;
     const startScaleY = transfer.startScaleY ?? transfer.startHeight / transfer.targetHeight;
-    const endScaleX = transfer.endScaleX ?? startScaleX;
-    const endScaleY = transfer.endScaleY ?? startScaleY;
-    const travelDuration = 0.82;
-    const carrierSettleAt = 0.54;
-    const commitAt = 0.76;
-    const planeOutAt = 0.77;
+    const travelDuration = 0.96;
+    const morphCompleteProgress = transfer.project.type === "mobile" ? 0.9 : 0.88;
+    const morphDuration = travelDuration * morphCompleteProgress;
+    const maskDuration =
+      transfer.project.type === "mobile" ? travelDuration * 0.72 : morphDuration;
+    const maskEase = transfer.project.type === "mobile" ? "power2.out" : "power2.in";
+    const commitAt = travelDuration - 0.015;
+    const planeOutAt = travelDuration + 0.02;
 
     gsap.set(plane, {
       autoAlpha: 1,
@@ -661,12 +659,21 @@ function PortfolioSection() {
       const liveTargetRect = liveTargetScreen?.getBoundingClientRect();
       const liveCenterX =
         liveSectionRect && liveTargetRect
-          ? liveTargetRect.left + transfer.entryInset - liveSectionRect.left
+          ? liveTargetRect.left + liveTargetRect.width * 0.5 - liveSectionRect.left
           : transfer.centerX;
       const liveCenterY =
         liveSectionRect && liveTargetRect
           ? liveTargetRect.top + liveTargetRect.height * 0.5 - liveSectionRect.top
           : transfer.centerY;
+      const liveOverscan = transfer.targetOverscan ?? 0;
+      const liveScaleX =
+        liveTargetRect && transfer.targetWidth
+          ? (liveTargetRect.width + liveOverscan * 2) / transfer.targetWidth
+          : 1;
+      const liveScaleY =
+        liveTargetRect && transfer.targetHeight
+          ? (liveTargetRect.height + liveOverscan * 2) / transfer.targetHeight
+          : 1;
       const vectorX = liveCenterX - transfer.startX;
       const distance = Math.max(120, Math.abs(vectorX));
       const direction = vectorX >= 0 ? 1 : -1;
@@ -676,9 +683,10 @@ function PortfolioSection() {
       const controlTwoY = liveCenterY - 34;
       const x = cubicPoint(transfer.startX, controlOneX, controlTwoX, liveCenterX, progress);
       const y = cubicPoint(transfer.startY, controlOneY, controlTwoY, liveCenterY, progress);
-      const scaleEase = 1 - Math.pow(1 - progress, 2);
-      const scaleX = gsap.utils.interpolate(startScaleX, endScaleX, scaleEase);
-      const scaleY = gsap.utils.interpolate(startScaleY, endScaleY, scaleEase);
+      const morphProgress = gsap.utils.clamp(0, 1, progress / morphCompleteProgress);
+      const scaleEase = morphProgress * morphProgress;
+      const scaleX = gsap.utils.interpolate(startScaleX, liveScaleX, scaleEase);
+      const scaleY = gsap.utils.interpolate(startScaleY, liveScaleY, scaleEase);
 
       gsap.set(plane, {
         x,
@@ -719,8 +727,8 @@ function PortfolioSection() {
           clipPath: transfer.finalClipPath,
           "--liquid-sheen-opacity": 0.18,
           "--liquid-edge-opacity": 0.08,
-          duration: carrierSettleAt,
-          ease: "power2.out",
+          duration: maskDuration,
+          ease: maskEase,
         },
         0
       )
