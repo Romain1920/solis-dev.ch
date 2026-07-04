@@ -46,8 +46,8 @@ const metrics = [
 ];
 
 const portfolioSegmentOptions = [
-  { id: "desktop", label: "Desktop" },
-  { id: "mobile", label: "Mobile" },
+  { id: "desktop", label: "Website References" },
+  { id: "mobile", label: "Mobile App References" },
 ];
 
 const defaultPortfolioSelection = {
@@ -437,11 +437,10 @@ function PortfolioSection() {
   const [connection, setConnection] = useState(null);
   const [injectingKey, setInjectingKey] = useState(null);
   const sectionRef = useRef(null);
-  const wheelRef = useRef(null);
+  const selectorRef = useRef(null);
   const monitorScreenRef = useRef(null);
   const phoneScreenRef = useRef(null);
   const timersRef = useRef([]);
-  const wheelTimerRef = useRef(0);
   const reducedMotion = useReducedMotion();
 
   const segmentProjects = useMemo(
@@ -478,7 +477,7 @@ function PortfolioSection() {
 
   const buildConnection = (sourceElement, project) => {
     const section = sectionRef.current;
-    const source = sourceElement ?? wheelRef.current;
+    const source = sourceElement ?? selectorRef.current;
     const targetScreen =
       project.type === "mobile"
         ? phoneScreenRef.current ?? monitorScreenRef.current
@@ -561,8 +560,15 @@ function PortfolioSection() {
     commitProjectSelection(project, event.currentTarget);
   };
 
-  const handleWheelSelect = (project) => {
-    commitProjectSelection(project, wheelRef.current);
+  const handleProjectStep = (direction) => {
+    const activeIndex = segmentProjects.findIndex((project) => project.id === selectedProject?.id);
+    const nextIndex = Math.min(
+      segmentProjects.length - 1,
+      Math.max(0, activeIndex + direction)
+    );
+    const nextProject = segmentProjects[nextIndex];
+
+    commitProjectSelection(nextProject, selectorRef.current);
   };
 
   const handleSegmentChange = (segment, event) => {
@@ -683,15 +689,14 @@ function PortfolioSection() {
             })}
           </div>
 
-          <ProjectWheel
+          <ProjectReferences
             activeSegment={activeSegment}
             projects={segmentProjects}
             selectedId={selectedProject?.id}
-            wheelRef={wheelRef}
-            wheelTimerRef={wheelTimerRef}
+            selectorRef={selectorRef}
             reducedMotion={reducedMotion}
             onSelect={handleProjectSelect}
-            onWheelSelect={handleWheelSelect}
+            onStep={handleProjectStep}
           />
         </div>
 
@@ -702,16 +707,16 @@ function PortfolioSection() {
               animate={
                 isMobileShowcase
                   ? {
-                      x: "-10%",
-                      y: -18,
-                      scale: 0.66,
-                      opacity: 0.58,
-                      filter: "blur(0.8px) saturate(0.9)",
+                      x: "-14%",
+                      y: -14,
+                      scale: 0.72,
+                      opacity: 0.42,
+                      filter: "blur(0.9px) saturate(0.88)",
                     }
                   : {
                       x: "0%",
                       y: 0,
-                      scale: 1,
+                      scale: 1.04,
                       opacity: 1,
                       filter: "blur(0px) saturate(1)",
                     }
@@ -721,28 +726,39 @@ function PortfolioSection() {
               <div className="studio-display-stage">
                 <div className="studio-screen" ref={monitorScreenRef}>
                   <AnimatePresence mode="wait">
-                    <motion.img
-                      className="studio-screen-shot"
-                      key={displayProject.id}
-                      src={displayProject.src}
-                      alt={`Aperçu du projet ${displayProject.title}`}
-                      initial={
-                        reducedMotion
-                          ? false
-                          : { opacity: 0, scale: 1.035, filter: "blur(10px)" }
-                      }
-                      animate={{
-                        opacity: isMobileShowcase ? 0.72 : 1,
-                        scale: 1,
-                        filter: isMobileShowcase ? "blur(1.2px)" : "blur(0px)",
-                      }}
-                      exit={
-                        reducedMotion
-                          ? { opacity: 0 }
-                          : { opacity: 0, scale: 0.985, filter: "blur(8px)" }
-                      }
-                      transition={{ duration: 0.48, ease: [0.22, 1, 0.36, 1] }}
-                    />
+                    {isMobileShowcase || displayProject?.type !== "web" ? (
+                      <motion.div
+                        className="studio-screen-blank"
+                        key={`studio-blank-${activeSegment}`}
+                        initial={reducedMotion ? false : { opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        transition={{ duration: 0.34, ease: [0.22, 1, 0.36, 1] }}
+                      />
+                    ) : (
+                      <motion.img
+                        className="studio-screen-shot"
+                        key={displayProject.id}
+                        src={displayProject.src}
+                        alt={`Aperçu du projet ${displayProject.title}`}
+                        initial={
+                          reducedMotion
+                            ? false
+                            : { opacity: 0, scale: 1.035, filter: "blur(10px)" }
+                        }
+                        animate={{
+                          opacity: 1,
+                          scale: 1,
+                          filter: "blur(0px)",
+                        }}
+                        exit={
+                          reducedMotion
+                            ? { opacity: 0 }
+                            : { opacity: 0, scale: 0.985, filter: "blur(8px)" }
+                        }
+                        transition={{ duration: 0.48, ease: [0.22, 1, 0.36, 1] }}
+                      />
+                    )}
                   </AnimatePresence>
 
                   <AnimatePresence>
@@ -774,9 +790,9 @@ function PortfolioSection() {
               animate={
                 isMobileShowcase
                   ? {
-                      x: "0%",
-                      y: "0%",
-                      scale: 1,
+                      x: "-4%",
+                      y: "-2%",
+                      scale: 1.1,
                       opacity: 1,
                       filter: "blur(0px)",
                     }
@@ -842,195 +858,191 @@ function PortfolioSection() {
               </div>
             </motion.div>
           </div>
-
-          <AnimatePresence mode="wait">
-            <motion.article
-              className="portfolio-info"
-              key={displayProject.id}
-              initial={reducedMotion ? false : { opacity: 0, y: 18, filter: "blur(8px)" }}
-              animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-              exit={
-                reducedMotion
-                  ? { opacity: 0 }
-                  : { opacity: 0, y: -12, filter: "blur(8px)" }
-              }
-              transition={{ duration: 0.42, ease: [0.22, 1, 0.36, 1] }}
-            >
-              <span className="portfolio-category">{displayProject.category}</span>
-              <h3>{displayProject.title}</h3>
-              <p>{displayProject.description}</p>
-              <dl className="portfolio-meta">
-                <div>
-                  <dt>Client</dt>
-                  <dd>{displayProject.client}</dd>
-                </div>
-              </dl>
-              <blockquote className="portfolio-testimonial">
-                “{displayProject.testimonial}”
-              </blockquote>
-              <div className="portfolio-tech-list" aria-label="Technologies utilisees">
-                {displayProject.technologies.map((technology, index) => (
-                  <motion.span
-                    className="portfolio-tech-chip"
-                    key={technology}
-                    initial={reducedMotion ? false : { opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{
-                      duration: 0.34,
-                      ease: [0.22, 1, 0.36, 1],
-                      delay: reducedMotion ? 0 : index * 0.035,
-                    }}
-                  >
-                    {technology}
-                  </motion.span>
-                ))}
-              </div>
-            </motion.article>
-          </AnimatePresence>
         </div>
       </div>
     </section>
   );
 }
 
-function ProjectWheel({
+function ProjectReferences({
   activeSegment,
-  projects: wheelProjects,
+  projects: referenceProjects,
   selectedId,
-  wheelRef,
-  wheelTimerRef,
+  selectorRef,
   reducedMotion,
   onSelect,
-  onWheelSelect,
+  onStep,
 }) {
+  const listRef = useRef(null);
+  const activeItemRef = useRef(null);
   const activeIndex = Math.max(
     0,
-    wheelProjects.findIndex((project) => project.id === selectedId)
+    referenceProjects.findIndex((project) => project.id === selectedId)
   );
+  const canGoPrevious = activeIndex > 0;
+  const canGoNext = activeIndex < referenceProjects.length - 1;
 
-  const selectByOffset = (offset) => {
-    if (wheelProjects.length < 2) {
-      return;
-    }
-
-    const nextIndex = (activeIndex + offset + wheelProjects.length) % wheelProjects.length;
-    onWheelSelect(wheelProjects[nextIndex]);
-  };
-
-  const handleWheel = (event) => {
-    event.preventDefault();
-    event.stopPropagation();
-
-    const now = window.performance.now();
-    if (now - wheelTimerRef.current < 260) {
-      return;
-    }
-
-    wheelTimerRef.current = now;
-    selectByOffset(event.deltaY > 0 ? 1 : -1);
-  };
+  useEffect(() => {
+    activeItemRef.current?.scrollIntoView({
+      behavior: reducedMotion ? "auto" : "smooth",
+      block: "center",
+    });
+  }, [activeSegment, reducedMotion, selectedId]);
 
   const handleKeyDown = (event) => {
     if (event.key === "ArrowDown") {
       event.preventDefault();
-      selectByOffset(1);
+      onStep(1);
     }
 
     if (event.key === "ArrowUp") {
       event.preventDefault();
-      selectByOffset(-1);
+      onStep(-1);
     }
 
     if (event.key === "Home") {
       event.preventDefault();
-      onWheelSelect(wheelProjects[0]);
+      onSelect(referenceProjects[0], event);
     }
 
     if (event.key === "End") {
       event.preventDefault();
-      onWheelSelect(wheelProjects[wheelProjects.length - 1]);
+      onSelect(referenceProjects[referenceProjects.length - 1], event);
     }
   };
 
   return (
     <nav
-      className="portfolio-wheel"
-      ref={wheelRef}
-      aria-label={`Projets ${activeSegment === "desktop" ? "desktop" : "mobile"}`}
-      onWheel={handleWheel}
+      className="portfolio-reference-selector"
+      ref={selectorRef}
+      aria-label={
+        activeSegment === "desktop"
+          ? "Website references"
+          : "Mobile app references"
+      }
       onKeyDown={handleKeyDown}
     >
-      <motion.div
-        className="portfolio-wheel-stack"
-        key={activeSegment}
-        initial={reducedMotion ? false : { opacity: 0, y: 12 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.34, ease: [0.22, 1, 0.36, 1] }}
+      <button
+        className="portfolio-reference-arrow portfolio-reference-arrow--up"
+        type="button"
+        aria-label="Projet précédent"
+        disabled={!canGoPrevious}
+        onClick={() => onStep(-1)}
       >
-        {wheelProjects.map((project, index) => {
-          const offset = getWheelOffset(index, activeIndex, wheelProjects.length);
-          const absoluteOffset = Math.abs(offset);
-          const isSelected = project.id === selectedId;
-          const isVisible = absoluteOffset <= 2;
-          const itemOpacity = isSelected ? 1 : absoluteOffset === 1 ? 0.52 : 0.18;
+        <span aria-hidden="true" />
+      </button>
 
-          return (
-            <motion.button
-              className="portfolio-wheel-item"
-              type="button"
-              key={project.id}
-              aria-pressed={isSelected}
-              tabIndex={isVisible ? 0 : -1}
-              onClick={(event) => onSelect(project, event)}
-              style={{ pointerEvents: isVisible ? "auto" : "none" }}
-              animate={
-                reducedMotion
-                  ? {
-                      opacity: isSelected ? 1 : 0.34,
-                      y: offset * 42,
-                      scale: isSelected ? 1 : 0.94,
-                    }
-                  : {
-                      opacity: isVisible ? itemOpacity : 0,
-                      y: offset * 58,
-                      z: -absoluteOffset * 58,
-                      rotateX: offset * -24,
-                      scale: isSelected ? 1 : 1 - absoluteOffset * 0.07,
-                      filter: isSelected ? "blur(0px)" : "blur(0.45px)",
-                    }
-              }
-              whileHover={
-                reducedMotion || !isVisible
-                  ? undefined
-                  : { opacity: isSelected ? 1 : 0.72, scale: isSelected ? 1.02 : 0.93 }
-              }
-              transition={
-                reducedMotion
-                  ? { duration: 0 }
-                  : { type: "spring", stiffness: 190, damping: 24, mass: 0.9 }
-              }
-            >
-              <span>{project.name}</span>
-            </motion.button>
-          );
-        })}
-      </motion.div>
+      <div className="portfolio-reference-viewport" ref={listRef}>
+        <motion.div
+          className="portfolio-reference-list"
+          key={activeSegment}
+          initial={reducedMotion ? false : { opacity: 0, y: 16 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.36, ease: [0.22, 1, 0.36, 1] }}
+        >
+          {referenceProjects.map((project) => {
+            const isSelected = project.id === selectedId;
+
+            return (
+              <motion.article
+                className="portfolio-reference-item"
+                data-active={isSelected ? "true" : "false"}
+                key={project.id}
+                ref={isSelected ? activeItemRef : null}
+                layout="position"
+                transition={{
+                  type: "spring",
+                  stiffness: 210,
+                  damping: 28,
+                  mass: 0.86,
+                }}
+              >
+                <button
+                  className="portfolio-reference-button"
+                  type="button"
+                  aria-expanded={isSelected}
+                  aria-controls={`portfolio-reference-panel-${project.id}`}
+                  onClick={(event) => onSelect(project, event)}
+                >
+                  <span className="portfolio-reference-icon" aria-hidden="true" />
+                  <span>{project.name}</span>
+                </button>
+
+                <AnimatePresence initial={false}>
+                  {isSelected ? (
+                    <motion.div
+                      className="portfolio-reference-panel"
+                      id={`portfolio-reference-panel-${project.id}`}
+                      initial={{ height: 0, opacity: 0 }}
+                      animate={{ height: "auto", opacity: 1 }}
+                      exit={{ height: 0, opacity: 0 }}
+                      transition={{
+                        height: { duration: 0.48, ease: [0.4, 0, 0.2, 1] },
+                        opacity: { duration: 0.26, ease: [0.22, 1, 0.36, 1] },
+                      }}
+                    >
+                      <motion.div
+                        className="portfolio-reference-panel-inner"
+                        initial={reducedMotion ? false : { opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={reducedMotion ? { opacity: 0 } : { opacity: 0, y: -6 }}
+                        transition={{ duration: 0.34, ease: [0.22, 1, 0.36, 1] }}
+                      >
+                        <span className="portfolio-reference-category">
+                          {project.category}
+                        </span>
+                        <h3>{project.title}</h3>
+                        <p>{project.description}</p>
+                        <dl className="portfolio-reference-meta">
+                          <div>
+                            <dt>Client</dt>
+                            <dd>{project.client}</dd>
+                          </div>
+                        </dl>
+                        <blockquote className="portfolio-reference-testimonial">
+                          “{project.testimonial}”
+                        </blockquote>
+                        <div
+                          className="portfolio-tech-list portfolio-reference-tech-list"
+                          aria-label="Technologies utilisees"
+                        >
+                          {project.technologies.map((technology, index) => (
+                            <motion.span
+                              className="portfolio-tech-chip portfolio-reference-tech-chip"
+                              key={technology}
+                              initial={reducedMotion ? false : { opacity: 0, y: 8 }}
+                              animate={{ opacity: 1, y: 0 }}
+                              transition={{
+                                duration: 0.28,
+                                ease: [0.22, 1, 0.36, 1],
+                                delay: reducedMotion ? 0 : index * 0.026,
+                              }}
+                            >
+                              {technology}
+                            </motion.span>
+                          ))}
+                        </div>
+                      </motion.div>
+                    </motion.div>
+                  ) : null}
+                </AnimatePresence>
+              </motion.article>
+            );
+          })}
+        </motion.div>
+      </div>
+
+      <button
+        className="portfolio-reference-arrow portfolio-reference-arrow--down"
+        type="button"
+        aria-label="Projet suivant"
+        disabled={!canGoNext}
+        onClick={() => onStep(1)}
+      >
+        <span aria-hidden="true" />
+      </button>
     </nav>
   );
-}
-
-function getWheelOffset(index, activeIndex, length) {
-  let offset = index - activeIndex;
-
-  if (offset > length / 2) {
-    offset -= length;
-  }
-
-  if (offset < -length / 2) {
-    offset += length;
-  }
-
-  return offset;
 }
 
 function MetricVisual({ type }) {
