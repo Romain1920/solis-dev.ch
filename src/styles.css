@@ -159,10 +159,11 @@ a {
   justify-self: center;
   display: flex;
   align-items: center;
-  gap: clamp(28px, 3.1vw, 54px);
+  gap: clamp(16px, 2.15vw, 32px);
   color: #111111;
-  font-size: 0.95rem;
+  font-size: clamp(0.82rem, 0.92vw, 0.95rem);
   font-weight: 500;
+  white-space: nowrap;
 }
 
 .nav-links > a,
@@ -194,18 +195,28 @@ a {
 .nav-dropdown {
   position: absolute;
   left: 50%;
-  top: calc(100% + 12px);
+  top: calc(100% + 8px);
   z-index: 2;
-  width: min(1150px, calc(100vw - 64px));
+  width: min(620px, calc(100vw - 64px));
   color: #050505;
+  white-space: normal;
   opacity: 0;
   visibility: hidden;
   pointer-events: none;
-  transform: translate3d(-50%, -10px, 0);
+  transform: translate3d(-50%, -6px, 0);
   transition:
-    opacity 180ms ease,
-    visibility 180ms ease,
-    transform 220ms cubic-bezier(0.2, 0, 0, 1);
+    opacity 200ms ease,
+    visibility 0ms linear 200ms,
+    transform 210ms cubic-bezier(0.2, 0, 0, 1);
+}
+
+.nav-dropdown::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: -12px;
+  height: 12px;
 }
 
 .nav-menu:hover .nav-dropdown,
@@ -214,30 +225,19 @@ a {
   visibility: visible;
   pointer-events: auto;
   transform: translate3d(-50%, 0, 0);
+  transition-delay: 0ms;
 }
 
 .nav-dropdown-inner {
-  display: grid;
-  grid-template-columns: 178px minmax(0, 1fr);
-  gap: clamp(32px, 5vw, 76px);
-  align-items: start;
-  border: 1px solid rgba(10, 12, 12, 0.06);
-  border-radius: 0 0 22px 22px;
-  background: rgba(255, 255, 255, 0.96);
-  box-shadow: 0 28px 68px rgba(20, 26, 31, 0.14);
-  backdrop-filter: blur(22px);
-  padding: clamp(28px, 3vw, 42px) clamp(30px, 4vw, 54px)
-    clamp(34px, 4vw, 54px);
-}
-
-.nav-dropdown-brand {
-  width: 150px;
-  padding-top: 3px;
-}
-
-.nav-dropdown-brand img {
-  width: 100%;
-  height: auto;
+  overflow: hidden;
+  border: 1px solid rgba(10, 12, 12, 0.075);
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.88);
+  box-shadow:
+    0 18px 44px rgba(20, 26, 31, 0.09),
+    inset 0 1px 0 rgba(255, 255, 255, 0.72);
+  backdrop-filter: blur(18px);
+  padding: 20px 24px 22px;
 }
 
 .nav-dropdown-content {
@@ -245,64 +245,68 @@ a {
 }
 
 .nav-dropdown-kicker {
-  margin: 0 0 22px;
-  color: rgba(5, 5, 5, 0.62);
-  font-size: 1.02rem;
-  font-weight: 500;
+  margin: 0 0 12px;
+  color: rgba(5, 5, 5, 0.5);
+  font-family: "SF Pro Display", "SF Pro Text", -apple-system, BlinkMacSystemFont,
+    "Segoe UI", sans-serif;
+  font-size: 0.78rem;
+  font-weight: 650;
   line-height: 1;
+  letter-spacing: 0;
 }
 
 .nav-dropdown-links {
   display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: clamp(18px, 2.2vw, 34px);
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px 12px;
 }
 
 .nav-dropdown-link {
   min-width: 0;
   display: grid;
-  gap: 7px;
+  gap: 5px;
   align-content: start;
-  border-radius: 8px;
-  padding: 4px 0;
+  border-radius: 10px;
+  padding: 11px 12px;
   transition:
+    background 160ms ease,
     color 160ms ease,
     transform 180ms ease;
 }
 
-.nav-dropdown-link span {
-  color: rgba(5, 5, 5, 0.52);
-  font-size: 0.86rem;
-  font-weight: 500;
-  line-height: 1.1;
-}
-
 .nav-dropdown-link strong {
   color: #050505;
-  font-size: clamp(1.82rem, 2.9vw, 2.65rem);
-  font-weight: 700;
-  line-height: 0.96;
+  font-family: "SF Pro Display", "SF Pro Text", -apple-system, BlinkMacSystemFont,
+    "Segoe UI", sans-serif;
+  font-size: 0.98rem;
+  font-weight: 650;
+  line-height: 1.12;
   letter-spacing: 0;
+  transition: color 160ms ease;
 }
 
 .nav-dropdown-link small {
-  max-width: 24ch;
-  color: rgba(5, 5, 5, 0.62);
-  font-size: 0.94rem;
+  display: block;
+  min-width: 0;
+  max-width: 28ch;
+  color: rgba(5, 5, 5, 0.56);
+  font-size: 0.82rem;
   font-weight: 500;
   line-height: 1.28;
+  overflow-wrap: break-word;
 }
 
 .nav-dropdown-link:hover,
 .nav-dropdown-link:focus-visible {
+  background: rgba(238, 124, 66, 0.06);
   color: var(--orange);
-  transform: translate3d(0, -2px, 0);
+  transform: translate3d(0, -1px, 0);
   outline: none;
 }
 
 .nav-dropdown-link:hover strong,
 .nav-dropdown-link:focus-visible strong {
-  color: var(--orange);
+  color: #050505;
 }
 
 .nav-cta {
@@ -1461,30 +1465,25 @@ a {
   }
 
   .nav-links {
-    gap: 26px;
+    gap: clamp(13px, 2vw, 24px);
+    font-size: clamp(0.76rem, 1.4vw, 0.9rem);
   }
 
   .nav-dropdown {
-    width: calc(100vw - 32px);
+    width: min(600px, calc(100vw - 32px));
   }
 
   .nav-dropdown-inner {
-    grid-template-columns: 128px minmax(0, 1fr);
-    gap: 28px;
-    padding: 28px;
-  }
-
-  .nav-dropdown-brand {
-    width: 118px;
+    padding: 18px 22px 20px;
   }
 
   .nav-dropdown-links {
     grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 22px 28px;
+    gap: 8px 10px;
   }
 
   .nav-dropdown-link strong {
-    font-size: clamp(1.55rem, 3.8vw, 2.15rem);
+    font-size: 0.96rem;
   }
 
   .hero-section {

@@ -19,28 +19,20 @@ const contactHref =
 const homeMenuItems = [
   {
     href: "#accueil",
-    eyebrow: "Introduction",
-    label: "Accueil",
+    label: "Introduction",
     description: "Le message principal et la demande de maquette offerte.",
   },
   {
-    href: "#kpis",
-    eyebrow: "Preuves",
-    label: "Chiffres clés",
-    description: "Un aperçu rapide de l'expérience, des réalisations et des résultats.",
-  },
-  {
     href: "#projets",
-    eyebrow: "Références",
     label: "Portfolio",
-    description: "Les sites web, apps mobiles et logiciels métiers réalisés.",
+    description: "Une sélection de références réalisées.",
   },
-  {
-    href: `${contactHref}&body=Source%3A%20menu%20accueil`,
-    eyebrow: "Démarrer",
-    label: "Contact",
-    description: "Un premier échange pour cadrer le projet et la maquette.",
-  },
+];
+
+const serviceNavItems = [
+  { href: "#projets", label: "Sites internet sur mesure" },
+  { href: "#projets", label: "Applications mobile" },
+  { href: "#projets", label: "Logiciels métier" },
 ];
 
 const screenshotIntervalMs = 1500;
@@ -189,15 +181,11 @@ function Header() {
             </button>
             <div className="nav-dropdown" aria-label="Menu Accueil">
               <div className="nav-dropdown-inner">
-                <div className="nav-dropdown-brand" aria-hidden="true">
-                  <img src={solisLogoNav} alt="" />
-                </div>
                 <div className="nav-dropdown-content">
                   <p className="nav-dropdown-kicker">Accueil</p>
                   <div className="nav-dropdown-links">
                     {homeMenuItems.map((item) => (
                       <a key={item.href} href={item.href} className="nav-dropdown-link">
-                        <span>{item.eyebrow}</span>
                         <strong>{item.label}</strong>
                         <small>{item.description}</small>
                       </a>
@@ -207,7 +195,11 @@ function Header() {
               </div>
             </div>
           </div>
-          <a href="#projets">Projets</a>
+          {serviceNavItems.map((item) => (
+            <a key={item.label} href={item.href}>
+              {item.label}
+            </a>
+          ))}
         </div>
 
         <a
