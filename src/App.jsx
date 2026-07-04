@@ -7,7 +7,6 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 import ReactLenis from "lenis/react";
 import iphoneFrameImage from "../assets/iphone-17-black-portrait.png";
 import macBookFrameImage from "../assets/macbook-pro-m5.png";
-import solisLogoDark from "../assets/solis-logo-dark.png";
 import solisLogoNav from "../assets/solis-logo-nav.png";
 import studioDisplayImage from "../assets/studio-display-light.png";
 import { portfolioProjects, projects } from "./data/projects";
@@ -1344,7 +1343,7 @@ function Footer() {
       <div className="footer-shell">
         <div className="footer-brand">
           <a className="footer-logo" href="#accueil" aria-label="SOLIS">
-            <img src={solisLogoDark} alt="" aria-hidden="true" />
+            <img src={solisLogoNav} alt="" aria-hidden="true" />
           </a>
           <p id="footer-title" className="footer-description">
             SOLIS Développement Informatique est une marque suisse, propriété de
