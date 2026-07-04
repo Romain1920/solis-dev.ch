@@ -7,6 +7,7 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 import ReactLenis from "lenis/react";
 import iphoneFrameImage from "../assets/iphone-17-black-portrait.png";
 import macBookFrameImage from "../assets/macbook-pro-m5.png";
+import solisLogoNav from "../assets/solis-logo-nav.png";
 import studioDisplayImage from "../assets/studio-display-light.png";
 import { portfolioProjects, projects } from "./data/projects";
 
@@ -15,9 +16,31 @@ gsap.registerPlugin(useGSAP, ScrollTrigger);
 const contactHref =
   "mailto:info@solis.li?subject=Maquette%20interactive%20offerte";
 
-const navItems = [
-  { href: "#accueil", label: "Accueil" },
-  { href: "#projets", label: "Projets" },
+const homeMenuItems = [
+  {
+    href: "#accueil",
+    eyebrow: "Introduction",
+    label: "Accueil",
+    description: "Le message principal et la demande de maquette offerte.",
+  },
+  {
+    href: "#kpis",
+    eyebrow: "Preuves",
+    label: "Chiffres clés",
+    description: "Un aperçu rapide de l'expérience, des réalisations et des résultats.",
+  },
+  {
+    href: "#projets",
+    eyebrow: "Références",
+    label: "Portfolio",
+    description: "Les sites web, apps mobiles et logiciels métiers réalisés.",
+  },
+  {
+    href: `${contactHref}&body=Source%3A%20menu%20accueil`,
+    eyebrow: "Démarrer",
+    label: "Contact",
+    description: "Un premier échange pour cadrer le projet et la maquette.",
+  },
 ];
 
 const screenshotIntervalMs = 1500;
@@ -156,15 +179,35 @@ function Header() {
     <header className="site-header">
       <nav className="nav-shell" aria-label="Navigation principale">
         <a className="brand-mark" href="#accueil" aria-label="SOLIS Developpement">
-          <SolisMark />
+          <img src={solisLogoNav} alt="" aria-hidden="true" />
         </a>
 
         <div className="nav-links" aria-label="Sections">
-          {navItems.map((item) => (
-            <a key={item.href} href={item.href}>
-              {item.label}
-            </a>
-          ))}
+          <div className="nav-menu">
+            <button className="nav-menu-trigger" type="button" aria-haspopup="true">
+              Accueil
+            </button>
+            <div className="nav-dropdown" aria-label="Menu Accueil">
+              <div className="nav-dropdown-inner">
+                <div className="nav-dropdown-brand" aria-hidden="true">
+                  <img src={solisLogoNav} alt="" />
+                </div>
+                <div className="nav-dropdown-content">
+                  <p className="nav-dropdown-kicker">Accueil</p>
+                  <div className="nav-dropdown-links">
+                    {homeMenuItems.map((item) => (
+                      <a key={item.href} href={item.href} className="nav-dropdown-link">
+                        <span>{item.eyebrow}</span>
+                        <strong>{item.label}</strong>
+                        <small>{item.description}</small>
+                      </a>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <a href="#projets">Projets</a>
         </div>
 
         <a
@@ -199,6 +242,7 @@ function Hero() {
           if (arrowPath) {
             const length = arrowPath.getTotalLength();
             gsap.set(arrowPath, {
+              autoAlpha: reduceMotion ? 1 : 0,
               strokeDasharray: length,
               strokeDashoffset: reduceMotion ? 0 : length,
             });
@@ -232,6 +276,7 @@ function Hero() {
             .to(
               arrowPath,
               {
+                autoAlpha: 1,
                 strokeDashoffset: 0,
                 duration: 0.82,
                 ease: "power1.inOut",
@@ -1316,27 +1361,6 @@ function HandDrawnArrow() {
         strokeLinecap="round"
         strokeLinejoin="round"
         strokeWidth="16"
-      />
-    </svg>
-  );
-}
-
-function SolisMark() {
-  return (
-    <svg viewBox="0 0 116 64" role="img" aria-label="SOLIS">
-      <path
-        d="M18 42 C28 25 45 16 60 16 C78 16 94 27 102 42"
-        fill="none"
-        stroke="currentColor"
-        strokeLinecap="round"
-        strokeWidth="5"
-      />
-      <path
-        d="M15 47 H105 M60 8 V1 M38 14 L31 4 M82 14 L89 4 M25 29 L13 22 M95 29 L107 22"
-        fill="none"
-        stroke="currentColor"
-        strokeLinecap="round"
-        strokeWidth="5"
       />
     </svg>
   );
