@@ -18,14 +18,8 @@ const contactHref =
 
 const homeMenuItems = [
   {
-    href: "#accueil",
-    label: "Introduction",
-    description: "Le message principal et la demande de maquette offerte.",
-  },
-  {
     href: "#projets",
     label: "Portfolio",
-    description: "Une sélection de références réalisées.",
   },
 ];
 
@@ -176,22 +170,20 @@ function Header() {
 
         <div className="nav-links" aria-label="Sections">
           <div className="nav-menu">
-            <button className="nav-menu-trigger" type="button" aria-haspopup="true">
+            <button
+              className="nav-menu-trigger nav-link-active"
+              type="button"
+              aria-haspopup="true"
+            >
               Accueil
             </button>
             <div className="nav-dropdown" aria-label="Menu Accueil">
               <div className="nav-dropdown-inner">
-                <div className="nav-dropdown-content">
-                  <p className="nav-dropdown-kicker">Accueil</p>
-                  <div className="nav-dropdown-links">
-                    {homeMenuItems.map((item) => (
-                      <a key={item.href} href={item.href} className="nav-dropdown-link">
-                        <strong>{item.label}</strong>
-                        <small>{item.description}</small>
-                      </a>
-                    ))}
-                  </div>
-                </div>
+                {homeMenuItems.map((item) => (
+                  <a key={item.href} href={item.href} className="nav-dropdown-link">
+                    {item.label}
+                  </a>
+                ))}
               </div>
             </div>
           </div>
