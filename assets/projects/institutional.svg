@@ -18,15 +18,15 @@
   <path d="M0 686 C260 590 438 660 640 556 C824 460 976 560 1128 486 C1292 408 1398 492 1600 428 L1600 1000 L0 1000 Z" fill="#ffffff" opacity="0.66"/>
   <g font-family="Inter, Helvetica, Arial, sans-serif" fill="#171a18">
     <text x="120" y="132" font-size="26" font-weight="780">COMMUNE DE L’ORNE</text>
-    <text x="968" y="132" font-size="18" font-weight="650">Actualites</text>
-    <text x="1114" y="132" font-size="18" font-weight="650">Demarches</text>
+    <text x="968" y="132" font-size="18" font-weight="650">Actualités</text>
+    <text x="1114" y="132" font-size="18" font-weight="650">Démarches</text>
     <text x="1270" y="132" font-size="18" font-weight="650">Territoire</text>
     <rect x="1386" y="100" width="110" height="48" rx="24" fill="#171a18"/>
     <text x="1416" y="131" fill="#ffffff" font-size="17" font-weight="700">Contact</text>
     <text x="120" y="364" font-size="86" font-weight="760">Un territoire clair,</text>
-    <text x="120" y="456" font-size="86" font-weight="760">simple a comprendre.</text>
+    <text x="120" y="456" font-size="86" font-weight="760">simple à comprendre.</text>
   </g>
-  <text x="124" y="532" fill="#65706b" font-family="Inter, Helvetica, Arial, sans-serif" font-size="28">Informations publiques, services en ligne et recits locaux</text>
+  <text x="124" y="532" fill="#65706b" font-family="Inter, Helvetica, Arial, sans-serif" font-size="28">Informations publiques, services en ligne et récits locaux</text>
   <text x="124" y="574" fill="#65706b" font-family="Inter, Helvetica, Arial, sans-serif" font-size="28">dans une interface calme et accessible.</text>
   <g filter="url(#shadow)">
     <rect x="976" y="374" width="380" height="310" rx="34" fill="#ffffff" opacity="0.92"/>

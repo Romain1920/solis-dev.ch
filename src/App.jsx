@@ -167,7 +167,7 @@ function Header() {
   return (
     <header className="site-header">
       <nav className="nav-shell" aria-label="Navigation principale">
-        <a className="brand-mark" href="#accueil" aria-label="SOLIS Developpement">
+        <a className="brand-mark" href="#accueil" aria-label="SOLIS Développement">
           <img src={solisLogoNav} alt="" aria-hidden="true" />
         </a>
 
@@ -1087,7 +1087,7 @@ function PortfolioCategoryVisualSelector({ activeSegment, reducedMotion, onChang
   return (
     <nav
       className="portfolio-category-selector"
-      aria-label="Categories de references"
+      aria-label="Catégories de références"
     >
       {portfolioCategoryOptions.map((category) => {
         const isActive = category.id === activeSegment;
@@ -1169,10 +1169,10 @@ function ProjectReferences({
       ref={selectorRef}
       aria-label={
         activeSegment === "desktop"
-          ? "Website references"
+          ? "Références sites web"
           : activeSegment === "mobile"
-            ? "Mobile app references"
-            : "Business software references"
+            ? "Références applications mobiles"
+            : "Références logiciels métiers"
       }
     >
       <div className="portfolio-reference-viewport" ref={listRef}>

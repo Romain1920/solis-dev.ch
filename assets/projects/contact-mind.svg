@@ -16,11 +16,11 @@
     <text x="1014" y="146" font-size="18" font-weight="650">Cartes</text>
     <text x="1150" y="146" font-size="18" font-weight="650">Relations</text>
     <text x="1328" y="146" font-size="18" font-weight="650">App</text>
-    <text x="146" y="348" font-size="78" font-weight="780">Votre reseau</text>
+    <text x="146" y="348" font-size="78" font-weight="780">Votre réseau</text>
     <text x="146" y="432" font-size="78" font-weight="780">devient visible.</text>
   </g>
   <text x="150" y="518" fill="#707682" font-family="Inter, Helvetica, Arial, sans-serif" font-size="28">Application mobile pour cartographier son carnet de contacts</text>
-  <text x="150" y="560" fill="#707682" font-family="Inter, Helvetica, Arial, sans-serif" font-size="28">et organiser les liens de maniere visuelle.</text>
+  <text x="150" y="560" fill="#707682" font-family="Inter, Helvetica, Arial, sans-serif" font-size="28">et organiser les liens de manière visuelle.</text>
   <g filter="url(#shadow)">
     <rect x="842" y="226" width="472" height="594" rx="40" fill="#1e2129"/>
     <circle cx="1078" cy="522" r="70" fill="#ee7c42"/>

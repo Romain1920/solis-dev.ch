@@ -18,10 +18,10 @@
     <text x="1252" y="142" font-size="18" font-weight="650">Approche</text>
     <text x="1390" y="142" font-size="18" font-weight="650">Contact</text>
     <text x="136" y="342" font-size="76" font-weight="760">Architecture sobre,</text>
-    <text x="136" y="424" font-size="76" font-weight="760">detaillee, durable.</text>
+    <text x="136" y="424" font-size="76" font-weight="760">détaillée, durable.</text>
   </g>
-  <text x="140" y="510" fill="#68706b" font-family="Inter, Helvetica, Arial, sans-serif" font-size="27">Portfolio editorial, fiches projets et appels a projets dans une</text>
-  <text x="140" y="550" fill="#68706b" font-family="Inter, Helvetica, Arial, sans-serif" font-size="27">experience silencieuse qui laisse respirer les realisations.</text>
+  <text x="140" y="510" fill="#68706b" font-family="Inter, Helvetica, Arial, sans-serif" font-size="27">Portfolio éditorial, fiches projets et appels à projets dans une</text>
+  <text x="140" y="550" fill="#68706b" font-family="Inter, Helvetica, Arial, sans-serif" font-size="27">expérience silencieuse qui laisse respirer les réalisations.</text>
   <g filter="url(#shadow)">
     <rect x="772" y="250" width="540" height="560" rx="30" fill="#d8ded7"/>
     <rect x="820" y="304" width="444" height="290" rx="18" fill="#bfc9c1"/>

@@ -17,14 +17,14 @@
   <rect x="96" y="78" width="1408" height="844" rx="42" fill="#ffffff" opacity="0.86"/>
   <g fill="#18191a" font-family="Inter, Helvetica, Arial, sans-serif">
     <text x="152" y="148" font-size="28" font-weight="800">Popup Challenge</text>
-    <text x="1088" y="148" font-size="19" font-weight="650">Quetes</text>
+    <text x="1088" y="148" font-size="19" font-weight="650">Quêtes</text>
     <text x="1224" y="148" font-size="19" font-weight="650">CMS</text>
     <text x="1332" y="148" font-size="19" font-weight="650">Rewards</text>
-    <text x="152" y="358" font-size="82" font-weight="760">Des randonnees</text>
-    <text x="152" y="448" font-size="82" font-weight="760">en quetes.</text>
+    <text x="152" y="358" font-size="82" font-weight="760">Des randonnées</text>
+    <text x="152" y="448" font-size="82" font-weight="760">en quêtes.</text>
   </g>
   <text x="156" y="538" fill="#68737d" font-family="Inter, Helvetica, Arial, sans-serif" font-size="29">Application mobile et CMS pour transformer les parcours</text>
-  <text x="156" y="580" fill="#68737d" font-family="Inter, Helvetica, Arial, sans-serif" font-size="29">touristiques en challenges avec QR codes et recompenses.</text>
+  <text x="156" y="580" fill="#68737d" font-family="Inter, Helvetica, Arial, sans-serif" font-size="29">touristiques en challenges avec QR codes et récompenses.</text>
   <g filter="url(#shadow)">
     <rect x="930" y="240" width="272" height="552" rx="54" fill="url(#phone)"/>
     <rect x="950" y="266" width="232" height="500" rx="38" fill="#f7f9fb"/>

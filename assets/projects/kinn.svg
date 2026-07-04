@@ -24,7 +24,7 @@
     <text x="146" y="430" font-size="78" font-weight="780">naturel et clair.</text>
   </g>
   <text x="150" y="508" fill="#69736f" font-family="Inter, Helvetica, Arial, sans-serif" font-size="28">Application native pour guider les routines, conseiller les soins</text>
-  <text x="150" y="550" fill="#69736f" font-family="Inter, Helvetica, Arial, sans-serif" font-size="28">et prolonger la relation avec une experience simple et coherente.</text>
+  <text x="150" y="550" fill="#69736f" font-family="Inter, Helvetica, Arial, sans-serif" font-size="28">et prolonger la relation avec une expérience simple et cohérente.</text>
   <g filter="url(#shadow)">
     <rect x="820" y="244" width="510" height="552" rx="38" fill="#f1f6f3"/>
     <rect x="888" y="320" width="176" height="352" rx="42" fill="url(#brand)"/>

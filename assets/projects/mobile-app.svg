@@ -18,13 +18,13 @@
   <g fill="#18191a" font-family="Inter, Helvetica, Arial, sans-serif">
     <text x="152" y="148" font-size="28" font-weight="700">FIELDLY</text>
     <text x="1118" y="148" font-size="19" font-weight="600">Fonctions</text>
-    <text x="1264" y="148" font-size="19" font-weight="600">Equipes</text>
-    <text x="1394" y="148" font-size="19" font-weight="600">Demo</text>
+    <text x="1264" y="148" font-size="19" font-weight="600">Équipes</text>
+    <text x="1394" y="148" font-size="19" font-weight="600">Démo</text>
     <text x="152" y="358" font-size="92" font-weight="750">Le terrain avance</text>
-    <text x="152" y="458" font-size="92" font-weight="750">avec vos donnees.</text>
+    <text x="152" y="458" font-size="92" font-weight="750">avec vos données.</text>
   </g>
-  <text x="156" y="538" fill="#68737d" font-family="Inter, Helvetica, Arial, sans-serif" font-size="29">Une application mobile concue pour coordonner les interventions,</text>
-  <text x="156" y="580" fill="#68737d" font-family="Inter, Helvetica, Arial, sans-serif" font-size="29">centraliser les rapports et garder chaque equipe synchronisee.</text>
+  <text x="156" y="538" fill="#68737d" font-family="Inter, Helvetica, Arial, sans-serif" font-size="29">Une application mobile conçue pour coordonner les interventions,</text>
+  <text x="156" y="580" fill="#68737d" font-family="Inter, Helvetica, Arial, sans-serif" font-size="29">centraliser les rapports et garder chaque équipe synchronisée.</text>
   <rect x="154" y="654" width="204" height="62" rx="31" fill="#18191a"/>
   <text x="204" y="695" fill="#ffffff" font-family="Inter, Helvetica, Arial, sans-serif" font-size="22" font-weight="700">Voir l’app</text>
   <rect x="390" y="654" width="234" height="62" rx="31" fill="none" stroke="#c9d7df" stroke-width="2"/>

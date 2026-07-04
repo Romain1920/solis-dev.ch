@@ -20,8 +20,8 @@
     <text x="910" y="166" fill="#171917" font-size="25" font-weight="720">Quest</text>
     <text x="80" y="360" fill="#171917" font-size="82" font-weight="780">Scannez.</text>
     <text x="80" y="452" fill="#171917" font-size="82" font-weight="780">Avancez.</text>
-    <text x="84" y="532" fill="#68737d" font-size="32">Des randonnees transformees en</text>
-    <text x="84" y="578" fill="#68737d" font-size="32">quetes avec recompenses reelles.</text>
+    <text x="84" y="532" fill="#68737d" font-size="32">Des randonnées transformées en</text>
+    <text x="84" y="578" fill="#68737d" font-size="32">quêtes avec récompenses réelles.</text>
   </g>
   <g filter="url(#shadow)">
     <rect x="96" y="714" width="978" height="982" rx="62" fill="url(#trail)"/>

@@ -18,11 +18,11 @@
   <g font-family="Inter, Helvetica, Arial, sans-serif">
     <text x="142" y="152" fill="#17181b" font-size="29" font-weight="780">NOVA OPS</text>
     <text x="1220" y="152" fill="#626876" font-size="18" font-weight="650">Rapports</text>
-    <text x="1348" y="152" fill="#626876" font-size="18" font-weight="650">Equipe</text>
+    <text x="1348" y="152" fill="#626876" font-size="18" font-weight="650">Équipe</text>
     <text x="142" y="290" fill="#17181b" font-size="70" font-weight="780">Le pilotage SaaS</text>
-    <text x="142" y="368" fill="#17181b" font-size="70" font-weight="780">pour les operations.</text>
+    <text x="142" y="368" fill="#17181b" font-size="70" font-weight="780">pour les opérations.</text>
     <text x="146" y="430" fill="#69707d" font-size="25">Suivez vos ventes, vos tickets et vos objectifs dans une</text>
-    <text x="146" y="468" fill="#69707d" font-size="25">interface rapide, lisible et concue pour la croissance.</text>
+    <text x="146" y="468" fill="#69707d" font-size="25">interface rapide, lisible et conçue pour la croissance.</text>
   </g>
   <g filter="url(#shadow)">
     <rect x="742" y="246" width="624" height="528" rx="36" fill="#1d2027"/>

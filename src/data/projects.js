@@ -62,9 +62,9 @@ export const portfolioProjects = [
     technologies: ["Vue", "Node.js", "CMS", "QR Code", "SEO"],
     src: laGouttiereImage,
     description:
-      "Site vitrine pour un bar a Martigny, avec carte digitale par QR code et contenus faciles a garder a jour.",
+      "Site vitrine pour un bar à Martigny, avec carte digitale par QR code et contenus faciles à garder à jour.",
     testimonial:
-      "Une presence digitale claire qui simplifie le quotidien et donne aux clients les bonnes informations au bon moment.",
+      "Une présence digitale claire qui simplifie le quotidien et donne aux clients les bonnes informations au bon moment.",
   },
   {
     id: "jul-terrassement",
@@ -79,9 +79,9 @@ export const portfolioProjects = [
     technologies: ["React", "Vite", "Forms", "SEO", "Analytics"],
     src: julTerrassementImage,
     description:
-      "Vitrine claire pour presenter les prestations, rassurer les visiteurs et orienter les demandes qualifiees.",
+      "Vitrine claire pour présenter les prestations, rassurer les visiteurs et orienter les demandes qualifiées.",
     testimonial:
-      "Le site met immediatement en confiance et transforme les demandes entrantes en contacts mieux qualifies.",
+      "Le site met immédiatement en confiance et transforme les demandes entrantes en contacts mieux qualifiés.",
   },
   {
     id: "ozam",
@@ -96,9 +96,9 @@ export const portfolioProjects = [
     technologies: ["React", "Node.js", "PostgreSQL", "Docker", "API"],
     src: ozamImage,
     description:
-      "Plateforme de gestion pour digitaliser les cheques famille, les aides et leur suivi a grande echelle.",
+      "Plateforme de gestion pour digitaliser les chèques famille, les aides et leur suivi à grande échelle.",
     testimonial:
-      "Une interface robuste qui rend un processus administratif sensible plus lisible, plus rapide et plus simple a piloter.",
+      "Une interface robuste qui rend un processus administratif sensible plus lisible, plus rapide et plus simple à piloter.",
   },
   {
     id: "philippe-darioli",
@@ -113,9 +113,9 @@ export const portfolioProjects = [
     technologies: ["Shopify", "Liquid", "Stripe", "CMS", "SEO"],
     src: philippeDarioliImage,
     description:
-      "Site vitrine et e-commerce pour presenter le domaine, ses crus et faciliter l'achat en ligne.",
+      "Site vitrine et e-commerce pour présenter le domaine, ses crus et faciliter l'achat en ligne.",
     testimonial:
-      "L'experience garde l'esprit du domaine tout en donnant un acces simple aux produits et aux commandes.",
+      "L'expérience garde l'esprit du domaine tout en donnant un accès simple aux produits et aux commandes.",
   },
   {
     id: "popup-challenge",
@@ -131,9 +131,9 @@ export const portfolioProjects = [
     src: popupChallengeImage,
     mobileSrc: popupMobileImage,
     description:
-      "Application mobile et CMS pour transformer les randonnees en quetes interactives avec QR codes et recompenses.",
+      "Application mobile et CMS pour transformer les randonnées en quêtes interactives avec QR codes et récompenses.",
     testimonial:
-      "Le mobile devient le compagnon naturel de l'experience terrain, sans perdre la simplicite du parcours.",
+      "Le mobile devient le compagnon naturel de l'expérience terrain, sans perdre la simplicité du parcours.",
   },
   {
     id: "contact-mind",
@@ -149,9 +149,9 @@ export const portfolioProjects = [
     src: contactMindImage,
     mobileSrc: contactMindMobileImage,
     description:
-      "Application mobile pour visualiser son carnet de contacts et rendre son reseau plus lisible et actionnable.",
+      "Application mobile pour visualiser son carnet de contacts et rendre son réseau plus lisible et actionnable.",
     testimonial:
-      "Une idee complexe rendue tangible grace a une interface qui donne immediatement envie d'explorer son reseau.",
+      "Une idée complexe rendue tangible grâce à une interface qui donne immédiatement envie d'explorer son réseau.",
   },
   {
     id: "kinn",
@@ -169,7 +169,7 @@ export const portfolioProjects = [
     description:
       "Application native pour guider les routines, conseiller les soins et prolonger la relation client.",
     testimonial:
-      "L'application prolonge l'univers de marque avec une experience mobile douce, utile et parfaitement lisible.",
+      "L'application prolonge l'univers de marque avec une expérience mobile douce, utile et parfaitement lisible.",
   },
   {
     id: "hella",
@@ -184,9 +184,9 @@ export const portfolioProjects = [
     technologies: ["Shopify", "Vue", "Node.js", "Stripe", "Klaviyo"],
     src: ecommerceImage,
     description:
-      "Boutique premium pour prolonger l'experience salon, mettre en avant le conseil et fluidifier l'achat.",
+      "Boutique premium pour prolonger l'expérience salon, mettre en avant le conseil et fluidifier l'achat.",
     testimonial:
-      "La boutique garde le niveau de soin du salon et transforme la recommandation produit en experience premium.",
+      "La boutique garde le niveau de soin du salon et transforme la recommandation produit en expérience premium.",
   },
   {
     id: "mm-architectes",
@@ -201,8 +201,8 @@ export const portfolioProjects = [
     technologies: ["React", "Vite", "GSAP", "CMS", "SEO"],
     src: mmArchitectesImage,
     description:
-      "Portfolio editorial qui laisse respirer les projets avec une navigation sobre et des visuels au premier plan.",
+      "Portfolio éditorial qui laisse respirer les projets avec une navigation sobre et des visuels au premier plan.",
     testimonial:
-      "Un portfolio silencieux et precis, ou la navigation se met en retrait pour laisser les projets parler.",
+      "Un portfolio silencieux et précis, où la navigation se met en retrait pour laisser les projets parler.",
   },
 ];

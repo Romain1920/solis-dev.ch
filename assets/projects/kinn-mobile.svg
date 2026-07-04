@@ -35,7 +35,7 @@
   </g>
   <g font-family="Inter, Helvetica, Arial, sans-serif" filter="url(#shadow)">
     <rect x="96" y="1810" width="978" height="430" rx="58" fill="#ffffff"/>
-    <text x="156" y="1908" fill="#737e78" font-size="30" font-weight="650">Routine recommandee</text>
+    <text x="156" y="1908" fill="#737e78" font-size="30" font-weight="650">Routine recommandée</text>
     <text x="156" y="1994" fill="#111614" font-size="54" font-weight="780">Hydratation</text>
     <rect x="156" y="2070" width="208" height="76" rx="38" fill="#eef4f0"/>
     <text x="212" y="2118" fill="#111614" font-size="28" font-weight="760">Matin</text>

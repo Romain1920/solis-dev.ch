@@ -18,13 +18,13 @@
   <g font-family="Inter, Helvetica, Arial, sans-serif" fill="#161815">
     <text x="146" y="146" font-size="30" font-weight="800">Jul Terrassement</text>
     <text x="988" y="146" font-size="18" font-weight="650">Services</text>
-    <text x="1134" y="146" font-size="18" font-weight="650">Realisations</text>
+    <text x="1134" y="146" font-size="18" font-weight="650">Réalisations</text>
     <text x="1328" y="146" font-size="18" font-weight="650">Contact</text>
     <text x="146" y="348" font-size="78" font-weight="780">Un service clair</text>
     <text x="146" y="432" font-size="78" font-weight="780">avant chantier.</text>
   </g>
-  <text x="150" y="518" fill="#6f746d" font-family="Inter, Helvetica, Arial, sans-serif" font-size="28">Vitrine digitale pour presenter les prestations, les moyens</text>
-  <text x="150" y="560" fill="#6f746d" font-family="Inter, Helvetica, Arial, sans-serif" font-size="28">techniques et les demandes de contact qualifiees.</text>
+  <text x="150" y="518" fill="#6f746d" font-family="Inter, Helvetica, Arial, sans-serif" font-size="28">Vitrine digitale pour présenter les prestations, les moyens</text>
+  <text x="150" y="560" fill="#6f746d" font-family="Inter, Helvetica, Arial, sans-serif" font-size="28">techniques et les demandes de contact qualifiées.</text>
   <g filter="url(#shadow)">
     <rect x="790" y="254" width="546" height="536" rx="38" fill="url(#earth)"/>
     <path d="M826 646 C946 558 1058 678 1172 526 C1234 444 1278 496 1312 454" fill="none" stroke="#ffffff" stroke-width="22" stroke-linecap="round" opacity="0.74"/>
