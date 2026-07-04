@@ -16,7 +16,6 @@ const contactHref =
 
 const navItems = [
   { href: "#accueil", label: "Accueil" },
-  { href: "#services", label: "Services" },
   { href: "#projets", label: "Projets" },
 ];
 
@@ -44,12 +43,6 @@ const metrics = [
     visual: "commerce",
     variant: "commerce",
   },
-];
-
-const serviceLabels = [
-  "des sites internet sur mesure",
-  "des applications mobiles",
-  "des logiciels métiers",
 ];
 
 const portfolioSegmentOptions = [
@@ -131,7 +124,6 @@ function App() {
         <Hero />
         <div className="content-section-wrapper">
           <MetricsSection />
-          <ServicesScrollSection />
           <PortfolioSection />
         </div>
       </main>
@@ -432,115 +424,6 @@ function MetricsSection() {
             </div>
           </article>
         ))}
-      </div>
-    </section>
-  );
-}
-
-function ServicesScrollSection() {
-  const servicesRef = useRef(null);
-
-  useGSAP(
-    () => {
-      const mm = gsap.matchMedia();
-
-      mm.add(
-        {
-          reduceMotion: "(prefers-reduced-motion: reduce)",
-          mobile: "(max-width: 680px)",
-          all: "(min-width: 0px)",
-        },
-        (context) => {
-          const { reduceMotion, mobile } = context.conditions;
-          const section = servicesRef.current;
-          const list = section?.querySelector(".service-list");
-          const items = gsap.utils.toArray(".service-item");
-
-          if (!section || !list || items.length === 0) {
-            return undefined;
-          }
-
-          const inactiveState = { color: "#e5e5e5", opacity: 0.52 };
-          const activeState = { color: "#090a0a", opacity: 1 };
-          const getStep = () => {
-            const [firstItem, secondItem] = items;
-
-            if (!firstItem || !secondItem) {
-              return firstItem?.offsetHeight ?? 0;
-            }
-
-            return secondItem.offsetTop - firstItem.offsetTop;
-          };
-
-          gsap.set(items, inactiveState);
-          gsap.set(items[0], activeState);
-          gsap.set(list, { y: () => getStep() });
-
-          if (reduceMotion) {
-            gsap.set(list, { y: () => getStep() });
-            gsap.set(items, { clearProps: "opacity,color" });
-            return undefined;
-          }
-
-          const timeline = gsap.timeline({
-            defaults: { ease: "power2.out" },
-            scrollTrigger: {
-              trigger: section,
-              start: "top top",
-              end: () =>
-                `+=${Math.round(window.innerHeight * (mobile ? 1.55 : 2.2))}`,
-              pin: true,
-              scrub: 0.72,
-              anticipatePin: 1,
-              invalidateOnRefresh: true,
-              snap: {
-                snapTo: [0, 0.5, 1],
-                duration: { min: 0.18, max: 0.36 },
-                delay: 0.04,
-                ease: "power2.out",
-              },
-            },
-          });
-
-          timeline
-            .to(list, { y: 0, duration: 1, ease: "none" }, 0)
-            .to(items[0], { ...inactiveState, duration: 0.38 }, 0.1)
-            .to(items[1], { ...activeState, duration: 0.38 }, 0.18)
-            .to(list, { y: () => -getStep(), duration: 1, ease: "none" }, 1)
-            .to(items[1], { ...inactiveState, duration: 0.38 }, 1.1)
-            .to(items[2], { ...activeState, duration: 0.38 }, 1.18);
-
-          return undefined;
-        }
-      );
-
-      return () => mm.revert();
-    },
-    { scope: servicesRef }
-  );
-
-  return (
-    <section
-      className="services-scroll-section"
-      id="services"
-      ref={servicesRef}
-      aria-labelledby="services-scroll-title"
-    >
-      <div className="services-scroll-shell">
-        <div className="services-line">
-          <h2 className="fixed-text" id="services-scroll-title">
-            On construit pour vous
-          </h2>
-          <div className="service-viewport" aria-label="Services construits par SOLIS">
-            <div className="service-list">
-              {serviceLabels.map((label) => (
-                <span className="service-item" key={label}>
-                  {label}
-                </span>
-              ))}
-            </div>
-          </div>
-        </div>
       </div>
     </section>
   );
