@@ -453,14 +453,14 @@ function ServicesScrollSection() {
         (context) => {
           const { reduceMotion, mobile } = context.conditions;
           const section = servicesRef.current;
-          const list = section?.querySelector(".services-scroll-list");
-          const items = gsap.utils.toArray(".services-scroll-item");
+          const list = section?.querySelector(".service-list");
+          const items = gsap.utils.toArray(".service-item");
 
           if (!section || !list || items.length === 0) {
             return undefined;
           }
 
-          const inactiveState = { color: "#d9d9d9", opacity: 0.34 };
+          const inactiveState = { color: "#e5e5e5", opacity: 0.52 };
           const activeState = { color: "#090a0a", opacity: 1 };
           const getStep = () => {
             const [firstItem, secondItem] = items;
@@ -474,10 +474,10 @@ function ServicesScrollSection() {
 
           gsap.set(items, inactiveState);
           gsap.set(items[0], activeState);
-          gsap.set(list, { y: 0 });
+          gsap.set(list, { y: () => getStep() });
 
           if (reduceMotion) {
-            gsap.set(list, { clearProps: "transform" });
+            gsap.set(list, { y: () => getStep() });
             gsap.set(items, { clearProps: "opacity,color" });
             return undefined;
           }
@@ -503,10 +503,10 @@ function ServicesScrollSection() {
           });
 
           timeline
-            .to(list, { y: () => -getStep(), duration: 1, ease: "none" }, 0)
+            .to(list, { y: 0, duration: 1, ease: "none" }, 0)
             .to(items[0], { ...inactiveState, duration: 0.38 }, 0.1)
             .to(items[1], { ...activeState, duration: 0.38 }, 0.18)
-            .to(list, { y: () => -getStep() * 2, duration: 1, ease: "none" }, 1)
+            .to(list, { y: () => -getStep(), duration: 1, ease: "none" }, 1)
             .to(items[1], { ...inactiveState, duration: 0.38 }, 1.1)
             .to(items[2], { ...activeState, duration: 0.38 }, 1.18);
 
@@ -527,14 +527,14 @@ function ServicesScrollSection() {
       aria-labelledby="services-scroll-title"
     >
       <div className="services-scroll-shell">
-        <div className="services-scroll-statement">
-          <h2 className="services-scroll-fixed" id="services-scroll-title">
+        <div className="services-line">
+          <h2 className="fixed-text" id="services-scroll-title">
             On construit pour vous
           </h2>
-          <div className="services-scroll-window" aria-label="Services construits par SOLIS">
-            <div className="services-scroll-list">
+          <div className="service-viewport" aria-label="Services construits par SOLIS">
+            <div className="service-list">
               {serviceLabels.map((label) => (
-                <span className="services-scroll-item" key={label}>
+                <span className="service-item" key={label}>
                   {label}
                 </span>
               ))}
@@ -720,15 +720,17 @@ function PortfolioSection() {
 
     transferTimelineRef.current?.kill();
 
+    const isMobileTransfer = transfer.project.type === "mobile";
     const startScaleX = transfer.startScaleX ?? transfer.startWidth / transfer.targetWidth;
     const startScaleY = transfer.startScaleY ?? transfer.startHeight / transfer.targetHeight;
     const travelDuration = 0.96;
-    const morphCompleteProgress = 0.72;
-    const orientationDuration = travelDuration * 0.46;
-    const maskDuration = travelDuration * 0.88;
+    const morphCompleteProgress = isMobileTransfer ? 0.64 : 0.72;
+    const orientationDuration = travelDuration * (isMobileTransfer ? 0.36 : 0.46);
+    const maskDuration = travelDuration * (isMobileTransfer ? 0.64 : 0.88);
     const maskEase = "power2.in";
     const commitAt = travelDuration * 0.5;
-    const planeOutAt = travelDuration + 0.02;
+    const planeOutAt = isMobileTransfer ? travelDuration * 0.54 : travelDuration + 0.02;
+    const planeOutDuration = isMobileTransfer ? 0.14 : 0.12;
 
     gsap.set(plane, {
       autoAlpha: 1,
@@ -871,7 +873,7 @@ function PortfolioSection() {
         plane,
         {
           autoAlpha: 0,
-          duration: 0.12,
+          duration: planeOutDuration,
           ease: "power1.out",
         },
         planeOutAt

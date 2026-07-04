@@ -694,72 +694,76 @@ a {
   place-items: center;
   overflow: hidden;
   background: #ffffff;
-  padding: clamp(78px, 10svh, 124px) 0;
+  padding: clamp(80px, 10svh, 126px) 0;
   scroll-margin-top: 0;
 }
 
 .services-scroll-shell {
-  width: min(1320px, calc(100vw - 56px));
-  min-height: min(680px, 72svh);
+  width: min(1380px, calc(100vw - 64px));
+  min-height: min(640px, 70svh);
   display: grid;
   place-items: center;
   margin: 0 auto;
 }
 
-.services-scroll-statement {
-  --services-type-size: clamp(3.25rem, 5.2vw, 6.2rem);
-  --services-step: calc(var(--services-type-size) * 1.12);
-  width: 100%;
-  display: grid;
-  justify-items: center;
-  gap: clamp(8px, 1.2vw, 16px);
+.services-line {
+  --services-type-size: clamp(2.1rem, 2.9vw, 3.25rem);
+  --services-step: calc(var(--services-type-size) * 1.08);
+  width: max-content;
+  max-width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.28em;
   color: #090a0a;
   font-family: "SF Pro Display", "SF Pro Text", -apple-system, BlinkMacSystemFont,
     "Segoe UI", sans-serif;
   font-size: var(--services-type-size);
   font-weight: 700;
-  line-height: 0.98;
+  line-height: 0.95;
   letter-spacing: 0;
-  text-align: center;
-}
-
-.services-scroll-fixed {
-  margin: 0;
-  color: #090a0a;
-  font: inherit;
   white-space: nowrap;
 }
 
-.services-scroll-window {
-  position: relative;
-  width: min(100%, 980px);
-  min-width: 0;
-  height: calc(var(--services-step) * 3);
-  margin-top: clamp(16px, 2vw, 30px);
-  overflow: visible;
+.fixed-text {
+  flex: 0 0 auto;
+  margin: 0;
+  color: #090a0a;
+  font: inherit;
 }
 
-.services-scroll-list {
-  position: absolute;
-  top: calc(50% - (var(--services-step) / 2));
-  left: 0;
-  width: 100%;
+.service-viewport {
+  position: relative;
+  flex: 0 0 auto;
+  width: max-content;
+  height: calc(var(--services-step) * 3);
+  overflow: hidden;
+}
+
+.service-list {
+  position: relative;
+  width: max-content;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  transform: translate3d(0, var(--services-step), 0);
   will-change: transform;
 }
 
-.services-scroll-item {
+.service-item {
   height: var(--services-step);
   display: flex;
   align-items: center;
-  justify-content: center;
-  color: #d9d9d9;
-  opacity: 0.34;
+  justify-content: flex-start;
+  color: #e5e5e5;
+  opacity: 0.52;
   font: inherit;
-  text-wrap: balance;
-  will-change: transform, opacity, color;
+  line-height: 0.95;
+  white-space: nowrap;
+  will-change: opacity, color;
 }
 
-.services-scroll-item:first-child {
+.service-item:first-child {
   color: #090a0a;
   opacity: 1;
 }
@@ -866,6 +870,10 @@ a {
     inset 0 0 16px rgba(255, 255, 255, 0.32),
     inset 0 0 2px rgba(238, 124, 66, 0.16);
   opacity: var(--liquid-edge-opacity);
+}
+
+.portfolio-load-plane[data-device="mobile"] {
+  box-shadow: none;
 }
 
 .portfolio-load-plane[data-device="mobile"]::after {
@@ -1436,18 +1444,24 @@ a {
   }
 
   .services-scroll-shell {
-    width: min(880px, calc(100vw - 40px));
-    min-height: min(620px, 68svh);
+    width: min(940px, calc(100vw - 40px));
+    min-height: min(600px, 66svh);
   }
 
-  .services-scroll-statement {
-    --services-type-size: clamp(2.9rem, 7.6vw, 5rem);
-    --services-step: calc(var(--services-type-size) * 1.18);
-    gap: clamp(8px, 1.8vw, 18px);
+  .services-line {
+    --services-type-size: clamp(1.8rem, 4vw, 2.5rem);
+    --services-step: calc(var(--services-type-size) * 1.14);
+    gap: 0.24em;
   }
 
-  .services-scroll-window {
-    width: min(100%, 760px);
+  .service-viewport {
+    max-width: min(57vw, 560px);
+  }
+
+  .service-item {
+    max-width: min(57vw, 560px);
+    white-space: normal;
+    text-wrap: balance;
   }
 
   .portfolio-section {
@@ -1721,27 +1735,43 @@ a {
     min-height: min(520px, 66svh);
   }
 
-  .services-scroll-statement {
-    --services-type-size: clamp(2.05rem, 10vw, 3rem);
-    --services-step: clamp(82px, 26vw, 116px);
-    gap: 8px;
+  .services-line {
+    --services-type-size: clamp(1.28rem, 6.2vw, 1.82rem);
+    --services-step: clamp(74px, 22vw, 92px);
+    width: 100%;
+    display: grid;
+    grid-template-columns: minmax(110px, 0.9fr) minmax(0, 1.15fr);
+    align-items: center;
+    gap: 12px;
     line-height: 1.02;
+    white-space: normal;
   }
 
-  .services-scroll-fixed {
-    max-width: 11ch;
+  .fixed-text {
+    justify-self: end;
+    max-width: 10.5ch;
+    text-align: right;
     white-space: normal;
     text-wrap: balance;
   }
 
-  .services-scroll-window {
-    height: calc(var(--services-step) * 2.75);
-    margin-top: 6px;
+  .service-viewport {
+    justify-self: start;
+    width: 100%;
+    max-width: 100%;
+    height: calc(var(--services-step) * 3);
   }
 
-  .services-scroll-item {
-    padding: 0 6px;
-    line-height: 1.04;
+  .service-list {
+    width: 100%;
+  }
+
+  .service-item {
+    width: 100%;
+    max-width: 100%;
+    line-height: 1.02;
+    white-space: normal;
+    text-wrap: balance;
   }
 
   .portfolio-section {
@@ -1844,23 +1874,24 @@ a {
     min-height: auto;
   }
 
-  .services-scroll-window {
+  .service-viewport {
     height: auto;
+    overflow: visible;
   }
 
-  .services-scroll-list {
+  .service-list {
     position: static;
     transform: none !important;
   }
 
-  .services-scroll-item {
+  .service-item {
     height: auto;
     min-height: 1.12em;
     margin-top: 0.18em;
-    opacity: 0.34;
+    opacity: 0.52;
   }
 
-  .services-scroll-item:first-child {
+  .service-item:first-child {
     opacity: 1;
   }
 }
