@@ -510,6 +510,7 @@ function PortfolioSection() {
     const sectionRect = section.getBoundingClientRect();
     const sourceRect = source.getBoundingClientRect();
     const screenRect = targetScreen.getBoundingClientRect();
+    const targetStyles = window.getComputedStyle(targetScreen);
     const sourceLabel = source.matches?.(".portfolio-reference-button")
       ? source.querySelector(":scope > span:last-child")
       : source.querySelector(".portfolio-reference-button > span:last-child");
@@ -539,8 +540,16 @@ function PortfolioSection() {
         : Math.min(screenRect.height * 0.05, 18);
     const finalRadius =
       project.type === "mobile"
-        ? `${Math.max(18, screenRect.width * 0.1)}px`
+        ? targetStyles.borderRadius || `${Math.max(18, screenRect.width * 0.1)}px`
         : `${Math.max(3, screenRect.width * 0.006)}px`;
+    const startClipPath =
+      project.type === "mobile"
+        ? `inset(0% 18% 0% 18% round ${finalRadius})`
+        : "polygon(0% 46%, 72% 14%, 100% 50%, 72% 86%, 0% 54%)";
+    const finalClipPath =
+      project.type === "mobile"
+        ? `inset(0% round ${finalRadius})`
+        : "polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%, 0% 0%)";
     const startRotation = project.type === "mobile" ? 4 : -5;
     const startSkewX = project.type === "mobile" ? -8 : 10;
 
@@ -560,6 +569,8 @@ function PortfolioSection() {
       screenWidth: screenRect.width,
       screenHeight: screenRect.height,
       finalRadius,
+      startClipPath,
+      finalClipPath,
       startRotation,
       startSkewX,
       width: sectionRect.width,
@@ -583,10 +594,6 @@ function PortfolioSection() {
 
     const startScaleX = transfer.startWidth / transfer.screenWidth;
     const startScaleY = transfer.startHeight / transfer.screenHeight;
-    const ribbonClip =
-      "polygon(0% 46%, 72% 14%, 100% 50%, 72% 86%, 0% 54%)";
-    const screenClip =
-      "polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%, 0% 0%)";
 
     gsap.set(plane, {
       autoAlpha: 1,
@@ -601,7 +608,7 @@ function PortfolioSection() {
       rotation: transfer.startRotation,
       skewX: transfer.startSkewX,
       borderRadius: transfer.finalRadius,
-      clipPath: ribbonClip,
+      clipPath: transfer.startClipPath,
       "--liquid-sheen-opacity": 0.72,
       "--liquid-edge-opacity": 0.62,
     });
@@ -638,7 +645,7 @@ function PortfolioSection() {
           rotation: 0,
           skewX: 0,
           borderRadius: transfer.finalRadius,
-          clipPath: screenClip,
+          clipPath: transfer.finalClipPath,
           "--liquid-sheen-opacity": 0.18,
           "--liquid-edge-opacity": 0.08,
         },
@@ -743,7 +750,11 @@ function PortfolioSection() {
       <div className="portfolio-shell" ref={sectionRef}>
         {transfer && !prefersReducedMotion ? (
           <div className="portfolio-transfer-layer" aria-hidden="true">
-            <div className="portfolio-load-plane" ref={transferPlaneRef}>
+            <div
+              className="portfolio-load-plane"
+              data-device={transfer.project.type}
+              ref={transferPlaneRef}
+            >
               <img
                 className="portfolio-load-plane-image"
                 ref={transferImageRef}

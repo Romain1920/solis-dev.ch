@@ -742,6 +742,26 @@ a {
   opacity: var(--liquid-edge-opacity);
 }
 
+.portfolio-load-plane[data-device="mobile"]::after {
+  inset: auto;
+  top: 1.7%;
+  left: 50%;
+  z-index: 4;
+  width: 34%;
+  height: 4.8%;
+  transform: translateX(-50%);
+  border: 0;
+  border-radius: 999px;
+  background:
+    radial-gradient(circle at 84% 50%, rgba(11, 19, 38, 0.98) 0 11%, #030405 16%, transparent 17%),
+    radial-gradient(circle at 84% 50%, rgba(35, 78, 164, 0.76) 0 4%, transparent 5%),
+    radial-gradient(ellipse at 18% 50%, #030405 0 22%, transparent 23%),
+    radial-gradient(ellipse at 58% 50%, #030405 0 22%, transparent 23%),
+    linear-gradient(#030405, #030405) 18% 50% / 40% 44% no-repeat;
+  box-shadow: none;
+  opacity: 0.98;
+}
+
 .portfolio-load-plane-image {
   position: absolute;
   inset: 0;
