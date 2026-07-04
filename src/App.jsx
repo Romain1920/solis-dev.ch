@@ -4,13 +4,12 @@ import { flushSync } from "react-dom";
 import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import { MotionPathPlugin } from "gsap/MotionPathPlugin";
 import ReactLenis from "lenis/react";
 import iphoneFrameImage from "../assets/iphone-17-black-portrait.png";
 import studioDisplayImage from "../assets/studio-display-light.png";
 import { portfolioProjects, projects } from "./data/projects";
 
-gsap.registerPlugin(useGSAP, ScrollTrigger, MotionPathPlugin);
+gsap.registerPlugin(useGSAP, ScrollTrigger);
 
 const contactHref =
   "mailto:info@solis.li?subject=Maquette%20interactive%20offerte";
@@ -531,30 +530,17 @@ function PortfolioSection() {
       `${centerX} ${centerY}`,
     ].join(" ");
     const previewSrc = project.type === "mobile" ? project.mobileSrc ?? project.src : project.src;
-    const startWidth =
-      project.type === "mobile"
-        ? Math.min(screenRect.width * 0.18, 52)
-        : Math.min(screenRect.width * 0.14, 104);
-    const startHeight =
-      project.type === "mobile"
-        ? Math.min(screenRect.height * 0.18, 112)
-        : Math.min(screenRect.height * 0.05, 18);
     const targetWidth = screenRect.width;
     const targetHeight = screenRect.height;
     const targetRadius =
       project.type === "mobile"
         ? targetStyles.borderRadius || `${Math.max(18, screenRect.width * 0.1)}px`
         : `${Math.max(3, screenRect.width * 0.006)}px`;
-    const startClipPath =
-      project.type === "mobile"
-        ? `inset(0% 18% 0% 18% round ${targetRadius})`
-        : "polygon(0% 46%, 72% 14%, 100% 50%, 72% 86%, 0% 54%)";
-    const finalClipPath =
-      project.type === "mobile"
-        ? `inset(0% round ${targetRadius})`
-        : "polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%, 0% 0%)";
-    const startRotation = project.type === "mobile" ? 4 : -5;
-    const startSkewX = project.type === "mobile" ? -8 : 10;
+    const startMaxWidth = project.type === "mobile" ? 52 : 104;
+    const startScale = Math.min(project.type === "mobile" ? 0.18 : 0.14, startMaxWidth / targetWidth);
+    const startWidth = targetWidth * startScale;
+    const startHeight = targetHeight * startScale;
+    const finalClipPath = `inset(0% round ${targetRadius})`;
 
     return {
       id: `${project.id}-${Date.now()}`,
@@ -569,15 +555,16 @@ function PortfolioSection() {
       vectorY,
       startWidth,
       startHeight,
+      startScale,
       screenWidth: screenRect.width,
       screenHeight: screenRect.height,
       targetWidth,
       targetHeight,
       targetRadius,
-      startClipPath,
+      startClipPath: finalClipPath,
       finalClipPath,
-      startRotation,
-      startSkewX,
+      startRotation: 0,
+      startSkewX: 0,
       width: sectionRect.width,
       height: sectionRect.height,
     };
@@ -597,8 +584,7 @@ function PortfolioSection() {
 
     transferTimelineRef.current?.kill();
 
-    const startScaleX = transfer.startWidth / transfer.targetWidth;
-    const startScaleY = transfer.startHeight / transfer.targetHeight;
+    const startScale = transfer.startScale ?? transfer.startWidth / transfer.targetWidth;
 
     gsap.set(plane, {
       autoAlpha: 1,
@@ -608,8 +594,8 @@ function PortfolioSection() {
       yPercent: -50,
       x: transfer.startX,
       y: transfer.startY,
-      scaleX: startScaleX,
-      scaleY: startScaleY,
+      scaleX: startScale,
+      scaleY: startScale,
       rotation: transfer.startRotation,
       skewX: transfer.startSkewX,
       borderRadius: transfer.targetRadius,
@@ -620,13 +606,59 @@ function PortfolioSection() {
 
     gsap.set(image, {
       autoAlpha: 1,
-      xPercent: transfer.project.type === "mobile" ? -7 : -12,
-      yPercent: transfer.project.type === "mobile" ? -10 : -6,
-      scale: transfer.project.type === "mobile" ? 1.12 : 1.18,
+      xPercent: 0,
+      yPercent: 0,
+      scale: 1,
     });
 
+    const cubicPoint = (from, controlOne, controlTwo, to, progress) => {
+      const inverse = 1 - progress;
+
+      return (
+        inverse * inverse * inverse * from +
+        3 * inverse * inverse * progress * controlOne +
+        3 * inverse * progress * progress * controlTwo +
+        progress * progress * progress * to
+      );
+    };
+    const targetScreen =
+      transfer.project.type === "mobile"
+        ? phoneScreenRef.current ?? monitorScreenRef.current
+        : monitorScreenRef.current;
+    const travelState = { progress: 0 };
+    const updatePlanePosition = () => {
+      const section = sectionRef.current;
+      const target = targetScreen;
+
+      if (!section || !target) {
+        return;
+      }
+
+      const sectionRect = section.getBoundingClientRect();
+      const targetRect = target.getBoundingClientRect();
+      const targetX = targetRect.left + targetRect.width * 0.5 - sectionRect.left;
+      const targetY = targetRect.top + targetRect.height * 0.5 - sectionRect.top;
+      const progress = travelState.progress;
+      const vectorX = targetX - transfer.startX;
+      const distance = Math.max(120, Math.abs(vectorX));
+      const direction = vectorX >= 0 ? 1 : -1;
+      const controlOneX = transfer.startX + direction * distance * 0.32;
+      const controlOneY = transfer.startY - 10;
+      const controlTwoX = targetX - direction * distance * 0.36;
+      const controlTwoY = targetY - 34;
+      const x = cubicPoint(transfer.startX, controlOneX, controlTwoX, targetX, progress);
+      const y = cubicPoint(transfer.startY, controlOneY, controlTwoY, targetY, progress);
+      const scale = gsap.utils.interpolate(startScale, 1, progress);
+
+      gsap.set(plane, {
+        x,
+        y,
+        scaleX: scale,
+        scaleY: scale,
+      });
+    };
+
     const timeline = gsap.timeline({
-      defaults: { duration: 0.96, ease: "power3.inOut" },
       onComplete: () => {
         transferTimelineRef.current = null;
         setTransfer(null);
@@ -638,30 +670,27 @@ function PortfolioSection() {
 
     timeline
       .to(
+        travelState,
+        {
+          progress: 1,
+          duration: 0.96,
+          ease: "power3.inOut",
+          onUpdate: updatePlanePosition,
+          onComplete: updatePlanePosition,
+        },
+        0
+      )
+      .to(
         plane,
         {
-          motionPath: {
-            path: transfer.path,
-            start: 0,
-            end: 1,
-          },
-          scaleX: 1,
-          scaleY: 1,
           rotation: 0,
           skewX: 0,
           borderRadius: transfer.targetRadius,
           clipPath: transfer.finalClipPath,
           "--liquid-sheen-opacity": 0.18,
           "--liquid-edge-opacity": 0.08,
-        },
-        0
-      )
-      .to(
-        image,
-        {
-          xPercent: 0,
-          yPercent: 0,
-          scale: 1,
+          duration: 0.96,
+          ease: "power3.inOut",
         },
         0
       )
@@ -673,16 +702,16 @@ function PortfolioSection() {
           });
         },
         [],
-        0.88
+        0.82
       )
       .to(
         plane,
         {
           autoAlpha: 0,
-          duration: 0.04,
+          duration: 0.06,
           ease: "power1.out",
         },
-        0.89
+        0.9
       );
 
     return () => {
