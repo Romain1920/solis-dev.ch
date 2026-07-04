@@ -747,6 +747,7 @@ a {
 .portfolio-load-plane {
   --liquid-sheen-opacity: 0.46;
   --liquid-edge-opacity: 0.38;
+  --mobile-island-opacity: 1;
   position: absolute;
   top: 0;
   left: 0;
@@ -810,7 +811,7 @@ a {
   box-shadow:
     0 1px 2px rgba(255, 255, 255, 0.12),
     inset 0 0 0 1px rgba(255, 255, 255, 0.03);
-  opacity: 1;
+  opacity: var(--mobile-island-opacity);
   transform: translateX(-50%);
 }
 

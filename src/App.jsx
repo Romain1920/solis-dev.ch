@@ -540,17 +540,21 @@ function PortfolioSection() {
       `${Math.max(3, screenRect.width * (project.type === "mobile" ? 0.1 : 0.006))}px`;
     const startWidth =
       project.type === "mobile"
-        ? Math.min(screenRect.width * 0.18, 52)
+        ? Math.min(screenRect.width * 0.32, 86)
         : Math.min(screenRect.width * 0.14, 104);
     const startHeight =
       project.type === "mobile"
-        ? Math.min(screenRect.height * 0.18, 112)
+        ? Math.min(screenRect.height * 0.11, 72)
         : Math.min(screenRect.height * 0.05, 18);
     const startScaleX = startWidth / targetWidth;
     const startScaleY = startHeight / targetHeight;
+    const liquidClipPath =
+      project.type === "mobile"
+        ? "polygon(4% 18%, 56% 0%, 100% 22%, 92% 76%, 49% 100%, 0% 84%, 13% 48%)"
+        : "polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%, 0% 0%)";
     const startClipPath =
       project.type === "mobile"
-        ? `inset(0% 18% 0% 18% round ${targetRadius})`
+        ? "polygon(0% 28%, 45% 4%, 100% 18%, 94% 82%, 55% 100%, 6% 76%, 12% 42%)"
         : "polygon(0% 46%, 72% 14%, 100% 50%, 72% 86%, 0% 54%)";
     const finalClipPath =
       project.type === "mobile"
@@ -581,9 +585,10 @@ function PortfolioSection() {
       targetOverscan,
       targetRadius,
       startClipPath,
+      liquidClipPath,
       finalClipPath,
-      startRotation,
-      startSkewX,
+      startRotation: project.type === "mobile" ? 0 : startRotation,
+      startSkewX: project.type === "mobile" ? 0 : startSkewX,
       width: sectionRect.width,
       height: sectionRect.height,
     };
@@ -607,10 +612,11 @@ function PortfolioSection() {
     const startScaleX = transfer.startScaleX ?? transfer.startWidth / transfer.targetWidth;
     const startScaleY = transfer.startScaleY ?? transfer.startHeight / transfer.targetHeight;
     const travelDuration = 0.96;
-    const morphCompleteProgress = isMobileTransfer ? 0.64 : 0.72;
+    const morphCompleteProgress = isMobileTransfer ? 0.98 : 0.72;
     const orientationDuration = travelDuration * (isMobileTransfer ? 0.36 : 0.46);
     const maskDuration = travelDuration * (isMobileTransfer ? 0.64 : 0.88);
-    const maskEase = "power2.in";
+    const maskEase = isMobileTransfer ? "sine.inOut" : "power2.in";
+    const maskClipPath = isMobileTransfer ? transfer.liquidClipPath : transfer.finalClipPath;
     const commitAt = travelDuration * 0.5;
     const planeOutAt = isMobileTransfer ? travelDuration * 0.54 : travelDuration + 0.02;
     const planeOutDuration = isMobileTransfer ? 0.14 : 0.12;
@@ -631,6 +637,7 @@ function PortfolioSection() {
       clipPath: transfer.startClipPath,
       "--liquid-sheen-opacity": 0.72,
       "--liquid-edge-opacity": 0.62,
+      "--mobile-island-opacity": isMobileTransfer ? 0 : 1,
     });
 
     gsap.set(image, {
@@ -734,9 +741,9 @@ function PortfolioSection() {
       .to(
         plane,
         {
-          clipPath: transfer.finalClipPath,
-          "--liquid-sheen-opacity": 0.18,
-          "--liquid-edge-opacity": 0.08,
+          clipPath: maskClipPath,
+          "--liquid-sheen-opacity": isMobileTransfer ? 0.58 : 0.18,
+          "--liquid-edge-opacity": isMobileTransfer ? 0.36 : 0.08,
           duration: maskDuration,
           ease: maskEase,
         },
