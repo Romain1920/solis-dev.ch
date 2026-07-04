@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
 import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
@@ -50,6 +50,10 @@ const portfolioSegmentOptions = [
   { id: "desktop", label: "Références sites web" },
   { id: "mobile", label: "Références applications mobiles" },
 ];
+
+const getPrefersReducedMotion = () =>
+  typeof window !== "undefined" &&
+  window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
 
 const techLogos = [
   {
@@ -438,7 +442,8 @@ function PortfolioSection() {
   const transferImageRef = useRef(null);
   const transferTimelineRef = useRef(null);
   const transferFrameRef = useRef(null);
-  const reducedMotion = useReducedMotion();
+  const reducedMotion = usePrefersReducedMotion();
+  const prefersReducedMotion = reducedMotion || getPrefersReducedMotion();
 
   const segmentProjects = useMemo(
     () =>
@@ -457,7 +462,8 @@ function PortfolioSection() {
     isMobileShowcase && displayProject?.type === "mobile" ? displayProject : null;
   const phonePreview = displayedPhoneProject?.mobileSrc ?? displayedPhoneProject?.src;
   const isInstantReveal = displayProject?.id === instantRevealId;
-  const deviceTransition = reducedMotion
+  const isTransferBlanking = Boolean(transfer) && !isInstantReveal;
+  const deviceTransition = prefersReducedMotion
     ? { duration: 0 }
     : { type: "spring", stiffness: 86, damping: 24, mass: 1.08 };
 
@@ -489,7 +495,7 @@ function PortfolioSection() {
     setInstantRevealId(null);
   };
 
-  const buildTransfer = (sourceElement, project) => {
+  const buildLiquidTransferGeometry = (sourceElement, project) => {
     const section = sectionRef.current;
     const source = sourceElement ?? selectorRef.current;
     const targetScreen =
@@ -510,31 +516,33 @@ function PortfolioSection() {
     const originRect = sourceLabel?.getBoundingClientRect() ?? sourceRect;
     const startX = originRect.right - sectionRect.left + 12;
     const startY = originRect.top + originRect.height / 2 - sectionRect.top;
-    const entryX =
-      screenRect.left + screenRect.width * (project.type === "mobile" ? 0.48 : 0.08) - sectionRect.left;
-    const entryY = screenRect.top + screenRect.height * 0.5 - sectionRect.top;
     const centerX = screenRect.left + screenRect.width * 0.5 - sectionRect.left;
     const centerY = screenRect.top + screenRect.height * 0.5 - sectionRect.top;
-    const distanceToEntry = Math.max(120, Math.abs(entryX - startX));
-    const direction = entryX >= startX ? 1 : -1;
+    const vectorX = centerX - startX;
+    const vectorY = centerY - startY;
+    const distanceToTarget = Math.max(120, Math.abs(vectorX));
+    const direction = vectorX >= 0 ? 1 : -1;
     const path = [
       `M ${startX} ${startY}`,
-      `C ${startX + direction * distanceToEntry * 0.32} ${startY - 6}`,
-      `${entryX - direction * distanceToEntry * 0.26} ${entryY - 24}`,
-      `${entryX} ${entryY}`,
+      `C ${startX + direction * distanceToTarget * 0.32} ${startY - 10}`,
+      `${centerX - direction * distanceToTarget * 0.36} ${centerY - 34}`,
+      `${centerX} ${centerY}`,
     ].join(" ");
     const previewSrc = project.type === "mobile" ? project.mobileSrc ?? project.src : project.src;
-    const startWidth = project.type === "mobile" ? 14 : 30;
-    const startHeight = project.type === "mobile" ? 28 : 9;
-    const approachWidth =
+    const startWidth =
       project.type === "mobile"
-        ? Math.min(screenRect.width * 0.54, 86)
-        : Math.min(screenRect.width * 0.36, 220);
-    const approachHeight = approachWidth * (screenRect.height / screenRect.width);
+        ? Math.min(screenRect.width * 0.18, 52)
+        : Math.min(screenRect.width * 0.14, 104);
+    const startHeight =
+      project.type === "mobile"
+        ? Math.min(screenRect.height * 0.18, 112)
+        : Math.min(screenRect.height * 0.05, 18);
     const finalRadius =
       project.type === "mobile"
         ? `${Math.max(18, screenRect.width * 0.1)}px`
         : `${Math.max(3, screenRect.width * 0.006)}px`;
+    const startRotation = project.type === "mobile" ? 4 : -5;
+    const startSkewX = project.type === "mobile" ? -8 : 10;
 
     return {
       id: `${project.id}-${Date.now()}`,
@@ -543,24 +551,24 @@ function PortfolioSection() {
       path,
       startX,
       startY,
-      entryX,
-      entryY,
       centerX,
       centerY,
+      vectorX,
+      vectorY,
       startWidth,
       startHeight,
-      approachWidth,
-      approachHeight,
       screenWidth: screenRect.width,
       screenHeight: screenRect.height,
       finalRadius,
+      startRotation,
+      startSkewX,
       width: sectionRect.width,
       height: sectionRect.height,
     };
   };
 
   useEffect(() => {
-    if (!transfer || reducedMotion) {
+    if (!transfer || prefersReducedMotion) {
       return undefined;
     }
 
@@ -575,12 +583,13 @@ function PortfolioSection() {
 
     const startScaleX = transfer.startWidth / transfer.screenWidth;
     const startScaleY = transfer.startHeight / transfer.screenHeight;
-    const approachScaleX = transfer.approachWidth / transfer.screenWidth;
-    const approachScaleY = transfer.approachHeight / transfer.screenHeight;
-    const roundClip = `inset(0% round ${transfer.finalRadius})`;
+    const ribbonClip =
+      "polygon(0% 46%, 72% 14%, 100% 50%, 72% 86%, 0% 54%)";
+    const screenClip =
+      "polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%, 0% 0%)";
 
     gsap.set(plane, {
-      autoAlpha: 0,
+      autoAlpha: 1,
       width: transfer.screenWidth,
       height: transfer.screenHeight,
       xPercent: -50,
@@ -589,17 +598,23 @@ function PortfolioSection() {
       y: transfer.startY,
       scaleX: startScaleX,
       scaleY: startScaleY,
-      borderRadius: "999px",
-      clipPath: "inset(0% round 999px)",
+      rotation: transfer.startRotation,
+      skewX: transfer.startSkewX,
+      borderRadius: transfer.finalRadius,
+      clipPath: ribbonClip,
+      "--liquid-sheen-opacity": 0.72,
+      "--liquid-edge-opacity": 0.62,
     });
 
     gsap.set(image, {
-      autoAlpha: 0.28,
-      scale: 1.04,
+      autoAlpha: 1,
+      xPercent: transfer.project.type === "mobile" ? -7 : -12,
+      yPercent: transfer.project.type === "mobile" ? -10 : -6,
+      scale: transfer.project.type === "mobile" ? 1.12 : 1.18,
     });
 
     const timeline = gsap.timeline({
-      defaults: { ease: "power3.inOut" },
+      defaults: { duration: 0.96, ease: "power3.inOut" },
       onComplete: () => {
         transferTimelineRef.current = null;
         setTransfer(null);
@@ -610,11 +625,6 @@ function PortfolioSection() {
     transferTimelineRef.current = timeline;
 
     timeline
-      .to(plane, {
-        autoAlpha: 1,
-        duration: 0.08,
-        ease: "power1.out",
-      })
       .to(
         plane,
         {
@@ -623,48 +633,25 @@ function PortfolioSection() {
             start: 0,
             end: 1,
           },
-          scaleX: approachScaleX,
-          scaleY: approachScaleY,
-          borderRadius: "36px",
-          clipPath: "inset(0% round 36px)",
-          duration: 0.58,
-          ease: "power2.inOut",
-        },
-        0.02
-      )
-      .to(
-        image,
-        {
-          autoAlpha: 0.92,
-          scale: 1.015,
-          duration: 0.48,
-          ease: "sine.out",
-        },
-        0.16
-      )
-      .to(
-        plane,
-        {
-          x: transfer.centerX,
-          y: transfer.centerY,
           scaleX: 1,
           scaleY: 1,
+          rotation: 0,
+          skewX: 0,
           borderRadius: transfer.finalRadius,
-          clipPath: roundClip,
-          duration: 0.3,
-          ease: "power3.inOut",
+          clipPath: screenClip,
+          "--liquid-sheen-opacity": 0.18,
+          "--liquid-edge-opacity": 0.08,
         },
-        0.56
+        0
       )
       .to(
         image,
         {
-          autoAlpha: 1,
+          xPercent: 0,
+          yPercent: 0,
           scale: 1,
-          duration: 0.22,
-          ease: "power2.out",
         },
-        0.58
+        0
       )
       .call(
         () => {
@@ -678,16 +665,16 @@ function PortfolioSection() {
         plane,
         {
           autoAlpha: 0,
-          duration: 0.16,
+          duration: 0.06,
           ease: "power1.out",
         },
-        0.9
+        0.92
       );
 
     return () => {
       timeline.kill();
     };
-  }, [reducedMotion, transfer]);
+  }, [prefersReducedMotion, transfer]);
 
   const collapseProjectSelection = () => {
     clearTransfer();
@@ -703,14 +690,16 @@ function PortfolioSection() {
     clearTransfer();
     setSelectedId(project.id);
 
-    if (reducedMotion) {
+    if (prefersReducedMotion || getPrefersReducedMotion()) {
       setDisplayId(project.id);
       return;
     }
 
+    setDisplayId(null);
+
     transferFrameRef.current = window.requestAnimationFrame(() => {
       transferFrameRef.current = null;
-      const nextTransfer = buildTransfer(sourceElement, project);
+      const nextTransfer = buildLiquidTransferGeometry(sourceElement, project);
 
       if (!nextTransfer) {
         setDisplayId(project.id);
@@ -752,7 +741,7 @@ function PortfolioSection() {
       </h2>
 
       <div className="portfolio-shell" ref={sectionRef}>
-        {transfer && !reducedMotion ? (
+        {transfer && !prefersReducedMotion ? (
           <div className="portfolio-transfer-layer" aria-hidden="true">
             <div className="portfolio-load-plane" ref={transferPlaneRef}>
               <img
@@ -801,7 +790,7 @@ function PortfolioSection() {
             projects={segmentProjects}
             selectedId={selectedProject?.id ?? null}
             selectorRef={selectorRef}
-            reducedMotion={reducedMotion}
+            reducedMotion={prefersReducedMotion}
             onSelect={handleProjectSelect}
           />
         </div>
@@ -831,17 +820,17 @@ function PortfolioSection() {
             >
               <div className="studio-display-stage">
                 <div className="studio-screen" ref={monitorScreenRef}>
-                  <AnimatePresence mode={isInstantReveal ? "sync" : "wait"}>
-                    {isMobileShowcase || displayProject?.type !== "web" ? (
+                  <AnimatePresence mode={isInstantReveal || prefersReducedMotion ? "sync" : "wait"}>
+                    {isTransferBlanking || isMobileShowcase || displayProject?.type !== "web" ? (
                       <motion.div
                         className="studio-screen-blank"
                         key={`studio-blank-${activeSegment}`}
-                        initial={reducedMotion || isInstantReveal ? false : { opacity: 0 }}
+                        initial={prefersReducedMotion || isInstantReveal ? false : { opacity: 0 }}
                         animate={{ opacity: 1 }}
                         exit={{ opacity: 0 }}
                         transition={
-                          isInstantReveal
-                            ? { duration: 0.08, ease: "linear" }
+                          prefersReducedMotion || isInstantReveal
+                            ? { duration: 0, ease: "linear" }
                             : { duration: 0.34, ease: [0.22, 1, 0.36, 1] }
                         }
                       />
@@ -852,7 +841,7 @@ function PortfolioSection() {
                         src={displayProject.src}
                         alt={`Aperçu du projet ${displayProject.title}`}
                         initial={
-                          reducedMotion || isInstantReveal
+                          prefersReducedMotion || isInstantReveal
                             ? false
                             : { opacity: 0, scale: 1.035, filter: "blur(10px)" }
                         }
@@ -862,13 +851,13 @@ function PortfolioSection() {
                           filter: "blur(0px)",
                         }}
                         exit={
-                          reducedMotion || isInstantReveal
+                          prefersReducedMotion || isInstantReveal
                             ? { opacity: 0 }
                             : { opacity: 0, scale: 0.985, filter: "blur(8px)" }
                         }
                         transition={
-                          isInstantReveal
-                            ? { duration: 0.08, ease: "linear" }
+                          prefersReducedMotion || isInstantReveal
+                            ? { duration: 0, ease: "linear" }
                             : { duration: 0.48, ease: [0.22, 1, 0.36, 1] }
                         }
                       />
@@ -910,8 +899,8 @@ function PortfolioSection() {
             >
               <div className="iphone-device">
                 <div className="iphone-screen" ref={phoneScreenRef}>
-                  <AnimatePresence mode={isInstantReveal ? "sync" : "wait"}>
-                    {phonePreview ? (
+                  <AnimatePresence mode={isInstantReveal || prefersReducedMotion ? "sync" : "wait"}>
+                    {!isTransferBlanking && phonePreview ? (
                       <motion.img
                         className="iphone-screen-shot"
                         key={`${displayProject.id}-phone`}
@@ -922,19 +911,19 @@ function PortfolioSection() {
                             : ""
                         }
                         initial={
-                          reducedMotion || isInstantReveal
+                          prefersReducedMotion || isInstantReveal
                             ? false
                             : { opacity: 0, y: 24, scale: 1.03, filter: "blur(8px)" }
                         }
                         animate={{ opacity: 1, y: 0, scale: 1, filter: "blur(0px)" }}
                         exit={
-                          reducedMotion || isInstantReveal
+                          prefersReducedMotion || isInstantReveal
                             ? { opacity: 0 }
                             : { opacity: 0, y: -18, scale: 0.985, filter: "blur(8px)" }
                         }
                         transition={
-                          isInstantReveal
-                            ? { duration: 0.08, ease: "linear" }
+                          prefersReducedMotion || isInstantReveal
+                            ? { duration: 0, ease: "linear" }
                             : { duration: 0.46, ease: [0.22, 1, 0.36, 1] }
                         }
                       />
