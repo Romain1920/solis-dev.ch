@@ -333,7 +333,7 @@ function Hero() {
         <a
           className="hero-request"
           href={`${contactHref}&body=${encodeURIComponent(
-            "Bonjour, j'aimerais demander un premier rendez-vous pour préparer une maquette sur mesure offerte, sans engagement, et imaginer un site unique, marquant et original, sans template, pensé pour être performant sur Google, attirer des visiteurs et convertir davantage de clients."
+            "Bonjour, j'aimerais recevoir une maquette sur mesure, offerte et sans engagement, pour imaginer un site unique, performant sur Google et pensé pour convertir mes visiteurs en clients."
           )}`}
           data-track="hero-maquette-offerte"
         >
@@ -343,10 +343,10 @@ function Hero() {
           <span className="request-copy">
             <strong>Besoin de vous projeter&nbsp;?</strong>
             <span>
-              Nous vous préparons une maquette sur mesure, sans engagement, pour imaginer un site unique, marquant et original, mais surtout un véritable outil : sans template, pensé pour être performant sur Google, attirer des visiteurs et convertir davantage de clients.
+              Recevez une maquette sur mesure, offerte et sans engagement, pour imaginer un site unique, performant sur Google et pensé pour convertir vos visiteurs en clients.
             </span>
             <small>
-              Le premier rendez-vous pour préparer votre maquette est également à notre charge, sans engagement. Et le café est pour nous 😉
+              Le premier rendez-vous est également offert. Et le café est pour nous 😉
             </small>
           </span>
         </a>
