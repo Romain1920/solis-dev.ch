@@ -695,6 +695,24 @@ a {
   pointer-events: none;
 }
 
+.portfolio-shell[data-transfer-device] .portfolio-list-column {
+  z-index: 9;
+}
+
+.portfolio-shell[data-transfer-device] .portfolio-display-column {
+  z-index: 8;
+}
+
+.portfolio-shell[data-transfer-device="web"] .studio-screen,
+.portfolio-shell[data-transfer-device="mobile"] .iphone-screen {
+  background: transparent;
+}
+
+.portfolio-shell[data-transfer-device="web"] .studio-screen-blank {
+  opacity: 0 !important;
+  visibility: hidden !important;
+}
+
 .portfolio-load-plane {
   --liquid-sheen-opacity: 0.46;
   --liquid-edge-opacity: 0.38;
@@ -713,14 +731,6 @@ a {
   backface-visibility: hidden;
   contain: layout paint;
   will-change: transform, opacity, clip-path, border-radius;
-}
-
-.portfolio-load-plane[data-device="mobile"] {
-  box-shadow:
-    0 0 0 4px rgba(10, 11, 12, 0.98),
-    0 0 0 6px rgba(58, 60, 61, 0.72),
-    0 20px 46px rgba(15, 16, 18, 0.18),
-    0 8px 22px rgba(15, 16, 18, 0.14);
 }
 
 .portfolio-load-plane::before {
@@ -751,23 +761,7 @@ a {
 }
 
 .portfolio-load-plane[data-device="mobile"]::after {
-  inset: auto;
-  top: 1.45%;
-  left: 50%;
-  z-index: 4;
-  display: block;
-  width: 32%;
-  height: 3.95%;
-  border: 0;
-  border-radius: 999px;
-  background:
-    radial-gradient(circle at 84% 50%, rgba(31, 53, 82, 0.96) 0 11%, #050608 12% 23%, transparent 24%),
-    #050608;
-  box-shadow:
-    inset 0 1px 1px rgba(255, 255, 255, 0.12),
-    0 1px 2px rgba(0, 0, 0, 0.18);
-  opacity: 1;
-  transform: translate3d(-50%, 0, 0);
+  display: none;
 }
 
 .portfolio-load-plane-image {
@@ -785,55 +779,6 @@ a {
 }
 
 .portfolio-load-plane[data-device="mobile"] .portfolio-load-plane-image {
-  inset: 0;
-  width: 100%;
-  height: 100%;
-}
-
-.portfolio-screen-receiver {
-  --receiver-sheen-opacity: 0.18;
-  position: absolute;
-  inset: 0;
-  z-index: 1;
-  overflow: hidden;
-  opacity: 0;
-  visibility: hidden;
-  border-radius: inherit;
-  pointer-events: none;
-  transform-origin: left center;
-  will-change: transform, opacity, clip-path;
-}
-
-.portfolio-screen-receiver::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  z-index: 2;
-  pointer-events: none;
-  background:
-    linear-gradient(100deg, rgba(255, 255, 255, 0.46), transparent 32%),
-    linear-gradient(90deg, rgba(238, 124, 66, 0.16), transparent 54%);
-  mix-blend-mode: screen;
-  opacity: var(--receiver-sheen-opacity);
-}
-
-.portfolio-screen-receiver-image {
-  position: absolute;
-  z-index: 1;
-  display: block;
-  object-fit: cover;
-  object-position: top center;
-  transform-origin: center center;
-  backface-visibility: hidden;
-}
-
-.portfolio-screen-receiver[data-device="web"] .portfolio-screen-receiver-image {
-  inset: -2px;
-  width: calc(100% + 4px);
-  height: calc(100% + 4px);
-}
-
-.portfolio-screen-receiver[data-device="mobile"] .portfolio-screen-receiver-image {
   inset: 0;
   width: 100%;
   height: 100%;
