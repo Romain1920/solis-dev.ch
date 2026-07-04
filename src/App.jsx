@@ -558,15 +558,14 @@ function PortfolioSection() {
         : Math.min(screenRect.height * 0.05, 18);
     const startScaleX = startWidth / targetWidth;
     const startScaleY = startHeight / targetHeight;
-    const travelEndScale = project.type === "mobile" ? 0.38 : 0.48;
     const startClipPath =
       project.type === "mobile"
         ? `inset(0% 18% 0% 18% round ${targetRadius})`
         : "polygon(0% 46%, 72% 14%, 100% 50%, 72% 86%, 0% 54%)";
     const finalClipPath =
       project.type === "mobile"
-        ? `inset(0% 7% 0% 7% round ${targetRadius})`
-        : "polygon(0% 3%, 100% 0%, 100% 100%, 0% 97%, 0% 3%)";
+        ? `inset(0% round ${targetRadius})`
+        : "polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%, 0% 0%)";
     const startRotation = project.type === "mobile" ? 4 : -5;
     const startSkewX = project.type === "mobile" ? -8 : 10;
 
@@ -585,7 +584,6 @@ function PortfolioSection() {
       startHeight,
       startScaleX,
       startScaleY,
-      travelEndScale,
       screenWidth: screenRect.width,
       screenHeight: screenRect.height,
       targetWidth,
@@ -645,18 +643,18 @@ function PortfolioSection() {
 
     gsap.set(image, {
       autoAlpha: 1,
-      xPercent: transfer.project.type === "mobile" ? -7 : -12,
-      yPercent: transfer.project.type === "mobile" ? -10 : -6,
-      scale: transfer.project.type === "mobile" ? 1.12 : 1.18,
+      xPercent: 0,
+      yPercent: 0,
+      scale: 1,
     });
 
     gsap.set(receiverElement, {
       autoAlpha: 0,
-      clipPath: "inset(0% 98% 0% 0%)",
-      scaleX: 0.985,
+      clipPath: "inset(0% 0% 0% 0%)",
+      scaleX: 1,
       scaleY: 1,
       transformOrigin: "left center",
-      "--receiver-sheen-opacity": 0.34,
+      "--receiver-sheen-opacity": 0,
     });
 
     gsap.set(receiverImage, {
@@ -676,43 +674,42 @@ function PortfolioSection() {
         progress * progress * progress * to
       );
     };
-    const targetScreen =
-      transfer.project.type === "mobile"
-        ? phoneScreenRef.current ?? monitorScreenRef.current
-        : monitorScreenRef.current;
     const travelState = { progress: 0 };
     const updatePlanePosition = () => {
-      const section = sectionRef.current;
-      const target = targetScreen;
-
-      if (!section || !target) {
-        return;
-      }
-
-      const sectionRect = section.getBoundingClientRect();
-      const targetRect = target.getBoundingClientRect();
-      const targetCenterX = targetRect.left + targetRect.width * 0.5 - sectionRect.left;
-      const incomingFromLeft = targetCenterX >= transfer.startX;
-      const edgeInset = Math.min(
-        targetRect.width * (transfer.project.type === "mobile" ? 0.12 : 0.1),
-        transfer.project.type === "mobile" ? 26 : 64
-      );
-      const targetX =
-        (incomingFromLeft ? targetRect.left + edgeInset : targetRect.right - edgeInset) -
-        sectionRect.left;
-      const targetY = targetRect.top + targetRect.height * 0.5 - sectionRect.top;
       const progress = travelState.progress;
-      const vectorX = targetX - transfer.startX;
+      const liveSectionRect = sectionRef.current?.getBoundingClientRect();
+      const liveTargetScreen =
+        transfer.project.type === "mobile"
+          ? phoneScreenRef.current
+          : monitorScreenRef.current;
+      const liveTargetRect = liveTargetScreen?.getBoundingClientRect();
+      const liveCenterX =
+        liveSectionRect && liveTargetRect
+          ? liveTargetRect.left + liveTargetRect.width * 0.5 - liveSectionRect.left
+          : transfer.centerX;
+      const liveCenterY =
+        liveSectionRect && liveTargetRect
+          ? liveTargetRect.top + liveTargetRect.height * 0.5 - liveSectionRect.top
+          : transfer.centerY;
+      const liveScaleX =
+        liveTargetRect && transfer.targetWidth
+          ? liveTargetRect.width / transfer.targetWidth
+          : 1;
+      const liveScaleY =
+        liveTargetRect && transfer.targetHeight
+          ? liveTargetRect.height / transfer.targetHeight
+          : 1;
+      const vectorX = liveCenterX - transfer.startX;
       const distance = Math.max(120, Math.abs(vectorX));
       const direction = vectorX >= 0 ? 1 : -1;
       const controlOneX = transfer.startX + direction * distance * 0.32;
       const controlOneY = transfer.startY - 10;
-      const controlTwoX = targetX - direction * distance * 0.36;
-      const controlTwoY = targetY - 34;
-      const x = cubicPoint(transfer.startX, controlOneX, controlTwoX, targetX, progress);
-      const y = cubicPoint(transfer.startY, controlOneY, controlTwoY, targetY, progress);
-      const scaleX = gsap.utils.interpolate(startScaleX, transfer.travelEndScale, progress);
-      const scaleY = gsap.utils.interpolate(startScaleY, transfer.travelEndScale, progress);
+      const controlTwoX = liveCenterX - direction * distance * 0.36;
+      const controlTwoY = liveCenterY - 34;
+      const x = cubicPoint(transfer.startX, controlOneX, controlTwoX, liveCenterX, progress);
+      const y = cubicPoint(transfer.startY, controlOneY, controlTwoY, liveCenterY, progress);
+      const scaleX = gsap.utils.interpolate(startScaleX, liveScaleX, progress);
+      const scaleY = gsap.utils.interpolate(startScaleY, liveScaleY, progress);
 
       gsap.set(plane, {
         x,
@@ -740,7 +737,7 @@ function PortfolioSection() {
         travelState,
         {
           progress: 1,
-          duration: 0.86,
+          duration: 0.96,
           ease: "power3.inOut",
           onUpdate: updatePlanePosition,
           onComplete: updatePlanePosition,
@@ -756,35 +753,12 @@ function PortfolioSection() {
           clipPath: transfer.finalClipPath,
           "--liquid-sheen-opacity": 0.18,
           "--liquid-edge-opacity": 0.08,
-          duration: 0.86,
+          duration: 0.96,
           ease: "power3.inOut",
         },
         0
       )
-      .to(
-        image,
-        {
-          xPercent: 0,
-          yPercent: 0,
-          scale: 1,
-          duration: 0.74,
-          ease: "power3.inOut",
-        },
-        0
-      )
-      .set(receiverElement, { autoAlpha: 1 }, 0.62)
-      .to(
-        receiverElement,
-        {
-          clipPath: "inset(0% 0% 0% 0%)",
-          scaleX: 1,
-          scaleY: 1,
-          "--receiver-sheen-opacity": 0.08,
-          duration: 0.24,
-          ease: "power2.out",
-        },
-        0.62
-      )
+      .set(receiverElement, { autoAlpha: 1 }, 0.84)
       .call(
         () => {
           flushSync(() => {
@@ -802,7 +776,7 @@ function PortfolioSection() {
           duration: 0.06,
           ease: "power1.out",
         },
-        0.88
+        0.94
       )
       .to(
         receiverElement,
