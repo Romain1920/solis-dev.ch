@@ -123,8 +123,10 @@ function App() {
 
       <main id="contenu">
         <Hero />
-        <MetricsSection />
-        <PortfolioSection />
+        <div className="content-section-wrapper">
+          <MetricsSection />
+          <PortfolioSection />
+        </div>
       </main>
     </ReactLenis>
   );
@@ -605,12 +607,14 @@ function PortfolioSection() {
     const startScaleX = transfer.startScaleX ?? transfer.startWidth / transfer.targetWidth;
     const startScaleY = transfer.startScaleY ?? transfer.startHeight / transfer.targetHeight;
     const travelDuration = 0.96;
-    const morphCompleteProgress = transfer.project.type === "mobile" ? 0.9 : 0.88;
-    const morphDuration = travelDuration * morphCompleteProgress;
+    const morphCompleteProgress = transfer.project.type === "mobile" ? 0.9 : 0.72;
+    const orientationDuration =
+      transfer.project.type === "mobile" ? travelDuration * 0.72 : travelDuration * 0.46;
     const maskDuration =
-      transfer.project.type === "mobile" ? travelDuration * 0.72 : morphDuration;
+      transfer.project.type === "mobile" ? travelDuration * 0.72 : travelDuration * 0.88;
     const maskEase = transfer.project.type === "mobile" ? "power2.out" : "power2.in";
-    const commitAt = travelDuration - 0.015;
+    const commitAt =
+      transfer.project.type === "web" ? travelDuration * 0.5 : travelDuration - 0.015;
     const planeOutAt = travelDuration + 0.02;
 
     gsap.set(plane, {
@@ -724,6 +728,14 @@ function PortfolioSection() {
           rotation: 0,
           skewX: 0,
           borderRadius: transfer.targetRadius,
+          duration: orientationDuration,
+          ease: "power2.out",
+        },
+        0
+      )
+      .to(
+        plane,
+        {
           clipPath: transfer.finalClipPath,
           "--liquid-sheen-opacity": 0.18,
           "--liquid-edge-opacity": 0.08,
