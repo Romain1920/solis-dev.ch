@@ -30,7 +30,7 @@
   --glass: rgba(255, 255, 255, 0.72);
   --orange: #ee7c42;
   --line: rgba(10, 12, 12, 0.08);
-  --font-main: "FK Grotesk", "SF Pro Display", "SF Pro Text", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --font-main: "SF Pro Display", "SF Pro Text", -apple-system, BlinkMacSystemFont, "Segoe UI", "FK Grotesk", system-ui, sans-serif;
 }
 
 * {
@@ -658,7 +658,7 @@ a {
   color: rgba(255, 255, 255, 0.92);
   font-size: clamp(1rem, 1.08vw, 1.16rem);
   font-weight: 500;
-  line-height: 0.98;
+  line-height: 1.12;
   letter-spacing: 0;
 }
 
@@ -1881,7 +1881,7 @@ a {
     border-radius: 15px;
     padding: 10px;
     font-size: 0.72rem;
-    line-height: 1.08;
+    line-height: 1.16;
     white-space: normal;
   }
 
@@ -1896,7 +1896,7 @@ a {
     text-align: left;
     min-width: 0;
     max-width: 100%;
-    line-height: 1.08;
+    line-height: 1.16;
   }
 
   .hero-request strong {
@@ -1942,7 +1942,7 @@ a {
     width: max-content;
     max-width: 100%;
     font-size: clamp(0.92rem, 4vw, 1rem);
-    line-height: 0.98;
+    line-height: 1.12;
   }
 
   .website-carousel {
