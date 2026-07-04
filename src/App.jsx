@@ -433,11 +433,16 @@ function PortfolioSection() {
   const [selectedId, setSelectedId] = useState(null);
   const [displayId, setDisplayId] = useState(null);
   const [transfer, setTransfer] = useState(null);
+  const [receiver, setReceiver] = useState(null);
   const [instantRevealId, setInstantRevealId] = useState(null);
   const sectionRef = useRef(null);
   const selectorRef = useRef(null);
   const monitorScreenRef = useRef(null);
   const phoneScreenRef = useRef(null);
+  const monitorReceiverRef = useRef(null);
+  const monitorReceiverImageRef = useRef(null);
+  const phoneReceiverRef = useRef(null);
+  const phoneReceiverImageRef = useRef(null);
   const transferPlaneRef = useRef(null);
   const transferImageRef = useRef(null);
   const transferTimelineRef = useRef(null);
@@ -491,7 +496,14 @@ function PortfolioSection() {
       gsap.set(transferPlaneRef.current, { autoAlpha: 0 });
     }
 
+    [monitorReceiverRef.current, phoneReceiverRef.current].forEach((element) => {
+      if (element) {
+        gsap.set(element, { autoAlpha: 0 });
+      }
+    });
+
     setTransfer(null);
+    setReceiver(null);
     setInstantRevealId(null);
   };
 
@@ -536,11 +548,27 @@ function PortfolioSection() {
       project.type === "mobile"
         ? targetStyles.borderRadius || `${Math.max(18, screenRect.width * 0.1)}px`
         : `${Math.max(3, screenRect.width * 0.006)}px`;
-    const startMaxWidth = project.type === "mobile" ? 52 : 104;
-    const startScale = Math.min(project.type === "mobile" ? 0.18 : 0.14, startMaxWidth / targetWidth);
-    const startWidth = targetWidth * startScale;
-    const startHeight = targetHeight * startScale;
-    const finalClipPath = `inset(0% round ${targetRadius})`;
+    const startWidth =
+      project.type === "mobile"
+        ? Math.min(screenRect.width * 0.18, 52)
+        : Math.min(screenRect.width * 0.14, 104);
+    const startHeight =
+      project.type === "mobile"
+        ? Math.min(screenRect.height * 0.18, 112)
+        : Math.min(screenRect.height * 0.05, 18);
+    const startScaleX = startWidth / targetWidth;
+    const startScaleY = startHeight / targetHeight;
+    const travelEndScale = project.type === "mobile" ? 0.38 : 0.48;
+    const startClipPath =
+      project.type === "mobile"
+        ? `inset(0% 18% 0% 18% round ${targetRadius})`
+        : "polygon(0% 46%, 72% 14%, 100% 50%, 72% 86%, 0% 54%)";
+    const finalClipPath =
+      project.type === "mobile"
+        ? `inset(0% 7% 0% 7% round ${targetRadius})`
+        : "polygon(0% 3%, 100% 0%, 100% 100%, 0% 97%, 0% 3%)";
+    const startRotation = project.type === "mobile" ? 4 : -5;
+    const startSkewX = project.type === "mobile" ? -8 : 10;
 
     return {
       id: `${project.id}-${Date.now()}`,
@@ -555,16 +583,18 @@ function PortfolioSection() {
       vectorY,
       startWidth,
       startHeight,
-      startScale,
+      startScaleX,
+      startScaleY,
+      travelEndScale,
       screenWidth: screenRect.width,
       screenHeight: screenRect.height,
       targetWidth,
       targetHeight,
       targetRadius,
-      startClipPath: finalClipPath,
+      startClipPath,
       finalClipPath,
-      startRotation: 0,
-      startSkewX: 0,
+      startRotation,
+      startSkewX,
       width: sectionRect.width,
       height: sectionRect.height,
     };
@@ -577,14 +607,23 @@ function PortfolioSection() {
 
     const plane = transferPlaneRef.current;
     const image = transferImageRef.current;
+    const receiverElement =
+      transfer.project.type === "mobile"
+        ? phoneReceiverRef.current
+        : monitorReceiverRef.current;
+    const receiverImage =
+      transfer.project.type === "mobile"
+        ? phoneReceiverImageRef.current
+        : monitorReceiverImageRef.current;
 
-    if (!plane || !image) {
+    if (!plane || !image || !receiverElement || !receiverImage) {
       return undefined;
     }
 
     transferTimelineRef.current?.kill();
 
-    const startScale = transfer.startScale ?? transfer.startWidth / transfer.targetWidth;
+    const startScaleX = transfer.startScaleX ?? transfer.startWidth / transfer.targetWidth;
+    const startScaleY = transfer.startScaleY ?? transfer.startHeight / transfer.targetHeight;
 
     gsap.set(plane, {
       autoAlpha: 1,
@@ -594,8 +633,8 @@ function PortfolioSection() {
       yPercent: -50,
       x: transfer.startX,
       y: transfer.startY,
-      scaleX: startScale,
-      scaleY: startScale,
+      scaleX: startScaleX,
+      scaleY: startScaleY,
       rotation: transfer.startRotation,
       skewX: transfer.startSkewX,
       borderRadius: transfer.targetRadius,
@@ -605,6 +644,22 @@ function PortfolioSection() {
     });
 
     gsap.set(image, {
+      autoAlpha: 1,
+      xPercent: transfer.project.type === "mobile" ? -7 : -12,
+      yPercent: transfer.project.type === "mobile" ? -10 : -6,
+      scale: transfer.project.type === "mobile" ? 1.12 : 1.18,
+    });
+
+    gsap.set(receiverElement, {
+      autoAlpha: 0,
+      clipPath: "inset(0% 98% 0% 0%)",
+      scaleX: 0.985,
+      scaleY: 1,
+      transformOrigin: "left center",
+      "--receiver-sheen-opacity": 0.34,
+    });
+
+    gsap.set(receiverImage, {
       autoAlpha: 1,
       xPercent: 0,
       yPercent: 0,
@@ -636,7 +691,15 @@ function PortfolioSection() {
 
       const sectionRect = section.getBoundingClientRect();
       const targetRect = target.getBoundingClientRect();
-      const targetX = targetRect.left + targetRect.width * 0.5 - sectionRect.left;
+      const targetCenterX = targetRect.left + targetRect.width * 0.5 - sectionRect.left;
+      const incomingFromLeft = targetCenterX >= transfer.startX;
+      const edgeInset = Math.min(
+        targetRect.width * (transfer.project.type === "mobile" ? 0.12 : 0.1),
+        transfer.project.type === "mobile" ? 26 : 64
+      );
+      const targetX =
+        (incomingFromLeft ? targetRect.left + edgeInset : targetRect.right - edgeInset) -
+        sectionRect.left;
       const targetY = targetRect.top + targetRect.height * 0.5 - sectionRect.top;
       const progress = travelState.progress;
       const vectorX = targetX - transfer.startX;
@@ -648,13 +711,14 @@ function PortfolioSection() {
       const controlTwoY = targetY - 34;
       const x = cubicPoint(transfer.startX, controlOneX, controlTwoX, targetX, progress);
       const y = cubicPoint(transfer.startY, controlOneY, controlTwoY, targetY, progress);
-      const scale = gsap.utils.interpolate(startScale, 1, progress);
+      const scaleX = gsap.utils.interpolate(startScaleX, transfer.travelEndScale, progress);
+      const scaleY = gsap.utils.interpolate(startScaleY, transfer.travelEndScale, progress);
 
       gsap.set(plane, {
         x,
         y,
-        scaleX: scale,
-        scaleY: scale,
+        scaleX,
+        scaleY,
       });
     };
 
@@ -662,7 +726,10 @@ function PortfolioSection() {
       onComplete: () => {
         transferTimelineRef.current = null;
         setTransfer(null);
+        setReceiver(null);
+        setInstantRevealId(null);
         gsap.set(plane, { autoAlpha: 0 });
+        gsap.set(receiverElement, { autoAlpha: 0 });
       },
     });
 
@@ -673,7 +740,7 @@ function PortfolioSection() {
         travelState,
         {
           progress: 1,
-          duration: 0.96,
+          duration: 0.86,
           ease: "power3.inOut",
           onUpdate: updatePlanePosition,
           onComplete: updatePlanePosition,
@@ -689,10 +756,34 @@ function PortfolioSection() {
           clipPath: transfer.finalClipPath,
           "--liquid-sheen-opacity": 0.18,
           "--liquid-edge-opacity": 0.08,
-          duration: 0.96,
+          duration: 0.86,
           ease: "power3.inOut",
         },
         0
+      )
+      .to(
+        image,
+        {
+          xPercent: 0,
+          yPercent: 0,
+          scale: 1,
+          duration: 0.74,
+          ease: "power3.inOut",
+        },
+        0
+      )
+      .set(receiverElement, { autoAlpha: 1 }, 0.62)
+      .to(
+        receiverElement,
+        {
+          clipPath: "inset(0% 0% 0% 0%)",
+          scaleX: 1,
+          scaleY: 1,
+          "--receiver-sheen-opacity": 0.08,
+          duration: 0.24,
+          ease: "power2.out",
+        },
+        0.62
       )
       .call(
         () => {
@@ -702,7 +793,7 @@ function PortfolioSection() {
           });
         },
         [],
-        0.82
+        0.86
       )
       .to(
         plane,
@@ -711,7 +802,16 @@ function PortfolioSection() {
           duration: 0.06,
           ease: "power1.out",
         },
-        0.9
+        0.88
+      )
+      .to(
+        receiverElement,
+        {
+          autoAlpha: 0,
+          duration: 0.08,
+          ease: "power1.out",
+        },
+        1.16
       );
 
     return () => {
@@ -735,6 +835,7 @@ function PortfolioSection() {
 
     if (prefersReducedMotion || getPrefersReducedMotion()) {
       setDisplayId(project.id);
+      setReceiver(null);
       return;
     }
 
@@ -745,10 +846,17 @@ function PortfolioSection() {
       const nextTransfer = buildLiquidTransferGeometry(sourceElement, project);
 
       if (!nextTransfer) {
+        setReceiver(null);
         setDisplayId(project.id);
         return;
       }
 
+      setReceiver({
+        id: nextTransfer.id,
+        project,
+        device: project.type,
+        previewSrc: nextTransfer.previewSrc,
+      });
       setTransfer(nextTransfer);
     });
   };
@@ -771,6 +879,7 @@ function PortfolioSection() {
     setActiveSegment(segment);
     setSelectedId(null);
     setDisplayId(null);
+    setReceiver(null);
   };
 
   return (
@@ -910,6 +1019,21 @@ function PortfolioSection() {
                       />
                     )}
                   </AnimatePresence>
+                  {receiver?.device === "web" ? (
+                    <div
+                      className="portfolio-screen-receiver"
+                      data-device="web"
+                      ref={monitorReceiverRef}
+                      aria-hidden="true"
+                    >
+                      <img
+                        className="portfolio-screen-receiver-image"
+                        ref={monitorReceiverImageRef}
+                        src={receiver.previewSrc}
+                        alt=""
+                      />
+                    </div>
+                  ) : null}
                 </div>
 
                 <img
@@ -976,6 +1100,21 @@ function PortfolioSection() {
                       />
                     ) : null}
                   </AnimatePresence>
+                  {receiver?.device === "mobile" ? (
+                    <div
+                      className="portfolio-screen-receiver"
+                      data-device="mobile"
+                      ref={phoneReceiverRef}
+                      aria-hidden="true"
+                    >
+                      <img
+                        className="portfolio-screen-receiver-image"
+                        ref={phoneReceiverImageRef}
+                        src={receiver.previewSrc}
+                        alt=""
+                      />
+                    </div>
+                  ) : null}
                 </div>
                 <img
                   className="iphone-frame-image"
