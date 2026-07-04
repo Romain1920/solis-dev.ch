@@ -607,14 +607,12 @@ function PortfolioSection() {
     const startScaleX = transfer.startScaleX ?? transfer.startWidth / transfer.targetWidth;
     const startScaleY = transfer.startScaleY ?? transfer.startHeight / transfer.targetHeight;
     const travelDuration = 0.96;
-    const morphCompleteProgress = transfer.project.type === "mobile" ? 0.9 : 0.72;
+    const morphCompleteProgress = transfer.project.type === "mobile" ? 0.82 : 0.72;
     const orientationDuration =
-      transfer.project.type === "mobile" ? travelDuration * 0.72 : travelDuration * 0.46;
-    const maskDuration =
-      transfer.project.type === "mobile" ? travelDuration * 0.72 : travelDuration * 0.88;
-    const maskEase = transfer.project.type === "mobile" ? "power2.out" : "power2.in";
-    const commitAt =
-      transfer.project.type === "web" ? travelDuration * 0.5 : travelDuration - 0.015;
+      transfer.project.type === "mobile" ? travelDuration * 0.52 : travelDuration * 0.46;
+    const maskDuration = travelDuration * 0.88;
+    const maskEase = "power2.in";
+    const commitAt = travelDuration * 0.5;
     const planeOutAt = travelDuration + 0.02;
 
     gsap.set(plane, {
