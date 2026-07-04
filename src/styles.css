@@ -673,6 +673,8 @@ a {
 }
 
 .portfolio-shell {
+  --portfolio-display-width: min(860px, 63vw, calc((100svh - 116px) * 1.3));
+  --portfolio-display-height: min(662px, 48.55vw, calc(100svh - 116px));
   position: relative;
   width: min(1320px, calc(100vw - 56px));
   height: min(760px, calc(100svh - 112px));
@@ -722,12 +724,13 @@ a {
 .portfolio-list-column {
   position: relative;
   z-index: 6;
+  width: min(100%, 420px);
+  height: var(--portfolio-display-height);
   min-width: 0;
-  align-self: stretch;
+  align-self: center;
   display: grid;
   grid-template-rows: auto minmax(0, 1fr);
-  align-content: center;
-  gap: clamp(18px, 2.6svh, 28px);
+  gap: 16px;
   font-family: "SF Pro Display", "SF Pro Text", -apple-system, BlinkMacSystemFont,
     "Segoe UI", sans-serif;
 }
@@ -736,7 +739,7 @@ a {
   position: relative;
   display: inline-grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  width: min(372px, 100%);
+  width: 100%;
   padding: 3px;
   border: 1px solid rgba(9, 10, 10, 0.06);
   border-radius: 999px;
@@ -751,12 +754,12 @@ a {
   border-radius: 999px;
   background: transparent;
   color: rgba(17, 17, 17, 0.52);
-  min-height: 38px;
-  padding: 0 12px;
+  min-height: 42px;
+  padding: 0 14px;
   font: inherit;
-  font-size: clamp(0.74rem, 0.9vw, 0.86rem);
+  font-size: clamp(0.72rem, 0.82vw, 0.82rem);
   font-weight: 650;
-  line-height: 1;
+  line-height: 1.08;
   letter-spacing: 0;
   text-align: center;
   cursor: pointer;
@@ -789,26 +792,26 @@ a {
 
 .portfolio-reference-selector {
   position: relative;
-  width: min(100%, 390px);
-  height: min(590px, calc(100svh - 198px));
-  min-height: 360px;
+  width: 100%;
+  height: 100%;
+  min-height: 0;
   display: grid;
-  grid-template-rows: 42px minmax(0, 1fr) 42px;
-  gap: 10px;
+  grid-template-rows: 34px minmax(0, 1fr) 34px;
+  gap: 8px;
   outline: none;
 }
 
 .portfolio-reference-arrow {
   justify-self: start;
-  width: 38px;
-  height: 38px;
+  width: 32px;
+  height: 32px;
   appearance: none;
   border: 1px solid rgba(9, 10, 10, 0.07);
   border-radius: 999px;
-  background: rgba(247, 247, 245, 0.86);
+  background: rgba(247, 247, 245, 0.72);
   color: rgba(17, 17, 17, 0.76);
   box-shadow:
-    0 10px 24px rgba(17, 18, 18, 0.06),
+    0 8px 18px rgba(17, 18, 18, 0.045),
     inset 0 1px 0 rgba(255, 255, 255, 0.88);
   cursor: pointer;
   transition:
@@ -827,7 +830,7 @@ a {
   outline: 0;
   box-shadow:
     0 0 0 3px rgba(238, 124, 66, 0.16),
-    0 10px 24px rgba(17, 18, 18, 0.06);
+    0 8px 18px rgba(17, 18, 18, 0.045);
 }
 
 .portfolio-reference-arrow:disabled {
@@ -837,8 +840,8 @@ a {
 
 .portfolio-reference-arrow span {
   display: block;
-  width: 9px;
-  height: 9px;
+  width: 8px;
+  height: 8px;
   margin: auto;
   border-top: 2px solid currentColor;
   border-left: 2px solid currentColor;
@@ -862,15 +865,15 @@ a {
   -webkit-mask-image: linear-gradient(
     180deg,
     transparent 0%,
-    #000 8%,
-    #000 92%,
+    #000 7%,
+    #000 93%,
     transparent 100%
   );
   mask-image: linear-gradient(
     180deg,
     transparent 0%,
-    #000 8%,
-    #000 92%,
+    #000 7%,
+    #000 93%,
     transparent 100%
   );
 }
@@ -886,7 +889,7 @@ a {
   left: 0;
   right: 0;
   z-index: 3;
-  height: 68px;
+  height: 54px;
   pointer-events: none;
 }
 
@@ -902,42 +905,38 @@ a {
 
 .portfolio-reference-list {
   display: grid;
-  gap: 10px;
-  padding: 44px 0;
+  gap: 4px;
+  padding: 10px 0;
 }
 
 .portfolio-reference-item {
-  width: min(100%, 370px);
+  width: 100%;
   scroll-snap-align: center;
-  border-radius: 24px;
+  border-radius: 28px;
   color: #111111;
 }
 
 .portfolio-reference-item[data-active="true"] {
-  background: #f8f8f6;
-  box-shadow:
-    0 18px 40px rgba(17, 18, 18, 0.08),
-    inset 0 0 0 1px rgba(9, 10, 10, 0.04),
-    inset 0 1px 0 rgba(255, 255, 255, 0.92);
+  color: #111111;
 }
 
 .portfolio-reference-button {
   position: relative;
   width: 100%;
-  min-height: 58px;
+  min-height: 46px;
   display: flex;
   align-items: center;
-  gap: 13px;
+  gap: 12px;
   appearance: none;
   border: 0;
   border-radius: 999px;
   background: transparent;
   color: #111111;
-  padding: 0 18px;
+  padding: 0 4px;
   font: inherit;
-  font-size: clamp(1rem, 1.18vw, 1.18rem);
+  font-size: clamp(1.02rem, 1.15vw, 1.18rem);
   font-weight: 650;
-  line-height: 1.08;
+  line-height: 1.12;
   letter-spacing: 0;
   text-align: left;
   cursor: pointer;
@@ -950,7 +949,7 @@ a {
 
 .portfolio-reference-button:hover,
 .portfolio-reference-button:focus-visible {
-  background: rgba(9, 10, 10, 0.035);
+  background: transparent;
 }
 
 .portfolio-reference-button:focus-visible {
@@ -960,9 +959,9 @@ a {
 .portfolio-reference-icon {
   position: relative;
   flex: 0 0 auto;
-  width: 21px;
-  height: 21px;
-  border: 1.6px solid rgba(17, 17, 17, 0.5);
+  width: 20px;
+  height: 20px;
+  border: 1.5px solid rgba(17, 17, 17, 0.46);
   border-radius: 999px;
 }
 
@@ -972,8 +971,8 @@ a {
   position: absolute;
   left: 50%;
   top: 50%;
-  width: 9px;
-  height: 1.6px;
+  width: 8px;
+  height: 1.5px;
   border-radius: 999px;
   background: currentColor;
   transform: translate3d(-50%, -50%, 0);
@@ -993,84 +992,32 @@ a {
 }
 
 .portfolio-reference-panel-inner {
-  padding: 0 18px 20px 52px;
+  margin: 2px 0 16px 32px;
+  padding: clamp(24px, 2.2vw, 32px);
+  border-radius: 26px;
+  background: #f7f7f5;
+  box-shadow:
+    inset 0 0 0 1px rgba(9, 10, 10, 0.04),
+    inset 0 1px 0 rgba(255, 255, 255, 0.9);
 }
 
-.portfolio-reference-category {
-  display: inline-flex;
-  align-items: center;
-  min-height: 23px;
-  border: 1px solid rgba(9, 10, 10, 0.07);
-  border-radius: 999px;
-  background: #ffffff;
-  color: rgba(17, 17, 17, 0.56);
-  padding: 0 9px;
-  font-size: 0.7rem;
-  font-weight: 650;
-  line-height: 1;
-}
-
-.portfolio-reference-panel h3 {
-  margin: 10px 0 7px;
-  color: #111111;
-  font-size: clamp(1.25rem, 1.6vw, 1.72rem);
-  font-weight: 680;
-  line-height: 1.04;
-  letter-spacing: 0;
-}
-
-.portfolio-reference-panel p {
+.portfolio-reference-description {
   margin: 0;
-  color: rgba(17, 17, 17, 0.68);
-  font-size: clamp(0.86rem, 0.9vw, 0.94rem);
-  font-weight: 450;
-  line-height: 1.38;
+  color: rgba(17, 17, 17, 0.74);
+  font-size: clamp(0.96rem, 1.02vw, 1.08rem);
+  font-weight: 440;
+  line-height: 1.58;
   letter-spacing: 0;
-}
-
-.portfolio-reference-meta {
-  margin: 10px 0 0;
-  padding: 0;
-}
-
-.portfolio-reference-meta div {
-  display: grid;
-  gap: 3px;
-}
-
-.portfolio-reference-meta dt {
-  color: rgba(17, 17, 17, 0.45);
-  font-size: 0.68rem;
-  font-weight: 650;
-}
-
-.portfolio-reference-meta dd {
-  margin: 0;
-  color: #111111;
-  font-size: 0.8rem;
-  font-weight: 650;
-  line-height: 1.24;
 }
 
 .portfolio-reference-testimonial {
-  margin: 10px 0 0;
-  color: rgba(17, 17, 17, 0.56);
-  font-size: clamp(0.78rem, 0.84vw, 0.88rem);
-  font-weight: 500;
-  line-height: 1.34;
+  margin: 20px 0 0;
+  color: rgba(17, 17, 17, 0.58);
+  font-size: clamp(0.94rem, 0.98vw, 1.04rem);
+  font-weight: 470;
+  line-height: 1.52;
   letter-spacing: 0;
-}
-
-.portfolio-reference-tech-list {
-  gap: 6px;
-  margin-top: 11px;
-}
-
-.portfolio-reference-tech-chip {
-  min-height: 25px;
-  background: #ffffff;
-  padding: 0 9px;
-  font-size: 0.74rem;
+  hanging-punctuation: first;
 }
 
 .portfolio-display-column {
@@ -1086,7 +1033,7 @@ a {
 
 .device-showcase {
   position: relative;
-  width: min(860px, 63vw, calc((100svh - 116px) * 1.3));
+  width: var(--portfolio-display-width);
   aspect-ratio: 5400 / 4160;
   margin-left: auto;
   margin-right: clamp(-68px, -3.6vw, -28px);
@@ -1260,29 +1207,6 @@ a {
   user-select: none;
 }
 
-.portfolio-tech-list {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 7px;
-  margin-top: 9px;
-}
-
-.portfolio-tech-chip {
-  display: inline-flex;
-  align-items: center;
-  min-height: 27px;
-  border: 1px solid rgba(9, 10, 10, 0.075);
-  border-radius: 999px;
-  background: #f7f7f5;
-  color: #141414;
-  padding: 0 10px;
-  font-size: 0.78rem;
-  font-weight: 600;
-  line-height: 1;
-  letter-spacing: 0;
-  white-space: nowrap;
-}
-
 @keyframes metric-scroll-left {
   0% {
     transform: translate3d(0, 0, 0);
@@ -1427,6 +1351,8 @@ a {
   }
 
   .portfolio-shell {
+    --portfolio-display-width: min(630px, 58vw, calc((100svh - 112px) * 1.2));
+    --portfolio-display-height: min(485px, 44.7vw, calc(100svh - 112px));
     width: min(940px, calc(100vw - 34px));
     height: min(680px, calc(100svh - 102px));
     grid-template-columns: minmax(278px, 0.38fr) minmax(0, 1fr);
@@ -1434,7 +1360,8 @@ a {
   }
 
   .portfolio-list-column {
-    gap: 18px;
+    width: min(100%, 330px);
+    gap: 14px;
   }
 
   .portfolio-segment-control {
@@ -1442,28 +1369,26 @@ a {
   }
 
   .portfolio-reference-selector {
-    width: min(100%, 300px);
-    height: min(540px, calc(100svh - 178px));
-    min-height: 330px;
+    width: 100%;
   }
 
   .portfolio-reference-item {
-    width: min(100%, 292px);
     border-radius: 22px;
   }
 
   .portfolio-reference-button {
-    min-height: 54px;
-    padding: 0 15px;
+    min-height: 44px;
+    padding: 0 2px;
     font-size: clamp(0.9rem, 1.7vw, 1.03rem);
   }
 
   .portfolio-reference-panel-inner {
-    padding: 0 15px 18px 48px;
+    margin-left: 31px;
+    padding: 22px;
   }
 
   .device-showcase {
-    width: min(630px, 58vw, calc((100svh - 112px) * 1.2));
+    width: var(--portfolio-display-width);
     margin-right: -22px;
   }
 
@@ -1694,6 +1619,8 @@ a {
   }
 
   .portfolio-list-column {
+    width: 100%;
+    height: auto;
     gap: 16px;
   }
 
@@ -1713,12 +1640,13 @@ a {
 
   .portfolio-reference-button {
     min-height: 56px;
-    padding: 0 15px;
+    padding: 0 2px;
     font-size: clamp(1rem, 4vw, 1.12rem);
   }
 
   .portfolio-reference-panel-inner {
-    padding: 0 15px 18px 48px;
+    margin-left: 32px;
+    padding: 22px;
   }
 
   .portfolio-display-column {

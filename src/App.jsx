@@ -46,8 +46,8 @@ const metrics = [
 ];
 
 const portfolioSegmentOptions = [
-  { id: "desktop", label: "Website References" },
-  { id: "mobile", label: "Mobile App References" },
+  { id: "desktop", label: "Références sites web" },
+  { id: "mobile", label: "Références applications mobiles" },
 ];
 
 const defaultPortfolioSelection = {
@@ -560,17 +560,6 @@ function PortfolioSection() {
     commitProjectSelection(project, event.currentTarget);
   };
 
-  const handleProjectStep = (direction) => {
-    const activeIndex = segmentProjects.findIndex((project) => project.id === selectedProject?.id);
-    const nextIndex = Math.min(
-      segmentProjects.length - 1,
-      Math.max(0, activeIndex + direction)
-    );
-    const nextProject = segmentProjects[nextIndex];
-
-    commitProjectSelection(nextProject, selectorRef.current);
-  };
-
   const handleSegmentChange = (segment, event) => {
     if (segment === activeSegment) {
       return;
@@ -696,7 +685,6 @@ function PortfolioSection() {
             selectorRef={selectorRef}
             reducedMotion={reducedMotion}
             onSelect={handleProjectSelect}
-            onStep={handleProjectStep}
           />
         </div>
 
@@ -716,7 +704,7 @@ function PortfolioSection() {
                   : {
                       x: "0%",
                       y: 0,
-                      scale: 1.04,
+                      scale: 1,
                       opacity: 1,
                       filter: "blur(0px) saturate(1)",
                     }
@@ -871,43 +859,89 @@ function ProjectReferences({
   selectorRef,
   reducedMotion,
   onSelect,
-  onStep,
 }) {
   const listRef = useRef(null);
   const activeItemRef = useRef(null);
-  const activeIndex = Math.max(
-    0,
-    referenceProjects.findIndex((project) => project.id === selectedId)
-  );
-  const canGoPrevious = activeIndex > 0;
-  const canGoNext = activeIndex < referenceProjects.length - 1;
+  const [scrollState, setScrollState] = useState({
+    canScrollDown: false,
+    canScrollUp: false,
+  });
+
+  const updateScrollState = () => {
+    const list = listRef.current;
+
+    if (!list) {
+      return;
+    }
+
+    setScrollState({
+      canScrollDown: list.scrollTop + list.clientHeight < list.scrollHeight - 2,
+      canScrollUp: list.scrollTop > 2,
+    });
+  };
 
   useEffect(() => {
     activeItemRef.current?.scrollIntoView({
       behavior: reducedMotion ? "auto" : "smooth",
       block: "center",
     });
+
+    window.requestAnimationFrame(updateScrollState);
   }, [activeSegment, reducedMotion, selectedId]);
+
+  useEffect(() => {
+    const list = listRef.current;
+
+    if (!list) {
+      return undefined;
+    }
+
+    updateScrollState();
+    list.addEventListener("scroll", updateScrollState, { passive: true });
+
+    return () => {
+      list.removeEventListener("scroll", updateScrollState);
+    };
+  }, [activeSegment, referenceProjects.length]);
+
+  const scrollList = (direction) => {
+    const list = listRef.current;
+
+    if (!list) {
+      return;
+    }
+
+    list.scrollBy({
+      top: direction * Math.max(110, list.clientHeight * 0.62),
+      behavior: reducedMotion ? "auto" : "smooth",
+    });
+  };
 
   const handleKeyDown = (event) => {
     if (event.key === "ArrowDown") {
       event.preventDefault();
-      onStep(1);
+      scrollList(1);
     }
 
     if (event.key === "ArrowUp") {
       event.preventDefault();
-      onStep(-1);
+      scrollList(-1);
     }
 
     if (event.key === "Home") {
       event.preventDefault();
-      onSelect(referenceProjects[0], event);
+      listRef.current?.scrollTo({
+        top: 0,
+        behavior: reducedMotion ? "auto" : "smooth",
+      });
     }
 
     if (event.key === "End") {
       event.preventDefault();
-      onSelect(referenceProjects[referenceProjects.length - 1], event);
+      listRef.current?.scrollTo({
+        top: listRef.current.scrollHeight,
+        behavior: reducedMotion ? "auto" : "smooth",
+      });
     }
   };
 
@@ -926,8 +960,8 @@ function ProjectReferences({
         className="portfolio-reference-arrow portfolio-reference-arrow--up"
         type="button"
         aria-label="Projet précédent"
-        disabled={!canGoPrevious}
-        onClick={() => onStep(-1)}
+        disabled={!scrollState.canScrollUp}
+        onClick={() => scrollList(-1)}
       >
         <span aria-hidden="true" />
       </button>
@@ -988,40 +1022,12 @@ function ProjectReferences({
                         exit={reducedMotion ? { opacity: 0 } : { opacity: 0, y: -6 }}
                         transition={{ duration: 0.34, ease: [0.22, 1, 0.36, 1] }}
                       >
-                        <span className="portfolio-reference-category">
-                          {project.category}
-                        </span>
-                        <h3>{project.title}</h3>
-                        <p>{project.description}</p>
-                        <dl className="portfolio-reference-meta">
-                          <div>
-                            <dt>Client</dt>
-                            <dd>{project.client}</dd>
-                          </div>
-                        </dl>
+                        <p className="portfolio-reference-description">
+                          {project.description}
+                        </p>
                         <blockquote className="portfolio-reference-testimonial">
                           “{project.testimonial}”
                         </blockquote>
-                        <div
-                          className="portfolio-tech-list portfolio-reference-tech-list"
-                          aria-label="Technologies utilisees"
-                        >
-                          {project.technologies.map((technology, index) => (
-                            <motion.span
-                              className="portfolio-tech-chip portfolio-reference-tech-chip"
-                              key={technology}
-                              initial={reducedMotion ? false : { opacity: 0, y: 8 }}
-                              animate={{ opacity: 1, y: 0 }}
-                              transition={{
-                                duration: 0.28,
-                                ease: [0.22, 1, 0.36, 1],
-                                delay: reducedMotion ? 0 : index * 0.026,
-                              }}
-                            >
-                              {technology}
-                            </motion.span>
-                          ))}
-                        </div>
                       </motion.div>
                     </motion.div>
                   ) : null}
@@ -1036,8 +1042,8 @@ function ProjectReferences({
         className="portfolio-reference-arrow portfolio-reference-arrow--down"
         type="button"
         aria-label="Projet suivant"
-        disabled={!canGoNext}
-        onClick={() => onStep(1)}
+        disabled={!scrollState.canScrollDown}
+        onClick={() => scrollList(1)}
       >
         <span aria-hidden="true" />
       </button>
