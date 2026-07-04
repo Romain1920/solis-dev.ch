@@ -860,23 +860,6 @@ function ProjectReferences({
 }) {
   const listRef = useRef(null);
   const activeItemRef = useRef(null);
-  const [scrollState, setScrollState] = useState({
-    canScrollDown: false,
-    canScrollUp: false,
-  });
-
-  const updateScrollState = () => {
-    const list = listRef.current;
-
-    if (!list) {
-      return;
-    }
-
-    setScrollState({
-      canScrollDown: list.scrollTop + list.clientHeight < list.scrollHeight - 2,
-      canScrollUp: list.scrollTop > 2,
-    });
-  };
 
   useEffect(() => {
     if (selectedId) {
@@ -885,65 +868,7 @@ function ProjectReferences({
         block: "center",
       });
     }
-
-    window.requestAnimationFrame(updateScrollState);
   }, [activeSegment, reducedMotion, selectedId]);
-
-  useEffect(() => {
-    const list = listRef.current;
-
-    if (!list) {
-      return undefined;
-    }
-
-    updateScrollState();
-    list.addEventListener("scroll", updateScrollState, { passive: true });
-
-    return () => {
-      list.removeEventListener("scroll", updateScrollState);
-    };
-  }, [activeSegment, referenceProjects.length]);
-
-  const scrollList = (direction) => {
-    const list = listRef.current;
-
-    if (!list) {
-      return;
-    }
-
-    list.scrollBy({
-      top: direction * Math.max(110, list.clientHeight * 0.62),
-      behavior: reducedMotion ? "auto" : "smooth",
-    });
-  };
-
-  const handleKeyDown = (event) => {
-    if (event.key === "ArrowDown") {
-      event.preventDefault();
-      scrollList(1);
-    }
-
-    if (event.key === "ArrowUp") {
-      event.preventDefault();
-      scrollList(-1);
-    }
-
-    if (event.key === "Home") {
-      event.preventDefault();
-      listRef.current?.scrollTo({
-        top: 0,
-        behavior: reducedMotion ? "auto" : "smooth",
-      });
-    }
-
-    if (event.key === "End") {
-      event.preventDefault();
-      listRef.current?.scrollTo({
-        top: listRef.current.scrollHeight,
-        behavior: reducedMotion ? "auto" : "smooth",
-      });
-    }
-  };
 
   return (
     <nav
@@ -954,18 +879,7 @@ function ProjectReferences({
           ? "Website references"
           : "Mobile app references"
       }
-      onKeyDown={handleKeyDown}
     >
-      <button
-        className="portfolio-reference-arrow portfolio-reference-arrow--up"
-        type="button"
-        aria-label="Projet précédent"
-        disabled={!scrollState.canScrollUp}
-        onClick={() => scrollList(-1)}
-      >
-        <span aria-hidden="true" />
-      </button>
-
       <div className="portfolio-reference-viewport" ref={listRef}>
         <motion.div
           className="portfolio-reference-list"
@@ -1042,16 +956,6 @@ function ProjectReferences({
           })}
         </motion.div>
       </div>
-
-      <button
-        className="portfolio-reference-arrow portfolio-reference-arrow--down"
-        type="button"
-        aria-label="Projet suivant"
-        disabled={!scrollState.canScrollDown}
-        onClick={() => scrollList(1)}
-      >
-        <span aria-hidden="true" />
-      </button>
     </nav>
   );
 }
