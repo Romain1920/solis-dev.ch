@@ -85,8 +85,8 @@ export const portfolioProjects = [
   },
   {
     id: "ozam",
-    segment: "desktop",
-    order: 2,
+    segment: "business",
+    order: 1,
     type: "web",
     name: "OZAM",
     title: "OZAM",

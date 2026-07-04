@@ -6,6 +6,7 @@ import { useGSAP } from "@gsap/react";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import ReactLenis from "lenis/react";
 import iphoneFrameImage from "../assets/iphone-17-black-portrait.png";
+import macBookFrameImage from "../assets/macbook-pro-m5.png";
 import studioDisplayImage from "../assets/studio-display-light.png";
 import { portfolioProjects, projects } from "./data/projects";
 
@@ -45,9 +46,28 @@ const metrics = [
   },
 ];
 
-const portfolioSegmentOptions = [
-  { id: "desktop", label: "Références sites web" },
-  { id: "mobile", label: "Références applications mobiles" },
+const portfolioCategoryOptions = [
+  {
+    id: "desktop",
+    label: "Références sites web",
+    visual: macBookFrameImage,
+    visualAlt: "",
+    visualClassName: "portfolio-category-device--macbook",
+  },
+  {
+    id: "mobile",
+    label: "Applications mobiles",
+    visual: iphoneFrameImage,
+    visualAlt: "",
+    visualClassName: "portfolio-category-device--iphone",
+  },
+  {
+    id: "business",
+    label: "Logiciels métiers",
+    visual: studioDisplayImage,
+    visualAlt: "",
+    visualClassName: "portfolio-category-device--studio",
+  },
 ];
 
 const getPrefersReducedMotion = () =>
@@ -838,6 +858,12 @@ function PortfolioSection() {
         Portfolio
       </h2>
 
+      <PortfolioCategoryVisualSelector
+        activeSegment={activeSegment}
+        reducedMotion={prefersReducedMotion}
+        onChange={handleSegmentChange}
+      />
+
       <div
         className="portfolio-shell"
         data-transfer-device={transfer && !prefersReducedMotion ? transfer.project.type : undefined}
@@ -861,36 +887,6 @@ function PortfolioSection() {
         ) : null}
 
         <div className="portfolio-list-column">
-          <div className="portfolio-segment-control" aria-label="Categorie de projets">
-            {portfolioSegmentOptions.map((segment) => {
-              const isActive = segment.id === activeSegment;
-
-              return (
-                <button
-                  className="portfolio-segment-button"
-                  type="button"
-                  key={segment.id}
-                  aria-pressed={isActive}
-                  onClick={() => handleSegmentChange(segment.id)}
-                >
-                  {isActive ? (
-                    <motion.span
-                      className="portfolio-segment-indicator"
-                      layoutId="portfolio-segment-indicator"
-                      transition={{
-                        type: "spring",
-                        stiffness: 420,
-                        damping: 38,
-                        mass: 0.9,
-                      }}
-                    />
-                  ) : null}
-                  <span>{segment.label}</span>
-                </button>
-              );
-            })}
-          </div>
-
           <ProjectReferences
             activeSegment={activeSegment}
             projects={segmentProjects}
@@ -1051,6 +1047,66 @@ function PortfolioSection() {
   );
 }
 
+function PortfolioCategoryVisualSelector({ activeSegment, reducedMotion, onChange }) {
+  return (
+    <nav
+      className="portfolio-category-selector"
+      aria-label="Categories de references"
+    >
+      {portfolioCategoryOptions.map((category) => {
+        const isActive = category.id === activeSegment;
+
+        return (
+          <button
+            className="portfolio-category-button"
+            type="button"
+            key={category.id}
+            aria-pressed={isActive}
+            onClick={() => onChange(category.id)}
+          >
+            <motion.span
+              className="portfolio-category-visual"
+              animate={{
+                opacity: isActive ? 1 : 0.46,
+                y: isActive ? 0 : 4,
+                scale: isActive ? 1 : 0.96,
+                filter: isActive
+                  ? "saturate(1) contrast(1)"
+                  : "saturate(0.78) contrast(0.94)",
+              }}
+              transition={
+                reducedMotion
+                  ? { duration: 0 }
+                  : { duration: 0.38, ease: [0.4, 0, 0.2, 1] }
+              }
+              aria-hidden="true"
+            >
+              <img
+                className={`portfolio-category-device ${category.visualClassName}`}
+                src={category.visual}
+                alt={category.visualAlt}
+              />
+            </motion.span>
+            <span className="portfolio-category-label">{category.label}</span>
+            {isActive ? (
+              <motion.span
+                className="portfolio-category-indicator"
+                layoutId="portfolio-category-indicator"
+                transition={
+                  reducedMotion
+                    ? { duration: 0 }
+                    : { duration: 0.42, ease: [0.4, 0, 0.2, 1] }
+                }
+                aria-hidden="true"
+              />
+            ) : null}
+          </button>
+        );
+      })}
+    </nav>
+  );
+}
+
 function ProjectReferences({
   activeSegment,
   projects: referenceProjects,
@@ -1078,7 +1134,9 @@ function ProjectReferences({
       aria-label={
         activeSegment === "desktop"
           ? "Website references"
-          : "Mobile app references"
+          : activeSegment === "mobile"
+            ? "Mobile app references"
+            : "Business software references"
       }
     >
       <div className="portfolio-reference-viewport" ref={listRef}>

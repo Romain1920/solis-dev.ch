@@ -695,16 +695,111 @@ a {
   min-height: 100svh;
   height: 100svh;
   display: flex;
+  flex-direction: column;
   align-items: center;
+  justify-content: center;
+  gap: clamp(8px, 1.4svh, 16px);
   padding: clamp(70px, 9svh, 104px) 0 clamp(24px, 4svh, 44px);
 }
 
+.portfolio-category-selector {
+  position: relative;
+  z-index: 8;
+  width: min(720px, calc(100vw - 56px));
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  align-items: end;
+  gap: clamp(20px, 4.2vw, 72px);
+  font-family: "SF Pro Display", "SF Pro Text", -apple-system, BlinkMacSystemFont,
+    "Segoe UI", sans-serif;
+}
+
+.portfolio-category-button {
+  position: relative;
+  min-width: 0;
+  appearance: none;
+  border: 0;
+  background: transparent;
+  color: rgba(17, 17, 17, 0.48);
+  padding: 0 0 9px;
+  display: grid;
+  grid-template-rows: 72px auto 3px;
+  justify-items: center;
+  align-items: end;
+  gap: 8px;
+  font: inherit;
+  text-align: center;
+  cursor: pointer;
+  outline: none;
+  transition:
+    color 240ms ease,
+    opacity 240ms ease;
+}
+
+.portfolio-category-button[aria-pressed="true"] {
+  color: #111111;
+}
+
+.portfolio-category-button:focus-visible {
+  outline: none;
+}
+
+.portfolio-category-visual {
+  display: flex;
+  width: 100%;
+  height: 72px;
+  align-items: flex-end;
+  justify-content: center;
+  transform-origin: center bottom;
+  will-change: transform, opacity, filter;
+}
+
+.portfolio-category-device {
+  display: block;
+  width: auto;
+  height: auto;
+  max-width: 132px;
+  max-height: 70px;
+  object-fit: contain;
+  pointer-events: none;
+  user-select: none;
+}
+
+.portfolio-category-device--iphone {
+  max-width: 34px;
+  max-height: 70px;
+}
+
+.portfolio-category-device--studio {
+  max-width: 104px;
+  max-height: 70px;
+}
+
+.portfolio-category-label {
+  display: block;
+  max-width: 15ch;
+  min-height: 2.2em;
+  font-size: clamp(0.78rem, 0.86vw, 0.9rem);
+  font-weight: 620;
+  line-height: 1.12;
+  letter-spacing: 0;
+}
+
+.portfolio-category-indicator {
+  display: block;
+  width: 32px;
+  height: 1.5px;
+  border-radius: 999px;
+  background: rgba(17, 17, 17, 0.76);
+}
+
 .portfolio-shell {
-  --portfolio-display-width: min(860px, 63vw, calc((100svh - 116px) * 1.3));
-  --portfolio-display-height: min(662px, 48.55vw, calc(100svh - 116px));
+  --portfolio-display-width: min(830px, 61vw, calc((100svh - 214px) * 1.3));
+  --portfolio-display-height: min(638px, 47vw, calc(100svh - 214px));
   position: relative;
   width: min(1320px, calc(100vw - 56px));
-  height: min(760px, calc(100svh - 112px));
+  height: min(710px, calc(100svh - 214px));
   margin: 0 auto;
   display: grid;
   grid-template-columns: minmax(clamp(320px, 30vw, 380px), 0.38fr) minmax(0, 1fr);
@@ -849,66 +944,9 @@ a {
   height: var(--portfolio-display-height);
   min-width: 0;
   align-self: center;
-  display: grid;
-  grid-template-rows: auto minmax(0, 1fr);
-  gap: 16px;
+  display: block;
   font-family: "SF Pro Display", "SF Pro Text", -apple-system, BlinkMacSystemFont,
     "Segoe UI", sans-serif;
-}
-
-.portfolio-segment-control {
-  position: relative;
-  display: inline-grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  width: 100%;
-  padding: 3px;
-  border: 1px solid rgba(9, 10, 10, 0.06);
-  border-radius: 999px;
-  background: #f6f6f4;
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.82);
-}
-
-.portfolio-segment-button {
-  position: relative;
-  appearance: none;
-  border: 0;
-  border-radius: 999px;
-  background: transparent;
-  color: rgba(17, 17, 17, 0.52);
-  min-height: 42px;
-  padding: 0 14px;
-  font: inherit;
-  font-size: clamp(0.72rem, 0.82vw, 0.82rem);
-  font-weight: 650;
-  line-height: 1.08;
-  letter-spacing: 0;
-  text-align: center;
-  cursor: pointer;
-  outline: none;
-}
-
-.portfolio-segment-button span {
-  position: relative;
-  z-index: 1;
-}
-
-.portfolio-segment-button[aria-pressed="true"] {
-  color: #111111;
-}
-
-.portfolio-segment-button:focus-visible {
-  box-shadow: 0 0 0 3px rgba(238, 124, 66, 0.18);
-}
-
-.portfolio-segment-indicator {
-  position: absolute;
-  inset: 0;
-  z-index: 0;
-  border-radius: inherit;
-  background: #ffffff;
-  box-shadow:
-    0 7px 18px rgba(17, 18, 18, 0.08),
-    inset 0 1px 0 rgba(255, 255, 255, 0.92);
 }
 
 .portfolio-reference-selector {
@@ -1269,8 +1307,8 @@ a {
   }
 
   .portfolio-shell {
-    --portfolio-display-width: min(820px, 61vw, calc((100svh - 116px) * 1.3));
-    --portfolio-display-height: min(632px, 47vw, calc(100svh - 116px));
+    --portfolio-display-width: min(790px, 59vw, calc((100svh - 214px) * 1.3));
+    --portfolio-display-height: min(608px, 45.5vw, calc(100svh - 214px));
   }
 }
 
@@ -1362,24 +1400,54 @@ a {
   .portfolio-section {
     min-height: 100svh;
     height: 100svh;
-    padding: 72px 0 30px;
+    gap: 8px;
+    padding: 66px 0 28px;
+  }
+
+  .portfolio-category-selector {
+    width: min(620px, calc(100vw - 34px));
+    gap: clamp(12px, 3vw, 34px);
+  }
+
+  .portfolio-category-button {
+    grid-template-rows: 60px auto 3px;
+    gap: 7px;
+    padding-bottom: 8px;
+  }
+
+  .portfolio-category-visual {
+    height: 60px;
+  }
+
+  .portfolio-category-device {
+    max-width: 108px;
+    max-height: 58px;
+  }
+
+  .portfolio-category-device--iphone {
+    max-width: 28px;
+    max-height: 58px;
+  }
+
+  .portfolio-category-device--studio {
+    max-width: 84px;
+    max-height: 58px;
+  }
+
+  .portfolio-category-label {
+    font-size: clamp(0.72rem, 1.42vw, 0.82rem);
   }
 
   .portfolio-shell {
-    --portfolio-display-width: min(630px, 58vw, calc((100svh - 112px) * 1.2));
-    --portfolio-display-height: min(485px, 44.7vw, calc(100svh - 112px));
+    --portfolio-display-width: min(610px, 57vw, calc((100svh - 196px) * 1.2));
+    --portfolio-display-height: min(470px, 43.5vw, calc(100svh - 196px));
     width: min(940px, calc(100vw - 34px));
-    height: min(680px, calc(100svh - 102px));
+    height: min(610px, calc(100svh - 196px));
     grid-template-columns: minmax(278px, 0.38fr) minmax(0, 1fr);
     gap: 24px;
   }
 
   .portfolio-list-column {
-    width: min(100%, 330px);
-    gap: 14px;
-  }
-
-  .portfolio-segment-control {
     width: min(100%, 330px);
   }
 
@@ -1623,7 +1691,44 @@ a {
   .portfolio-section {
     min-height: auto;
     height: auto;
-    padding: 104px 0 86px;
+    gap: 20px;
+    padding: 68px 0 86px;
+  }
+
+  .portfolio-category-selector {
+    width: calc(100vw - 30px);
+    gap: clamp(8px, 2.6vw, 18px);
+  }
+
+  .portfolio-category-button {
+    grid-template-rows: 52px auto 3px;
+    gap: 7px;
+    padding-bottom: 7px;
+  }
+
+  .portfolio-category-visual {
+    height: 52px;
+  }
+
+  .portfolio-category-device {
+    max-width: 94px;
+    max-height: 50px;
+  }
+
+  .portfolio-category-device--iphone {
+    max-width: 24px;
+    max-height: 50px;
+  }
+
+  .portfolio-category-device--studio {
+    max-width: 74px;
+    max-height: 50px;
+  }
+
+  .portfolio-category-label {
+    max-width: 13ch;
+    min-height: 2.35em;
+    font-size: clamp(0.68rem, 3.25vw, 0.78rem);
   }
 
   .portfolio-shell {
@@ -1636,11 +1741,6 @@ a {
   .portfolio-list-column {
     width: 100%;
     height: auto;
-    gap: 16px;
-  }
-
-  .portfolio-segment-control {
-    width: min(100%, 320px);
   }
 
   .portfolio-reference-selector {
