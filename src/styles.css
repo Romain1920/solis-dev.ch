@@ -572,7 +572,7 @@ a {
 
 .client-logo-band {
   width: min(1180px, calc(100vw - 56px));
-  margin: clamp(28px, 3.8vw, 48px) auto 0;
+  margin: clamp(32px, 4.6vw, 58px) auto 0;
 }
 
 .client-marquee {
@@ -611,7 +611,8 @@ a {
   max-width: 190px;
   max-height: 46px;
   object-fit: contain;
-  opacity: 0.9;
+  filter: grayscale(1) brightness(0.5) contrast(1.08);
+  opacity: 0.82;
 }
 
 .client-logo--ozam,
@@ -630,7 +631,8 @@ a {
 }
 
 .client-logo--jul-terrassement {
-  opacity: 0.94;
+  filter: grayscale(1) brightness(0.28) contrast(1.12);
+  opacity: 0.92;
 }
 
 @keyframes clientMarquee {
