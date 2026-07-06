@@ -472,7 +472,7 @@ function AsciiMouseTrail() {
     let lastPoint = null;
     let targetTrailAlpha = 1;
     let trailAlpha = 1;
-    const maxParticles = window.innerWidth >= 1440 ? 96 : 78;
+    const maxParticles = window.innerWidth >= 1440 ? 132 : 112;
 
     const resize = () => {
       width = window.innerWidth;
@@ -491,11 +491,11 @@ function AsciiMouseTrail() {
       particles.push({
         x,
         y,
-        vx: (Math.random() - 0.5) * 0.22,
-        vy: (Math.random() - 0.5) * 0.22,
-        life: Math.min(1, 0.7 + intensity * 0.3),
-        decay: 0.942 + Math.random() * 0.014,
-        size: 9.5 + Math.random() * 3.5,
+        vx: (Math.random() - 0.5) * 0.3,
+        vy: (Math.random() - 0.5) * 0.3,
+        life: Math.min(1, 0.82 + intensity * 0.24),
+        decay: 0.958 + Math.random() * 0.014,
+        size: 12 + Math.random() * 4.5,
         char:
           asciiTrailCharacters[
             Math.floor(Math.random() * asciiTrailCharacters.length)
@@ -525,7 +525,7 @@ function AsciiMouseTrail() {
       const dx = nextPoint.x - lastPoint.x;
       const dy = nextPoint.y - lastPoint.y;
       const distance = Math.hypot(dx, dy);
-      const steps = Math.min(7, Math.max(1, Math.floor(distance / 9)));
+      const steps = Math.min(10, Math.max(1, Math.floor(distance / 7)));
 
       for (let index = 1; index <= steps; index += 1) {
         const progress = index / steps;
@@ -549,7 +549,7 @@ function AsciiMouseTrail() {
       const observer = new IntersectionObserver(
         ([entry]) => {
           targetTrailAlpha =
-            entry.isIntersecting && entry.intersectionRatio > 0.18 ? 0.42 : 1;
+            entry.isIntersecting && entry.intersectionRatio > 0.18 ? 0.68 : 1;
         },
         { threshold: [0, 0.18, 0.45] }
       );
@@ -574,7 +574,7 @@ function AsciiMouseTrail() {
         particle.y += particle.vy;
         particle.life *= particle.decay;
 
-        const alpha = Math.min(0.44, particle.life * particle.life * 0.52) * trailAlpha;
+        const alpha = Math.min(0.72, particle.life * particle.life * 0.82) * trailAlpha;
 
         context.font = `${particle.size}px var(--font-main)`;
         context.textAlign = "center";
