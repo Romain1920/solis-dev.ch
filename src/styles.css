@@ -1253,14 +1253,14 @@ a {
 
 .studio-screen {
   position: absolute;
-  left: 2.5926%;
-  top: 3.3654%;
+  left: calc(2.5926% - 1px);
+  top: calc(3.3654% - 1px);
   z-index: 1;
-  width: 94.8148%;
-  height: 69.2308%;
+  width: calc(94.8148% + 2px);
+  height: calc(69.2308% + 2px);
   overflow: hidden;
   border-radius: 0;
-  background: #ffffff;
+  background: #050505;
 }
 
 .studio-screen::after {
