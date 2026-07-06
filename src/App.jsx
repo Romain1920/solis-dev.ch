@@ -22,8 +22,12 @@ const linkedInHref = "https://www.linkedin.com/company/solis-d%C3%A9veloppement-
 
 const homeMenuItems = [
   {
+    href: "#equipe",
+    label: "L’équipe",
+  },
+  {
     href: "#projets",
-    label: "Portfolio",
+    label: "Le Portfolio",
   },
 ];
 
@@ -698,10 +702,11 @@ function TeamSection() {
         },
         (context) => {
           const { reduceMotion } = context.conditions;
-          const revealItems = gsap.utils.toArray(".team-reveal");
+          const heading = teamRef.current?.querySelector(".team-heading");
+          const cards = gsap.utils.toArray(".team-card");
 
           if (reduceMotion) {
-            gsap.set(revealItems, {
+            gsap.set([heading, ...cards].filter(Boolean), {
               autoAlpha: 1,
               y: 0,
               filter: "blur(0px)",
@@ -709,28 +714,47 @@ function TeamSection() {
             return undefined;
           }
 
-          gsap.fromTo(
-            revealItems,
-            {
-              autoAlpha: 0,
-              y: 28,
-              filter: "blur(6px)",
+          const timeline = gsap.timeline({
+            scrollTrigger: {
+              trigger: teamRef.current,
+              start: "top 75%",
+              toggleActions: "play none none reverse",
             },
-            {
-              autoAlpha: 1,
-              y: 0,
-              filter: "blur(0px)",
-              duration: 0.64,
-              ease: "power3.out",
-              stagger: 0.08,
-              immediateRender: false,
-              scrollTrigger: {
-                trigger: teamRef.current,
-                start: "top 74%",
-                toggleActions: "play none none reverse",
+          });
+
+          timeline
+            .fromTo(
+              heading,
+              {
+                autoAlpha: 0,
+                y: 14,
+                filter: "blur(4px)",
               },
-            }
-          );
+              {
+                autoAlpha: 1,
+                y: 0,
+                filter: "blur(0px)",
+                duration: 0.62,
+                ease: "power3.out",
+                immediateRender: false,
+              }
+            )
+            .fromTo(
+              cards,
+              {
+                autoAlpha: 0,
+                y: 32,
+              },
+              {
+                autoAlpha: 1,
+                y: 0,
+                duration: 0.7,
+                ease: "power3.out",
+                stagger: 0.08,
+                immediateRender: false,
+              },
+              0.14
+            );
 
           return undefined;
         }
@@ -744,25 +768,28 @@ function TeamSection() {
   return (
     <section
       className="team-section"
+      id="equipe"
       ref={teamRef}
       aria-labelledby="team-title"
     >
       <div className="team-shell">
-        <div className="team-center team-reveal">
-          <h2 id="team-title">Qui est Solis&nbsp;?</h2>
-          <img
-            src={solisLogoNav}
-            alt=""
-            className="team-logo"
-            aria-hidden="true"
-            decoding="async"
-          />
+        <div className="team-heading team-reveal">
+          <h2 id="team-title">
+            <span>Qui sommes-nous à</span>
+            <img
+              src={solisLogoNav}
+              alt="Solis"
+              className="team-title-logo"
+              decoding="async"
+            />
+            <span aria-hidden="true">?</span>
+          </h2>
         </div>
 
-        <div className="team-constellation" aria-label="Équipe SOLIS">
+        <div className="team-grid" aria-label="Équipe SOLIS">
           {teamMembers.map((member) => (
             <article
-              className={`team-card team-card--${member.id} team-reveal`}
+              className="team-card team-reveal"
               key={member.id}
             >
               <div className="team-photo-frame">
