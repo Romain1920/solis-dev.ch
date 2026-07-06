@@ -304,6 +304,27 @@ const getPrefersReducedMotion = () =>
   typeof window !== "undefined" &&
   window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
 
+const asciiTrailCharacters = [".", "·", ":", "+", "*"];
+
+const getShouldDisableAsciiTrail = () => {
+  if (typeof window === "undefined" || !window.matchMedia) {
+    return true;
+  }
+
+  const connection =
+    window.navigator.connection ??
+    window.navigator.mozConnection ??
+    window.navigator.webkitConnection;
+
+  return (
+    window.matchMedia("(prefers-reduced-motion: reduce)").matches ||
+    window.matchMedia("(pointer: coarse)").matches ||
+    window.matchMedia("(hover: none)").matches ||
+    window.matchMedia("(max-width: 760px)").matches ||
+    Boolean(connection?.saveData)
+  );
+};
+
 const instantTransition = { duration: 0 };
 const linearInstantTransition = { duration: 0, ease: "linear" };
 const deviceSpringTransition = { type: "spring", stiffness: 86, damping: 24, mass: 1.08 };
@@ -385,6 +406,8 @@ const techLogos = [
 function App() {
   return (
     <ReactLenis root options={lenisOptions}>
+      <AsciiMouseTrail />
+
       <a className="skip-link" href="#contenu">
         Aller au contenu
       </a>
@@ -403,6 +426,195 @@ function App() {
       <Footer />
     </ReactLenis>
   );
+}
+
+function AsciiMouseTrail() {
+  const canvasRef = useRef(null);
+  const particlesRef = useRef([]);
+  const pointerRef = useRef({ x: 0, y: 0 });
+  const delayedPointerRef = useRef({ x: 0, y: 0 });
+  const rafRef = useRef(null);
+  const [enabled, setEnabled] = useState(false);
+
+  useEffect(() => {
+    const queries = [
+      window.matchMedia("(prefers-reduced-motion: reduce)"),
+      window.matchMedia("(pointer: coarse)"),
+      window.matchMedia("(hover: none)"),
+      window.matchMedia("(max-width: 760px)"),
+    ];
+    const updateEnabled = () => setEnabled(!getShouldDisableAsciiTrail());
+
+    updateEnabled();
+    queries.forEach((query) => query.addEventListener("change", updateEnabled));
+
+    return () => {
+      queries.forEach((query) => query.removeEventListener("change", updateEnabled));
+    };
+  }, []);
+
+  useEffect(() => {
+    if (!enabled) {
+      particlesRef.current = [];
+      return undefined;
+    }
+
+    const canvas = canvasRef.current;
+    const context = canvas?.getContext("2d", { alpha: true });
+
+    if (!canvas || !context) {
+      return undefined;
+    }
+
+    let width = 0;
+    let height = 0;
+    let dpr = 1;
+    let lastPoint = null;
+    let targetTrailAlpha = 1;
+    let trailAlpha = 1;
+    const maxParticles = window.innerWidth >= 1440 ? 96 : 78;
+
+    const resize = () => {
+      width = window.innerWidth;
+      height = window.innerHeight;
+      dpr = Math.min(window.devicePixelRatio || 1, 2);
+      canvas.width = Math.round(width * dpr);
+      canvas.height = Math.round(height * dpr);
+      canvas.style.width = `${width}px`;
+      canvas.style.height = `${height}px`;
+      context.setTransform(dpr, 0, 0, dpr, 0, 0);
+    };
+
+    const pushParticle = (x, y, intensity = 1) => {
+      const particles = particlesRef.current;
+
+      particles.push({
+        x,
+        y,
+        vx: (Math.random() - 0.5) * 0.22,
+        vy: (Math.random() - 0.5) * 0.22,
+        life: Math.min(1, 0.7 + intensity * 0.3),
+        decay: 0.942 + Math.random() * 0.014,
+        size: 9.5 + Math.random() * 3.5,
+        char:
+          asciiTrailCharacters[
+            Math.floor(Math.random() * asciiTrailCharacters.length)
+          ],
+      });
+
+      if (particles.length > maxParticles) {
+        particles.splice(0, particles.length - maxParticles);
+      }
+    };
+
+    const handlePointerMove = (event) => {
+      if (event.pointerType && event.pointerType !== "mouse" && event.pointerType !== "pen") {
+        return;
+      }
+
+      const nextPoint = { x: event.clientX, y: event.clientY };
+      pointerRef.current = nextPoint;
+
+      if (!lastPoint) {
+        delayedPointerRef.current = nextPoint;
+        lastPoint = nextPoint;
+        pushParticle(nextPoint.x, nextPoint.y);
+        return;
+      }
+
+      const dx = nextPoint.x - lastPoint.x;
+      const dy = nextPoint.y - lastPoint.y;
+      const distance = Math.hypot(dx, dy);
+      const steps = Math.min(7, Math.max(1, Math.floor(distance / 9)));
+
+      for (let index = 1; index <= steps; index += 1) {
+        const progress = index / steps;
+        pushParticle(
+          lastPoint.x + dx * progress,
+          lastPoint.y + dy * progress,
+          Math.min(1, distance / 80)
+        );
+      }
+
+      lastPoint = nextPoint;
+    };
+
+    const observePortfolio = () => {
+      const portfolio = document.querySelector(".portfolio-section");
+
+      if (!portfolio || !("IntersectionObserver" in window)) {
+        return null;
+      }
+
+      const observer = new IntersectionObserver(
+        ([entry]) => {
+          targetTrailAlpha =
+            entry.isIntersecting && entry.intersectionRatio > 0.18 ? 0.42 : 1;
+        },
+        { threshold: [0, 0.18, 0.45] }
+      );
+
+      observer.observe(portfolio);
+      return observer;
+    };
+
+    const render = () => {
+      context.clearRect(0, 0, width, height);
+
+      const delayedPointer = delayedPointerRef.current;
+      const pointer = pointerRef.current;
+      delayedPointer.x += (pointer.x - delayedPointer.x) * 0.12;
+      delayedPointer.y += (pointer.y - delayedPointer.y) * 0.12;
+      trailAlpha += (targetTrailAlpha - trailAlpha) * 0.08;
+
+      particlesRef.current = particlesRef.current.filter((particle) => {
+        particle.vx += (delayedPointer.x - particle.x) * 0.00018 * particle.life;
+        particle.vy += (delayedPointer.y - particle.y) * 0.00018 * particle.life;
+        particle.x += particle.vx;
+        particle.y += particle.vy;
+        particle.life *= particle.decay;
+
+        const alpha = Math.min(0.44, particle.life * particle.life * 0.52) * trailAlpha;
+
+        context.font = `${particle.size}px var(--font-main)`;
+        context.textAlign = "center";
+        context.textBaseline = "middle";
+        context.fillStyle = `rgba(9, 10, 10, ${alpha})`;
+        context.fillText(particle.char, particle.x, particle.y);
+
+        return particle.life > 0.035;
+      });
+
+      rafRef.current = window.requestAnimationFrame(render);
+    };
+
+    resize();
+    const portfolioObserver = observePortfolio();
+
+    window.addEventListener("resize", resize);
+    window.addEventListener("mousemove", handlePointerMove, { passive: true });
+    rafRef.current = window.requestAnimationFrame(render);
+
+    return () => {
+      window.removeEventListener("resize", resize);
+      window.removeEventListener("mousemove", handlePointerMove);
+      portfolioObserver?.disconnect();
+
+      if (rafRef.current) {
+        window.cancelAnimationFrame(rafRef.current);
+        rafRef.current = null;
+      }
+
+      particlesRef.current = [];
+      context.clearRect(0, 0, width, height);
+    };
+  }, [enabled]);
+
+  if (!enabled) {
+    return null;
+  }
+
+  return <canvas className="ascii-mouse-trail" ref={canvasRef} aria-hidden="true" />;
 }
 
 function Header() {
