@@ -2,18 +2,18 @@ import ecommerceImage from "../../assets/hella-boutique-desktop.png";
 import contactMindImage from "../../assets/projects/contact-mind.svg";
 import contactMindMobileImage from "../../assets/projects/contact-mind-mobile.svg";
 import institutionalImage from "../../assets/projects/institutional.svg";
-import julTerrassementImage from "../../assets/projects/jul-terrassement.svg";
 import kinnImage from "../../assets/projects/kinn.svg";
 import kinnMobileImage from "../../assets/projects/kinn-mobile.svg";
-import laGouttiereImage from "../../assets/projects/la-gouttiere.svg";
 import mobileAppImage from "../../assets/projects/mobile-app.svg";
-import mmArchitectesImage from "../../assets/projects/mm-architectes.svg";
 import ozamImage from "../../assets/projects/ozam.svg";
-import philippeDarioliImage from "../../assets/projects/philippe-darioli.svg";
 import popupChallengeImage from "../../assets/projects/popup-challenge.svg";
 import popupMobileImage from "../../assets/projects/popup-mobile.svg";
 import platformImage from "../../assets/projects/platform.svg";
 import saasImage from "../../assets/projects/saas.svg";
+import julTerrassementScreenshot from "../../assets/project-screenshots/jul-terrassement.png";
+import laGouttiereScreenshot from "../../assets/project-screenshots/la-gouttiere.png";
+import mmArchitectesScreenshot from "../../assets/project-screenshots/mm-architectes.png";
+import philippeDarioliScreenshot from "../../assets/project-screenshots/philippe-darioli.png";
 
 export const projects = [
   {
@@ -60,7 +60,7 @@ export const portfolioProjects = [
     testimonialAuthor: "La Gouttière",
     category: "Web • Carte digitale",
     technologies: ["Vue", "Node.js", "CMS", "QR Code", "SEO"],
-    src: laGouttiereImage,
+    src: laGouttiereScreenshot,
     description:
       "Site vitrine pour un bar à Martigny, avec carte digitale par QR code et contenus faciles à garder à jour.",
     testimonial:
@@ -77,7 +77,7 @@ export const portfolioProjects = [
     testimonialAuthor: "Jul Terrassement",
     category: "Web • Vitrine",
     technologies: ["React", "Vite", "Forms", "SEO", "Analytics"],
-    src: julTerrassementImage,
+    src: julTerrassementScreenshot,
     description:
       "Vitrine claire pour présenter les prestations, rassurer les visiteurs et orienter les demandes qualifiées.",
     testimonial:
@@ -111,7 +111,7 @@ export const portfolioProjects = [
     testimonialAuthor: "Philippe Darioli",
     category: "Web • E-commerce",
     technologies: ["Shopify", "Liquid", "Stripe", "CMS", "SEO"],
-    src: philippeDarioliImage,
+    src: philippeDarioliScreenshot,
     description:
       "Site vitrine et e-commerce pour présenter le domaine, ses crus et faciliter l'achat en ligne.",
     testimonial:
@@ -199,7 +199,7 @@ export const portfolioProjects = [
     testimonialAuthor: "MM Architectes",
     category: "Web • Portfolio",
     technologies: ["React", "Vite", "GSAP", "CMS", "SEO"],
-    src: mmArchitectesImage,
+    src: mmArchitectesScreenshot,
     description:
       "Portfolio éditorial qui laisse respirer les projets avec une navigation sobre et des visuels au premier plan.",
     testimonial:
