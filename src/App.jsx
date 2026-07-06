@@ -512,7 +512,14 @@ function ProjectReel() {
   return (
     <span className="project-reel" aria-label="Aperçus de projets SOLIS">
       <span className="reel-slide" key={currentProject.id}>
-        <img src={currentProject.src} alt="" aria-hidden="true" />
+        <img
+          src={currentProject.src}
+          alt=""
+          className="carousel-project-screenshot"
+          aria-hidden="true"
+          decoding="async"
+          fetchPriority="high"
+        />
       </span>
     </span>
   );
@@ -1429,7 +1436,13 @@ function WebsiteCarouselRow({ projects: rowProjects, direction }) {
                 className="website-shot"
                 key={`${direction}-${groupIndex}-${project.id}`}
               >
-                <img src={project.src} alt="" loading="lazy" decoding="async" />
+                <img
+                  src={project.src}
+                  alt={project.title}
+                  className="carousel-project-screenshot"
+                  loading="lazy"
+                  decoding="async"
+                />
               </span>
             ))}
           </div>

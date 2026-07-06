@@ -445,13 +445,18 @@ a {
   animation: reel-swap 640ms cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 
-.reel-slide img {
+.carousel-project-screenshot {
   width: 100%;
   height: 100%;
   object-fit: cover;
+  display: block;
+  image-rendering: auto;
+}
+
+.reel-slide img {
   object-position: top center;
-  filter: saturate(1.18) contrast(1.22);
-  transform: scale(1.025);
+  filter: none;
+  transform: none;
 }
 
 .hero-request {
@@ -738,9 +743,6 @@ a {
 }
 
 .website-shot img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
   object-position: top center;
   filter: none;
 }
