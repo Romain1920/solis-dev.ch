@@ -40,9 +40,11 @@ const serviceNavItems = [
 const screenshotIntervalMs = 1500;
 const ENABLE_HERO_MOUSE_TRAIL = true;
 const SHOW_HERO_INLINE_REFERENCE_SCREEN = false;
+const heroMouseTrailImageWidth = 140;
+const heroMouseTrailImageHeight = 200;
 const heroMouseTrailStagger = 0.03;
 const heroMouseTrailDuration = 0.5;
-const heroMouseTrailPoolSize = 10;
+const heroMouseTrailPoolSize = 12;
 
 const lenisOptions = { lerp: 0.08, wheelMultiplier: 0.9 };
 const projectById = new Map(projects.map((project) => [project.id, project]));
@@ -163,38 +165,6 @@ const getRandomizedHeroTrailImages = () => {
   return Array.from({ length: heroMouseTrailPoolSize }, (_, index) => {
     return availableImages[index % availableImages.length];
   }).filter(Boolean);
-};
-
-const getHeroTrailOffsets = (count) => {
-  const center = (count - 1) / 2;
-
-  return Array.from({ length: count }, (_, index) => {
-    const distanceFromCenter = index - center;
-
-    return {
-      x: distanceFromCenter * 34 + (Math.random() - 0.5) * 12,
-      y: distanceFromCenter * 12 + Math.sin(index * 1.45) * 18,
-      rotation: (Math.random() - 0.5) * 12,
-      scale: 1 - Math.abs(distanceFromCenter) * 0.012,
-    };
-  });
-};
-
-const getHeroTrailInitialPoint = (hero) => ({
-  x: hero.clientWidth * 0.5,
-  y: hero.clientHeight * 0.44,
-});
-
-const getHeroTrailPointFromEvent = (hero, event) => {
-  const rect = hero.getBoundingClientRect();
-  const x = event.clientX - rect.left;
-  const y = event.clientY - rect.top;
-
-  return {
-    x,
-    y,
-    isInside: x >= 0 && y >= 0 && x <= rect.width && y <= rect.height,
-  };
 };
 
 const metrics = [
@@ -711,10 +681,7 @@ function Hero() {
 }
 
 function HeroMouseTrail() {
-  const layerRef = useRef(null);
   const trailImages = useMemo(() => getRandomizedHeroTrailImages(), []);
-  const trailOffsets = useMemo(() => getHeroTrailOffsets(trailImages.length), [trailImages.length]);
-  const reducedMotion = usePrefersReducedMotion();
 
   useEffect(() => {
     heroTrailImages.forEach((project) => {
@@ -722,140 +689,226 @@ function HeroMouseTrail() {
     });
   }, []);
 
-  useEffect(() => {
-    if (
-      reducedMotion ||
-      !ENABLE_HERO_MOUSE_TRAIL ||
-      trailImages.length === 0 ||
-      typeof window === "undefined"
-    ) {
-      return undefined;
-    }
-
-    const layer = layerRef.current;
-    const hero = layer?.closest(".hero-section");
-    const canUseTrail =
-      window.matchMedia("(hover: hover) and (pointer: fine)").matches &&
-      !window.matchMedia("(pointer: coarse)").matches;
-
-    if (!layer || !hero || !canUseTrail) {
-      return undefined;
-    }
-
-    const items = Array.from(layer.querySelectorAll(".hero-mouse-trail-item"));
-    const initialPoint = getHeroTrailInitialPoint(hero);
-    let animationFrameId = 0;
-    let isInsideHero = false;
-    let lastPoint = { x: Number.NaN, y: Number.NaN };
-    let targetPoint = initialPoint;
-
-    gsap.set(items, {
-      xPercent: -50,
-      yPercent: -50,
-      x: (index) => initialPoint.x + trailOffsets[index].x,
-      y: (index) => initialPoint.y + trailOffsets[index].y,
-      rotation: (index) => trailOffsets[index].rotation,
-      scale: (index) => trailOffsets[index].scale * 0.94,
-      autoAlpha: 0,
-      transformOrigin: "50% 50%",
-      zIndex: (index) => index + 1,
-    });
-
-    const renderTrail = () => {
-      animationFrameId = 0;
-
-      if (!isInsideHero) {
-        return;
-      }
-
-      const distanceX = targetPoint.x - lastPoint.x;
-      const distanceY = targetPoint.y - lastPoint.y;
-      const hasMovedEnough =
-        Number.isNaN(distanceX) ||
-        Number.isNaN(distanceY) ||
-        distanceX * distanceX + distanceY * distanceY > 16;
-
-      if (!hasMovedEnough) {
-        return;
-      }
-
-      lastPoint = targetPoint;
-
-      gsap.to(items, {
-        x: (index) => targetPoint.x + trailOffsets[index].x,
-        y: (index) => targetPoint.y + trailOffsets[index].y,
-        rotation: (index) => trailOffsets[index].rotation + gsap.utils.clamp(-5, 5, distanceX * 0.025),
-        scale: (index) => trailOffsets[index].scale,
-        autoAlpha: 0.94,
-        duration: heroMouseTrailDuration,
-        ease: "power3.out",
-        stagger: heroMouseTrailStagger,
-        overwrite: "auto",
-      });
-    };
-
-    const requestTrailRender = () => {
-      if (animationFrameId) {
-        return;
-      }
-
-      animationFrameId = window.requestAnimationFrame(renderTrail);
-    };
-
-    const handlePointerMove = (event) => {
-      const nextPoint = getHeroTrailPointFromEvent(hero, event);
-
-      if (!nextPoint.isInside) {
-        return;
-      }
-
-      targetPoint = nextPoint;
-      isInsideHero = true;
-      requestTrailRender();
-    };
-
-    const clearTrail = () => {
-      isInsideHero = false;
-      lastPoint = { x: Number.NaN, y: Number.NaN };
-
-      if (animationFrameId) {
-        window.cancelAnimationFrame(animationFrameId);
-        animationFrameId = 0;
-      }
-
-      gsap.to(items, {
-        autoAlpha: 0,
-        scale: 0.9,
-        duration: 0.28,
-        ease: "power2.out",
-        stagger: { each: 0.018, from: "end" },
-        overwrite: true,
-      });
-    };
-
-    hero.addEventListener("pointermove", handlePointerMove);
-    hero.addEventListener("pointerleave", clearTrail);
-
-    return () => {
-      hero.removeEventListener("pointermove", handlePointerMove);
-      hero.removeEventListener("pointerleave", clearTrail);
-      if (animationFrameId) {
-        window.cancelAnimationFrame(animationFrameId);
-      }
-      gsap.killTweensOf(items);
-    };
-  }, [reducedMotion, trailImages.length, trailOffsets]);
+  if (!ENABLE_HERO_MOUSE_TRAIL || trailImages.length === 0) {
+    return null;
+  }
 
   return (
-    <div className="hero-mouse-trail-layer" ref={layerRef} aria-hidden="true">
-      {trailImages.map((project, index) => (
-        <span
-          className={`hero-mouse-trail-item is-${project.type}`}
-          key={`${project.id}-${index}`}
-        >
-          <img src={project.src} alt="" decoding="async" loading="eager" />
-        </span>
-      ))}
+    <MouseTrail
+      images={trailImages.map((project) => project.src)}
+      imageWidth={heroMouseTrailImageWidth}
+      imageHeight={heroMouseTrailImageHeight}
+      stagger={heroMouseTrailStagger}
+      duration={heroMouseTrailDuration}
+      ease="power3.out"
+    />
+  );
+}
+
+function MouseTrail({
+  images,
+  imageWidth = 140,
+  imageHeight = 200,
+  stagger = 0.03,
+  duration = 0.5,
+  ease = "power3.out",
+}) {
+  const containerRef = useRef(null);
+  const [imagesLoaded, setImagesLoaded] = useState(false);
+  const hasMovedRef = useRef(false);
+  const containerBoundsRef = useRef(null);
+  const rafIdRef = useRef(null);
+  const reducedMotion = usePrefersReducedMotion();
+
+  useEffect(() => {
+    let isMounted = true;
+
+    const preloadImages = async () => {
+      const imagePromises = images.map((src) => {
+        return new Promise((resolve) => {
+          const image = new Image();
+          image.onload = resolve;
+          image.onerror = resolve;
+          image.src = src;
+        });
+      });
+
+      await Promise.all(imagePromises);
+
+      if (isMounted) {
+        setImagesLoaded(true);
+      }
+    };
+
+    preloadImages();
+
+    return () => {
+      isMounted = false;
+    };
+  }, [images]);
+
+  useGSAP(
+    () => {
+      if (
+        reducedMotion ||
+        !imagesLoaded ||
+        images.length === 0 ||
+        typeof window === "undefined"
+      ) {
+        return undefined;
+      }
+
+      const container = containerRef.current;
+      const canUseTrail =
+        window.matchMedia("(hover: hover) and (pointer: fine)").matches &&
+        !window.matchMedia("(pointer: coarse)").matches;
+
+      if (!container || !canUseTrail) {
+        return undefined;
+      }
+
+      const updateBounds = () => {
+        if (containerRef.current) {
+          containerBoundsRef.current = containerRef.current.getBoundingClientRect();
+        }
+      };
+
+      updateBounds();
+
+      gsap.set(".trail-img", {
+        x: -imageWidth,
+        y: -imageHeight,
+        opacity: 0,
+        scale: 1,
+        force3D: true,
+        willChange: "transform, opacity",
+      });
+
+      let resizeTimeout;
+      const hideTrail = () => {
+        if (rafIdRef.current) {
+          window.cancelAnimationFrame(rafIdRef.current);
+          rafIdRef.current = null;
+        }
+
+        gsap.to(".trail-img", {
+          opacity: 0,
+          duration: 0.3,
+          ease: "power2.out",
+          force3D: true,
+        });
+
+        hasMovedRef.current = false;
+      };
+
+      const debouncedUpdateBounds = () => {
+        window.clearTimeout(resizeTimeout);
+        resizeTimeout = window.setTimeout(() => {
+          updateBounds();
+
+          const bounds = containerBoundsRef.current;
+
+          if (bounds && (bounds.bottom <= 0 || bounds.top >= window.innerHeight)) {
+            hideTrail();
+          }
+        }, 16);
+      };
+
+      const handleMouseMove = (event) => {
+        if (!containerRef.current || !containerBoundsRef.current) {
+          return;
+        }
+
+        if (rafIdRef.current) {
+          window.cancelAnimationFrame(rafIdRef.current);
+        }
+
+        rafIdRef.current = window.requestAnimationFrame(() => {
+          if (!containerRef.current || !containerBoundsRef.current) {
+            return;
+          }
+
+          const containerRect = containerBoundsRef.current;
+          const relativeX = event.clientX - containerRect.left;
+          const relativeY = event.clientY - containerRect.top;
+          const isWithinBounds =
+            relativeX >= 0 &&
+            relativeX <= containerRect.width &&
+            relativeY >= 0 &&
+            relativeY <= containerRect.height;
+
+          if (!hasMovedRef.current && isWithinBounds) {
+            hasMovedRef.current = true;
+          }
+
+          gsap.to(".trail-img", {
+            x: relativeX - imageWidth / 2,
+            y: relativeY - imageHeight / 2,
+            opacity: hasMovedRef.current && isWithinBounds ? 1 : 0,
+            force3D: true,
+            duration,
+            ease,
+            stagger,
+            overwrite: "auto",
+          });
+        });
+      };
+
+      const handleMouseLeave = () => {
+        hideTrail();
+      };
+
+      window.addEventListener("resize", debouncedUpdateBounds);
+      window.addEventListener("scroll", debouncedUpdateBounds, { passive: true });
+      document.addEventListener("mousemove", handleMouseMove, { passive: true });
+      document.addEventListener("mouseleave", handleMouseLeave);
+      container.addEventListener("mouseleave", handleMouseLeave);
+
+      return () => {
+        if (rafIdRef.current) {
+          window.cancelAnimationFrame(rafIdRef.current);
+          rafIdRef.current = null;
+        }
+        window.clearTimeout(resizeTimeout);
+        document.removeEventListener("mousemove", handleMouseMove);
+        document.removeEventListener("mouseleave", handleMouseLeave);
+        container.removeEventListener("mouseleave", handleMouseLeave);
+        window.removeEventListener("resize", debouncedUpdateBounds);
+        window.removeEventListener("scroll", debouncedUpdateBounds);
+        gsap.killTweensOf(".trail-img");
+      };
+    },
+    {
+      scope: containerRef,
+      dependencies: [
+        duration,
+        ease,
+        imageHeight,
+        imageWidth,
+        images.length,
+        imagesLoaded,
+        reducedMotion,
+        stagger,
+      ],
+    }
+  );
+
+  return (
+    <div className="hero-mouse-trail-layer" ref={containerRef} aria-hidden="true">
+      {imagesLoaded &&
+        images.map((src, index) => (
+          <span
+            className="trail-img hero-mouse-trail-item"
+            key={`${src}-${index}`}
+            style={{
+              width: `${imageWidth}px`,
+              height: `${imageHeight}px`,
+              zIndex: images.length - index,
+            }}
+          >
+            <img src={src} alt="" decoding="async" draggable="false" loading="eager" />
+          </span>
+        ))}
     </div>
   );
 }
