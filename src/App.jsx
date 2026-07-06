@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { flushSync } from "react-dom";
 import gsap from "gsap";
@@ -32,7 +32,29 @@ const serviceNavItems = [
 
 const screenshotIntervalMs = 1500;
 
+const lenisOptions = { lerp: 0.08, wheelMultiplier: 0.9 };
+const projectById = new Map(projects.map((project) => [project.id, project]));
+const portfolioProjectById = new Map(
+  portfolioProjects.map((project) => [project.id, project])
+);
+const getProjectById = (projectId) => projectById.get(projectId) ?? null;
+
 const metricProjectOrder = ["ecommerce", "saas", "platform", "mobile-app", "institutional"];
+const metricCarouselProjects = metricProjectOrder.map(getProjectById).filter(Boolean);
+const metricCarouselRows = {
+  top: metricCarouselProjects,
+  bottom: [...metricCarouselProjects].reverse(),
+};
+const commerceProject = getProjectById("ecommerce");
+
+const heroReelProjectIds = [
+  "ecommerce",
+  "platform",
+  "saas",
+  "mobile-app",
+  "institutional",
+];
+const heroReelProjects = heroReelProjectIds.map(getProjectById).filter(Boolean);
 
 const metrics = [
   {
@@ -80,9 +102,39 @@ const portfolioCategoryOptions = [
   },
 ];
 
+const portfolioProjectsBySegment = Object.fromEntries(
+  portfolioCategoryOptions.map((category) => [
+    category.id,
+    portfolioProjects
+      .filter((project) => project.segment === category.id)
+      .sort((first, second) => first.order - second.order),
+  ])
+);
+
 const getPrefersReducedMotion = () =>
   typeof window !== "undefined" &&
   window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
+
+const instantTransition = { duration: 0 };
+const linearInstantTransition = { duration: 0, ease: "linear" };
+const deviceSpringTransition = { type: "spring", stiffness: 86, damping: 24, mass: 1.08 };
+const portfolioCategoryVisualTransition = { duration: 0.38, ease: [0.4, 0, 0.2, 1] };
+const portfolioCategoryIndicatorTransition = { duration: 0.42, ease: [0.4, 0, 0.2, 1] };
+const referenceListTransition = { duration: 0.36, ease: [0.22, 1, 0.36, 1] };
+const referenceItemTransition = {
+  type: "spring",
+  stiffness: 210,
+  damping: 28,
+  mass: 0.86,
+};
+const referencePanelTransition = {
+  height: { duration: 0.48, ease: [0.4, 0, 0.2, 1] },
+  opacity: { duration: 0.26, ease: [0.22, 1, 0.36, 1] },
+};
+const referencePanelInnerTransition = { duration: 0.34, ease: [0.22, 1, 0.36, 1] };
+const studioBlankTransition = { duration: 0.34, ease: [0.22, 1, 0.36, 1] };
+const studioShotTransition = { duration: 0.48, ease: [0.22, 1, 0.36, 1] };
+const iphoneShotTransition = { duration: 0.46, ease: [0.22, 1, 0.36, 1] };
 
 const techLogos = [
   {
@@ -143,7 +195,7 @@ const techLogos = [
 
 function App() {
   return (
-    <ReactLenis root options={{ lerp: 0.08, wheelMultiplier: 0.9 }}>
+    <ReactLenis root options={lenisOptions}>
       <a className="skip-link" href="#contenu">
         Aller au contenu
       </a>
@@ -168,7 +220,7 @@ function Header() {
     <header className="site-header">
       <nav className="nav-shell" aria-label="Navigation principale">
         <a className="brand-mark" href="#accueil" aria-label="SOLIS Développement">
-          <img src={solisLogoNav} alt="" aria-hidden="true" />
+          <img src={solisLogoNav} alt="" aria-hidden="true" decoding="async" />
         </a>
 
         <div className="nav-links" aria-label="Sections">
@@ -358,17 +410,7 @@ function Hero() {
 function ProjectReel() {
   const [index, setIndex] = useState(0);
   const reducedMotion = usePrefersReducedMotion();
-  const reelProjects = useMemo(
-    () =>
-      [
-        projects.find((project) => project.id === "ecommerce"),
-        projects.find((project) => project.id === "platform"),
-        projects.find((project) => project.id === "saas"),
-        projects.find((project) => project.id === "mobile-app"),
-        projects.find((project) => project.id === "institutional"),
-      ].filter(Boolean),
-    []
-  );
+  const reelProjects = heroReelProjects;
 
   useEffect(() => {
     if (reducedMotion || reelProjects.length <= 1) {
@@ -502,27 +544,17 @@ function PortfolioSection() {
   const reducedMotion = usePrefersReducedMotion();
   const prefersReducedMotion = reducedMotion || getPrefersReducedMotion();
 
-  const segmentProjects = useMemo(
-    () =>
-      portfolioProjects
-        .filter((project) => project.segment === activeSegment)
-        .slice()
-        .sort((first, second) => first.order - second.order),
-    [activeSegment]
-  );
+  const segmentProjects = portfolioProjectsBySegment[activeSegment] ?? [];
   const selectedProject =
     segmentProjects.find((project) => project.id === selectedId) ?? null;
-  const displayProject =
-    portfolioProjects.find((project) => project.id === displayId) ?? null;
+  const displayProject = portfolioProjectById.get(displayId) ?? null;
   const isMobileShowcase = activeSegment === "mobile";
   const displayedPhoneProject =
     isMobileShowcase && displayProject?.type === "mobile" ? displayProject : null;
   const phonePreview = displayedPhoneProject?.mobileSrc ?? displayedPhoneProject?.src;
   const isInstantReveal = displayProject?.id === instantRevealId;
   const isTransferBlanking = Boolean(transfer) && !isInstantReveal;
-  const deviceTransition = prefersReducedMotion
-    ? { duration: 0 }
-    : { type: "spring", stiffness: 86, damping: 24, mass: 1.08 };
+  const deviceTransition = prefersReducedMotion ? instantTransition : deviceSpringTransition;
 
   useEffect(
     () => () => {
@@ -577,15 +609,8 @@ function PortfolioSection() {
     const centerX = screenRect.left + screenRect.width * 0.5 - sectionRect.left;
     const centerY = screenRect.top + screenRect.height * 0.5 - sectionRect.top;
     const vectorX = centerX - startX;
-    const vectorY = centerY - startY;
     const distanceToTarget = Math.max(120, Math.abs(vectorX));
     const direction = vectorX >= 0 ? 1 : -1;
-    const path = [
-      `M ${startX} ${startY}`,
-      `C ${startX + direction * distanceToTarget * 0.32} ${startY - 10}`,
-      `${centerX - direction * distanceToTarget * 0.36} ${centerY - 34}`,
-      `${centerX} ${centerY}`,
-    ].join(" ");
     const previewSrc = project.type === "mobile" ? project.mobileSrc ?? project.src : project.src;
     const targetOverscan = project.type === "mobile" ? 0 : 3;
     const targetWidth = screenRect.width + targetOverscan * 2;
@@ -620,22 +645,16 @@ function PortfolioSection() {
     const startSkewX = project.type === "mobile" ? -8 : 10;
 
     return {
-      id: `${project.id}-${Date.now()}`,
       project,
       previewSrc,
-      path,
       startX,
       startY,
       centerX,
       centerY,
-      vectorX,
-      vectorY,
       startWidth,
       startHeight,
       startScaleX,
       startScaleY,
-      screenWidth: screenRect.width,
-      screenHeight: screenRect.height,
       targetWidth,
       targetHeight,
       targetOverscan,
@@ -645,8 +664,6 @@ function PortfolioSection() {
       finalClipPath,
       startRotation: project.type === "mobile" ? 0 : startRotation,
       startSkewX: project.type === "mobile" ? 0 : startSkewX,
-      width: sectionRect.width,
-      height: sectionRect.height,
     };
   };
 
@@ -968,8 +985,8 @@ function PortfolioSection() {
                         exit={{ opacity: 0 }}
                         transition={
                           prefersReducedMotion || isInstantReveal
-                            ? { duration: 0, ease: "linear" }
-                            : { duration: 0.34, ease: [0.22, 1, 0.36, 1] }
+                            ? linearInstantTransition
+                            : studioBlankTransition
                         }
                       />
                     ) : (
@@ -978,6 +995,7 @@ function PortfolioSection() {
                         key={displayProject.id}
                         src={displayProject.src}
                         alt={`Aperçu du projet ${displayProject.title}`}
+                        decoding="async"
                         initial={
                           prefersReducedMotion || isInstantReveal
                             ? false
@@ -995,8 +1013,8 @@ function PortfolioSection() {
                         }
                         transition={
                           prefersReducedMotion || isInstantReveal
-                            ? { duration: 0, ease: "linear" }
-                            : { duration: 0.48, ease: [0.22, 1, 0.36, 1] }
+                            ? linearInstantTransition
+                            : studioShotTransition
                         }
                       />
                     )}
@@ -1008,6 +1026,8 @@ function PortfolioSection() {
                   src={studioDisplayImage}
                   alt=""
                   aria-hidden="true"
+                  loading="lazy"
+                  decoding="async"
                 />
               </div>
             </motion.div>
@@ -1043,6 +1063,7 @@ function PortfolioSection() {
                         className="iphone-screen-shot"
                         key={`${displayProject.id}-phone`}
                         src={phonePreview}
+                        decoding="async"
                         alt={
                           isMobileShowcase
                             ? `Aperçu mobile du projet ${displayProject.title}`
@@ -1061,8 +1082,8 @@ function PortfolioSection() {
                         }
                         transition={
                           prefersReducedMotion || isInstantReveal
-                            ? { duration: 0, ease: "linear" }
-                            : { duration: 0.46, ease: [0.22, 1, 0.36, 1] }
+                            ? linearInstantTransition
+                            : iphoneShotTransition
                         }
                       />
                     ) : null}
@@ -1073,6 +1094,8 @@ function PortfolioSection() {
                   src={iphoneFrameImage}
                   alt=""
                   aria-hidden="true"
+                  loading="lazy"
+                  decoding="async"
                 />
               </div>
             </motion.div>
@@ -1112,8 +1135,8 @@ function PortfolioCategoryVisualSelector({ activeSegment, reducedMotion, onChang
               }}
               transition={
                 reducedMotion
-                  ? { duration: 0 }
-                  : { duration: 0.38, ease: [0.4, 0, 0.2, 1] }
+                  ? instantTransition
+                  : portfolioCategoryVisualTransition
               }
               aria-hidden="true"
             >
@@ -1121,6 +1144,8 @@ function PortfolioCategoryVisualSelector({ activeSegment, reducedMotion, onChang
                 className={`portfolio-category-device ${category.visualClassName}`}
                 src={category.visual}
                 alt={category.visualAlt}
+                loading="lazy"
+                decoding="async"
               />
             </motion.span>
             <span className="portfolio-category-label">{category.label}</span>
@@ -1130,8 +1155,8 @@ function PortfolioCategoryVisualSelector({ activeSegment, reducedMotion, onChang
                 layoutId="portfolio-category-indicator"
                 transition={
                   reducedMotion
-                    ? { duration: 0 }
-                    : { duration: 0.42, ease: [0.4, 0, 0.2, 1] }
+                    ? instantTransition
+                    : portfolioCategoryIndicatorTransition
                 }
                 aria-hidden="true"
               />
@@ -1151,7 +1176,6 @@ function ProjectReferences({
   reducedMotion,
   onSelect,
 }) {
-  const listRef = useRef(null);
   const activeItemRef = useRef(null);
 
   useEffect(() => {
@@ -1175,13 +1199,13 @@ function ProjectReferences({
             : "Références logiciels métiers"
       }
     >
-      <div className="portfolio-reference-viewport" ref={listRef}>
+      <div className="portfolio-reference-viewport">
         <motion.div
           className="portfolio-reference-list"
           key={activeSegment}
           initial={reducedMotion ? false : { opacity: 0, y: 16 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.36, ease: [0.22, 1, 0.36, 1] }}
+          transition={referenceListTransition}
         >
           {referenceProjects.map((project) => {
             const isSelected = project.id === selectedId;
@@ -1193,12 +1217,7 @@ function ProjectReferences({
                 key={project.id}
                 ref={isSelected ? activeItemRef : null}
                 layout="position"
-                transition={{
-                  type: "spring",
-                  stiffness: 210,
-                  damping: 28,
-                  mass: 0.86,
-                }}
+                transition={referenceItemTransition}
               >
                 <button
                   className="portfolio-reference-button"
@@ -1219,17 +1238,14 @@ function ProjectReferences({
                       initial={{ height: 0, opacity: 0 }}
                       animate={{ height: "auto", opacity: 1 }}
                       exit={{ height: 0, opacity: 0 }}
-                      transition={{
-                        height: { duration: 0.48, ease: [0.4, 0, 0.2, 1] },
-                        opacity: { duration: 0.26, ease: [0.22, 1, 0.36, 1] },
-                      }}
+                      transition={referencePanelTransition}
                     >
                       <motion.div
                         className="portfolio-reference-panel-inner"
                         initial={reducedMotion ? false : { opacity: 0, y: 10 }}
                         animate={{ opacity: 1, y: 0 }}
                         exit={reducedMotion ? { opacity: 0 } : { opacity: 0, y: -6 }}
-                        transition={{ duration: 0.34, ease: [0.22, 1, 0.36, 1] }}
+                        transition={referencePanelInnerTransition}
                       >
                         <p className="portfolio-reference-label">Description</p>
                         <p className="portfolio-reference-description">
@@ -1268,16 +1284,10 @@ function MetricVisual({ type }) {
 }
 
 function WebsiteCarouselVisual() {
-  const showcaseProjects = metricProjectOrder
-    .map((projectId) => projects.find((project) => project.id === projectId))
-    .filter(Boolean);
-  const topRowProjects = showcaseProjects;
-  const bottomRowProjects = showcaseProjects.slice().reverse();
-
   return (
     <div className="website-carousel">
-      <WebsiteCarouselRow projects={topRowProjects} direction="top" />
-      <WebsiteCarouselRow projects={bottomRowProjects} direction="bottom" />
+      <WebsiteCarouselRow projects={metricCarouselRows.top} direction="top" />
+      <WebsiteCarouselRow projects={metricCarouselRows.bottom} direction="bottom" />
     </div>
   );
 }
@@ -1297,7 +1307,7 @@ function WebsiteCarouselRow({ projects: rowProjects, direction }) {
                 className="website-shot"
                 key={`${direction}-${groupIndex}-${project.id}`}
               >
-                <img src={project.src} alt="" />
+                <img src={project.src} alt="" loading="lazy" decoding="async" />
               </span>
             ))}
           </div>
@@ -1332,11 +1342,9 @@ function TechFanVisual() {
 }
 
 function CommerceDashboardVisual() {
-  const commerceProject = projects.find((project) => project.id === "ecommerce");
-
   return (
     <div className="commerce-dashboard">
-      <img src={commerceProject.src} alt="" />
+      <img src={commerceProject.src} alt="" loading="lazy" decoding="async" />
     </div>
   );
 }
@@ -1347,7 +1355,13 @@ function Footer() {
       <div className="footer-shell">
         <div className="footer-brand">
           <a className="footer-logo" href="#accueil" aria-label="SOLIS">
-            <img src={solisLogoNav} alt="" aria-hidden="true" />
+            <img
+              src={solisLogoNav}
+              alt=""
+              aria-hidden="true"
+              loading="lazy"
+              decoding="async"
+            />
           </a>
           <p id="footer-title" className="footer-description">
             SOLIS Développement Informatique est une marque suisse, propriété de
