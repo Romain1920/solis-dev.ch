@@ -6,6 +6,7 @@ import { useGSAP } from "@gsap/react";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import ReactLenis from "lenis/react";
 import iphoneFrameImage from "../assets/iphone-17-black-portrait.png";
+import macBookFrameImage from "../assets/macbook-pro-m5.png";
 import solisLogoNav from "../assets/solis-logo-nav.png";
 import studioDisplayImage from "../assets/studio-display-light.png";
 import { portfolioProjects, projects } from "./data/projects";
@@ -100,16 +101,19 @@ const portfolioCategoryOptions = [
   {
     id: "desktop",
     label: "Références sites web",
+    deviceAsset: macBookFrameImage,
     visualClassName: "portfolio-category-device--macbook",
   },
   {
     id: "mobile",
     label: "Applications mobiles",
+    deviceAsset: iphoneFrameImage,
     visualClassName: "portfolio-category-device--iphone",
   },
   {
     id: "business",
     label: "Logiciels métiers",
+    deviceAsset: studioDisplayImage,
     visualClassName: "portfolio-category-device--studio",
   },
 ];
@@ -1296,10 +1300,13 @@ function PortfolioCategoryVisualSelector({ activeSegment, reducedMotion, onChang
                   ? instantTransition
                   : portfolioCategoryVisualTransition
               }
-              aria-hidden="true"
             >
-              <span
+              <img
                 className={`portfolio-category-device ${category.visualClassName}`}
+                src={category.deviceAsset}
+                alt={category.label}
+                loading="lazy"
+                decoding="async"
               />
             </motion.span>
             <span className="portfolio-category-label">{category.label}</span>
