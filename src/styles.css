@@ -577,20 +577,20 @@ a {
   isolation: isolate;
   background:
     linear-gradient(165deg, rgba(255, 255, 255, 0.2) 0%, transparent 34%),
-    linear-gradient(145deg, #a7e8ff 0%, #5ea7f5 48%, #6ec6f3 100%);
+    linear-gradient(145deg, #91deff 0%, #459df0 48%, #42c2ea 100%);
   will-change: filter, transform, opacity;
 }
 
 .metric-item:nth-child(2) {
   background:
     linear-gradient(155deg, rgba(255, 255, 255, 0.24) 0%, transparent 34%),
-    linear-gradient(145deg, #ffe0bd 0%, #f6ad69 54%, #ee8f4d 100%);
+    linear-gradient(145deg, #ffd09a 0%, #ff9a38 54%, #e87524 100%);
 }
 
 .metric-item:nth-child(3) {
   background:
     linear-gradient(165deg, rgba(255, 255, 255, 0.2) 0%, transparent 34%),
-    linear-gradient(145deg, #a7e8ff 0%, #5ea7f5 48%, #6ec6f3 100%);
+    linear-gradient(145deg, #91deff 0%, #459df0 48%, #42c2ea 100%);
 }
 
 .metric-item::before,
