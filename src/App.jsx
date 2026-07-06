@@ -38,6 +38,10 @@ const serviceNavItems = [
 ];
 
 const screenshotIntervalMs = 1500;
+const ENABLE_HERO_PICTURE_TRAIL = true;
+const SHOW_HERO_INLINE_REFERENCE_SCREEN = false;
+const heroPictureTrailSpawnIntervalMs = 96;
+const heroPictureTrailPoolSize = 8;
 
 const lenisOptions = { lerp: 0.08, wheelMultiplier: 0.9 };
 const projectById = new Map(projects.map((project) => [project.id, project]));
@@ -87,6 +91,28 @@ const heroReelProjectIds = [
   "institutional",
 ];
 const heroReelProjects = heroReelProjectIds.map(getProjectById).filter(Boolean);
+const heroTrailProjectIds = [
+  "mobile-app",
+  "ecommerce",
+  "platform",
+  "saas",
+  "institutional",
+  "le-fournil-de-melchior",
+  "mille-vadrouilles",
+  "kinn-mobile",
+  "contact-mind-mobile",
+  "popup-mobile",
+];
+const heroTrailImages = heroTrailProjectIds
+  .map(getProjectById)
+  .filter(Boolean)
+  .map((project) => ({
+    id: project.id,
+    title: project.title,
+    type: project.type,
+    src: getCarouselProjectImageSrc(project),
+  }))
+  .filter((project) => Boolean(project.src));
 
 const metrics = [
   {
@@ -485,6 +511,7 @@ function Hero() {
           const timeline = gsap.timeline({
             defaults: { ease: "power3.out" },
           });
+          const projectReel = heroRef.current?.querySelector(".project-reel");
 
           timeline
             .fromTo(
@@ -513,17 +540,6 @@ function Hero() {
               0.42
             )
             .from(
-              ".project-reel",
-              {
-                autoAlpha: 0,
-                y: 18,
-                scale: 0.92,
-                duration: 0.58,
-                stagger: 0.06,
-              },
-              0.46
-            )
-            .from(
               ".hero-request",
               {
                 autoAlpha: 0,
@@ -532,6 +548,19 @@ function Hero() {
               },
               0.7
             );
+
+          if (projectReel) {
+            timeline.from(
+              projectReel,
+              {
+                autoAlpha: 0,
+                y: 18,
+                scale: 0.92,
+                duration: 0.58,
+              },
+              0.46
+            );
+          }
 
           return undefined;
         }
@@ -549,6 +578,7 @@ function Hero() {
       ref={heroRef}
       aria-labelledby="hero-title"
     >
+      {ENABLE_HERO_PICTURE_TRAIL ? <HeroPictureTrail /> : null}
       <div className="hero-shell">
         <h1 id="hero-title" className="hero-title">
           <span className="hero-line hero-reveal">
@@ -567,7 +597,7 @@ function Hero() {
               mobiles <br className="mobile-only" />
               sur-mesure
             </span>
-            <ProjectReel />
+            {SHOW_HERO_INLINE_REFERENCE_SCREEN ? <ProjectReel /> : null}
           </span>
           <span className="hero-line hero-reveal">dont les gens se souviennent</span>
         </h1>
@@ -594,6 +624,161 @@ function Hero() {
         </a>
       </div>
     </section>
+  );
+}
+
+function HeroPictureTrail() {
+  const layerRef = useRef(null);
+  const reducedMotion = usePrefersReducedMotion();
+
+  useEffect(() => {
+    heroTrailImages.forEach((project) => {
+      preloadImage(project.src, "low");
+    });
+  }, []);
+
+  useEffect(() => {
+    if (
+      reducedMotion ||
+      !ENABLE_HERO_PICTURE_TRAIL ||
+      heroTrailImages.length === 0 ||
+      typeof window === "undefined"
+    ) {
+      return undefined;
+    }
+
+    const layer = layerRef.current;
+    const hero = layer?.closest(".hero-section");
+    const canUseTrail = window.matchMedia("(hover: hover) and (pointer: fine)").matches;
+
+    if (!layer || !hero || !canUseTrail) {
+      return undefined;
+    }
+
+    const items = Array.from(layer.querySelectorAll(".hero-picture-trail-item"));
+    let imageIndex = 0;
+    let itemIndex = 0;
+    let lastSpawnAt = 0;
+    let runId = 0;
+
+    const randomBetween = (min, max) => min + Math.random() * (max - min);
+
+    const clearTrail = () => {
+      items.forEach((item) => {
+        item.getAnimations().forEach((animation) => animation.cancel());
+        item.classList.remove("is-active");
+        item.style.opacity = "0";
+      });
+    };
+
+    const spawnTrailItem = (event) => {
+      const now = window.performance.now();
+
+      if (now - lastSpawnAt < heroPictureTrailSpawnIntervalMs) {
+        return;
+      }
+
+      const rect = hero.getBoundingClientRect();
+      const x = event.clientX - rect.left;
+      const y = event.clientY - rect.top;
+
+      if (x < 0 || y < 0 || x > rect.width || y > rect.height) {
+        return;
+      }
+
+      lastSpawnAt = now;
+
+      const item = items[itemIndex % items.length];
+      const image = item.querySelector("img");
+      const project = heroTrailImages[imageIndex % heroTrailImages.length];
+      const offsetX = randomBetween(-24, 24);
+      const offsetY = randomBetween(-20, 18);
+      const driftX = randomBetween(-8, 8);
+      const driftY = randomBetween(-22, -12);
+      const rotation = randomBetween(-5, 5);
+      const currentRunId = String((runId += 1));
+
+      itemIndex += 1;
+      imageIndex += 1;
+
+      item.getAnimations().forEach((animation) => animation.cancel());
+      item.dataset.runId = currentRunId;
+      item.classList.toggle("is-mobile", project.type === "mobile");
+      item.style.left = `${x + offsetX}px`;
+      item.style.top = `${y + offsetY}px`;
+      item.style.opacity = "0";
+
+      if (image && image.getAttribute("src") !== project.src) {
+        image.src = project.src;
+      }
+
+      item.classList.add("is-active");
+
+      const animation = item.animate(
+        [
+          {
+            opacity: 0,
+            transform: `translate3d(-50%, -46%, 0) scale(0.92) rotate(${rotation}deg)`,
+          },
+          {
+            opacity: 0.86,
+            transform: `translate3d(-50%, -50%, 0) scale(1) rotate(${rotation}deg)`,
+            offset: 0.2,
+          },
+          {
+            opacity: 0.8,
+            transform: `translate3d(-50%, -50%, 0) scale(1) rotate(${rotation}deg)`,
+            offset: 0.55,
+          },
+          {
+            opacity: 0,
+            transform: `translate3d(calc(-50% + ${driftX}px), calc(-50% + ${driftY}px), 0) scale(0.96) rotate(${
+              rotation * 0.45
+            }deg)`,
+          },
+        ],
+        {
+          duration: 1120,
+          easing: "cubic-bezier(0.4, 0, 0.2, 1)",
+          fill: "forwards",
+        }
+      );
+
+      animation.onfinish = () => {
+        if (item.dataset.runId === currentRunId) {
+          item.classList.remove("is-active");
+          item.style.opacity = "0";
+        }
+      };
+    };
+
+    hero.addEventListener("pointermove", spawnTrailItem);
+    hero.addEventListener("pointerleave", clearTrail);
+
+    return () => {
+      hero.removeEventListener("pointermove", spawnTrailItem);
+      hero.removeEventListener("pointerleave", clearTrail);
+      clearTrail();
+    };
+  }, [reducedMotion]);
+
+  return (
+    <div className="hero-picture-trail-layer" ref={layerRef} aria-hidden="true">
+      {Array.from({ length: heroPictureTrailPoolSize }, (_, index) => {
+        const project = heroTrailImages[index % heroTrailImages.length];
+
+        return (
+          <span
+            className={`hero-picture-trail-item${
+              project?.type === "mobile" ? " is-mobile" : ""
+            }`}
+            key={index}
+          >
+            <img src={project?.src} alt="" decoding="async" loading="eager" />
+          </span>
+        );
+      })}
+    </div>
   );
 }
 
