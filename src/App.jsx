@@ -1409,6 +1409,16 @@ function ProjectReferences({
                         transition={referencePanelInnerTransition}
                       >
                         <p className="portfolio-reference-label">Description</p>
+                        {project.url ? (
+                          <a
+                            className="portfolio-project-link"
+                            href={project.url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                          >
+                            Voir le site
+                          </a>
+                        ) : null}
                         <p className="portfolio-reference-description">
                           {project.description}
                         </p>

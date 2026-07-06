@@ -1217,6 +1217,26 @@ a {
   letter-spacing: 0;
 }
 
+.portfolio-project-link {
+  display: inline-flex;
+  align-items: center;
+  width: fit-content;
+  margin: 0 0 10px;
+  color: rgba(17, 17, 17, 0.7);
+  font-size: clamp(0.78rem, 0.8vw, 0.86rem);
+  font-weight: 560;
+  line-height: 1.2;
+  letter-spacing: 0;
+  text-decoration: none;
+}
+
+.portfolio-project-link:hover,
+.portfolio-project-link:focus-visible {
+  color: rgba(17, 17, 17, 0.92);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
 .portfolio-reference-description {
   margin: 0 0 16px;
   color: rgba(17, 17, 17, 0.74);

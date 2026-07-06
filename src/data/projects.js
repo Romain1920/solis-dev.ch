@@ -83,8 +83,9 @@ export const portfolioProjects = [
     category: "Web • Carte digitale",
     technologies: ["Vue", "Node.js", "CMS", "QR Code", "SEO"],
     src: laGouttiereScreenshot,
+    url: "https://www.bar-la-gouttiere.ch/",
     description:
-      "Site vitrine pour un bar à Martigny, avec carte digitale par QR code et contenus faciles à garder à jour.",
+      "Nous avons conçu une plateforme sur mesure pour traduire l’identité du bar en ligne, valoriser son ambiance et mettre en avant ses produits, ses événements et ses actualités. Le site intègre une carte digitale consultable facilement via QR code sur place, une galerie photo et un espace d’administration permettant au client de gérer ses contenus en autonomie.",
     testimonial:
       "Une présence digitale claire qui simplifie le quotidien et donne aux clients les bonnes informations au bon moment.",
   },
@@ -100,8 +101,9 @@ export const portfolioProjects = [
     category: "Web • Vitrine",
     technologies: ["React", "Vite", "Forms", "SEO", "Analytics"],
     src: julTerrassementScreenshot,
+    url: "https://www.jul-terrassement.ch/",
     description:
-      "Vitrine claire pour présenter les prestations, rassurer les visiteurs et orienter les demandes qualifiées.",
+      "Nous avons conçu un site vitrine moderne, responsive et simple à administrer pour mettre en valeur les services de Jul Terrassement. Le projet combine design clair, SEO local et gestion de contenu intuitive afin de renforcer la visibilité en ligne et transformer les visiteurs en contacts qualifiés.",
     testimonial:
       "Le site met immédiatement en confiance et transforme les demandes entrantes en contacts mieux qualifiés.",
   },
@@ -130,14 +132,15 @@ export const portfolioProjects = [
     name: "Philippe Darioli",
     title: "Philippe Darioli",
     client: "Domaine viticole",
-    testimonialAuthor: "Philippe Darioli",
+    testimonialAuthor: "Philippe Darioli, Vigneron-encaveur",
     category: "Web • E-commerce",
     technologies: ["Shopify", "Liquid", "Stripe", "CMS", "SEO"],
     src: philippeDarioliScreenshot,
+    url: "https://www.philippe-darioli.ch/",
     description:
-      "Site vitrine et e-commerce pour présenter le domaine, ses crus et faciliter l'achat en ligne.",
+      "Nous avons conçu un site web avec e-shop pour valoriser le domaine, présenter ses produits et structurer un parcours d’achat clair, moderne et responsive. Le projet a notamment permis de recentrer le catalogue autour des best-sellers, afin de faciliter la décision d’achat et d’améliorer concrètement les conversions.",
     testimonial:
-      "L'expérience garde l'esprit du domaine tout en donnant un accès simple aux produits et aux commandes.",
+      "De notre première réunion à la première commande enregistrée sur mon site, SOLIS et leurs équipes ont démontré un suivi et une réactivité qui ont permis de m'éviter quelques nuits blanches.",
   },
   {
     id: "popup-challenge",
