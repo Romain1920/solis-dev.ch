@@ -110,6 +110,68 @@ const metrics = [
   },
 ];
 
+const clientLogoAssets = import.meta.glob("../assets/client-logos/*.{svg,png,webp,avif}", {
+  eager: true,
+  import: "default",
+});
+
+const getClientLogo = (fileName) =>
+  clientLogoAssets[`../assets/client-logos/${fileName}.svg`] ??
+  clientLogoAssets[`../assets/client-logos/${fileName}.png`] ??
+  clientLogoAssets[`../assets/client-logos/${fileName}.webp`] ??
+  clientLogoAssets[`../assets/client-logos/${fileName}.avif`] ??
+  null;
+
+const clientLogoReferences = [
+  {
+    id: "ville-de-martigny",
+    name: "Ville de Martigny",
+    logo: getClientLogo("ville-de-martigny"),
+  },
+  {
+    id: "synergy",
+    name: "Synergy",
+    logo: getClientLogo("synergy"),
+  },
+  {
+    id: "ozam",
+    name: "OZAM",
+    logo: getClientLogo("ozam"),
+  },
+  {
+    id: "la-gouttiere",
+    name: "La Gouttière",
+    logo: getClientLogo("la-gouttiere"),
+  },
+  {
+    id: "philippe-darioli",
+    name: "Philippe Darioli",
+    logo: getClientLogo("philippe-darioli"),
+  },
+  {
+    id: "brasserie-la-lyonne",
+    name: "Brasserie La Lyonne",
+    logo: getClientLogo("brasserie-la-lyonne"),
+  },
+  {
+    id: "jul-terrassement",
+    name: "Jul Terrassement",
+    logo: getClientLogo("jul-terrassement"),
+  },
+  {
+    id: "contact-mind",
+    name: "Contact Mind",
+    logo: getClientLogo("contact-mind"),
+  },
+  {
+    id: "popup-challenge",
+    name: "Pop-up Challenge",
+    logo: getClientLogo("popup-challenge"),
+  },
+];
+
+const activeClientLogos = clientLogoReferences.filter((client) => client.logo);
+
 const teamMembers = [
   {
     id: "romain",
@@ -684,7 +746,36 @@ function MetricsSection() {
           </article>
         ))}
       </div>
+      <ClientLogoMarquee />
     </section>
+  );
+}
+
+function ClientLogoMarquee() {
+  if (activeClientLogos.length === 0) {
+    return null;
+  }
+
+  const marqueeLogos = [...activeClientLogos, ...activeClientLogos];
+
+  return (
+    <div className="client-logo-band" aria-label="Références clients">
+      <p className="client-logo-eyebrow">Ils nous ont fait confiance</p>
+      <div className="client-marquee" aria-hidden="true">
+        <div className="client-marquee-track">
+          {marqueeLogos.map((client, index) => (
+            <img
+              className="client-logo"
+              key={`${client.id}-${index}`}
+              src={client.logo}
+              alt=""
+              loading="lazy"
+              decoding="async"
+            />
+          ))}
+        </div>
+      </div>
+    </div>
   );
 }
 
