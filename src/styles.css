@@ -82,17 +82,6 @@ a {
   text-decoration: none;
 }
 
-.ascii-mouse-trail {
-  position: fixed;
-  inset: 0;
-  width: 100vw;
-  height: 100vh;
-  pointer-events: none;
-  contain: strict;
-  z-index: 3;
-  opacity: 0.92;
-}
-
 ::selection {
   background: var(--orange);
   color: #ffffff;
@@ -360,22 +349,9 @@ a {
 }
 
 .hero-shell {
-  position: relative;
-  z-index: 4;
   width: min(1240px, calc(100vw - 48px));
   margin: 0 auto;
   padding-top: clamp(18px, 4svh, 54px);
-}
-
-.metrics-shell,
-.client-logo-band,
-.team-shell,
-.portfolio-category-selector,
-.portfolio-shell,
-.footer-shell,
-.footer-bottom {
-  position: relative;
-  z-index: 4;
 }
 
 .hero-title {
@@ -1646,7 +1622,7 @@ a {
 .footer-shell,
 .footer-bottom {
   position: relative;
-  z-index: 4;
+  z-index: 1;
   width: min(1150px, calc(100vw - 56px));
   margin: 0 auto;
 }
@@ -2457,10 +2433,6 @@ a {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .ascii-mouse-trail {
-    display: none !important;
-  }
-
   *,
   *::before,
   *::after {
