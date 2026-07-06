@@ -1112,17 +1112,16 @@ function PortfolioSection() {
                         initial={
                           prefersReducedMotion || isInstantReveal
                             ? false
-                            : { opacity: 0, scale: 1.035, filter: "blur(10px)" }
+                            : { opacity: 0, filter: "blur(10px)" }
                         }
                         animate={{
                           opacity: 1,
-                          scale: 1,
                           filter: "blur(0px)",
                         }}
                         exit={
                           prefersReducedMotion || isInstantReveal
                             ? { opacity: 0 }
-                            : { opacity: 0, scale: 0.985, filter: "blur(8px)" }
+                            : { opacity: 0, filter: "blur(8px)" }
                         }
                         transition={
                           prefersReducedMotion || isInstantReveal
@@ -1187,13 +1186,13 @@ function PortfolioSection() {
                         initial={
                           prefersReducedMotion || isInstantReveal
                             ? false
-                            : { opacity: 0, y: 24, scale: 1.03, filter: "blur(8px)" }
+                            : { opacity: 0, filter: "blur(8px)" }
                         }
-                        animate={{ opacity: 1, y: 0, scale: 1, filter: "blur(0px)" }}
+                        animate={{ opacity: 1, filter: "blur(0px)" }}
                         exit={
                           prefersReducedMotion || isInstantReveal
                             ? { opacity: 0 }
-                            : { opacity: 0, y: -18, scale: 0.985, filter: "blur(8px)" }
+                            : { opacity: 0, filter: "blur(8px)" }
                         }
                         transition={
                           prefersReducedMotion || isInstantReveal

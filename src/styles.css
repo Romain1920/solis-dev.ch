@@ -1049,12 +1049,12 @@ a {
 }
 
 .portfolio-load-plane[data-device="mobile"] .portfolio-load-plane-image {
-  left: -2px;
-  top: -2px;
+  left: -4px;
+  top: -4px;
   right: auto;
   bottom: auto;
-  width: calc(100% + 4px);
-  height: calc(100% + 4px);
+  width: calc(100% + 8px);
+  height: calc(100% + 8px);
 }
 
 .portfolio-list-column {
@@ -1352,11 +1352,11 @@ a {
 
 .iphone-screen-shot {
   position: absolute;
-  left: -2px;
-  top: -2px;
+  left: -4px;
+  top: -4px;
   display: block;
-  width: calc(100% + 4px);
-  height: calc(100% + 4px);
+  width: calc(100% + 8px);
+  height: calc(100% + 8px);
   max-width: none;
   object-fit: cover;
   object-position: top center;
