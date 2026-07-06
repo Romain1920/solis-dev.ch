@@ -832,10 +832,144 @@ a {
   filter: saturate(1.06) contrast(1.05);
 }
 
+.team-section {
+  position: relative;
+  overflow: hidden;
+  padding: clamp(34px, 4.8vw, 72px) 0 clamp(80px, 8.8vw, 132px);
+  background: #ffffff;
+}
+
+.team-shell {
+  position: relative;
+  width: min(1180px, calc(100vw - 56px));
+  min-height: clamp(730px, 58vw, 820px);
+  margin: 0 auto;
+}
+
+.team-center {
+  position: absolute;
+  inset: 65% auto auto 50%;
+  z-index: 3;
+  width: min(360px, 38vw);
+  display: grid;
+  justify-items: center;
+  gap: 18px;
+  text-align: center;
+  transform: translate3d(-50%, -50%, 0);
+}
+
+.team-center h2 {
+  margin: 0;
+  color: #090a0a;
+  font-size: clamp(2.7rem, 5vw, 5.4rem);
+  font-weight: 500;
+  line-height: 0.98;
+  letter-spacing: 0;
+}
+
+.team-logo {
+  width: clamp(70px, 6.8vw, 92px);
+  height: auto;
+  opacity: 0.22;
+  filter: saturate(0.82);
+}
+
+.team-constellation {
+  position: absolute;
+  inset: 0;
+}
+
+.team-card {
+  position: absolute;
+  z-index: 2;
+  width: clamp(214px, 21vw, 286px);
+  overflow: hidden;
+  border: 1px solid rgba(9, 10, 10, 0.08);
+  border-radius: 8px;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.96), rgba(250, 252, 252, 0.96)),
+    #ffffff;
+  box-shadow:
+    0 16px 42px rgba(16, 17, 18, 0.055),
+    inset 0 1px 0 rgba(255, 255, 255, 0.84);
+}
+
+.team-card--romain {
+  top: clamp(92px, 7.8vw, 116px);
+  left: 50%;
+  width: clamp(176px, 16vw, 198px);
+  transform: translate3d(-50%, 0, 0);
+}
+
+.team-card--aymeric {
+  top: clamp(304px, 23vw, 354px);
+  left: 0;
+}
+
+.team-card--lyndon {
+  right: 0;
+  bottom: clamp(8px, 1.8vw, 28px);
+  width: clamp(224px, 22.6vw, 302px);
+}
+
+.team-photo-frame {
+  aspect-ratio: 1 / 1.06;
+  overflow: hidden;
+  background: #ffffff;
+  border-bottom: 1px solid rgba(9, 10, 10, 0.07);
+}
+
+.team-photo {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transform: translate3d(0, 0, 0);
+}
+
+.team-photo--romain {
+  object-position: 52% 22%;
+}
+
+.team-photo--aymeric {
+  object-position: center 18%;
+}
+
+.team-photo--lyndon {
+  object-position: center top;
+}
+
+.team-card-copy {
+  display: grid;
+  gap: 7px;
+  padding: 17px 18px 19px;
+}
+
+.team-card-copy h3 {
+  margin: 0;
+  color: #111111;
+  font-size: clamp(1rem, 1.05vw, 1.12rem);
+  font-weight: 620;
+  line-height: 1.12;
+  letter-spacing: 0;
+}
+
+.team-card-copy p {
+  margin: 0;
+  color: rgba(17, 17, 17, 0.62);
+  font-size: clamp(0.84rem, 0.86vw, 0.92rem);
+  font-weight: 450;
+  line-height: 1.34;
+  letter-spacing: 0;
+}
+
+.team-reveal {
+  will-change: filter, transform, opacity;
+}
+
 .portfolio-section {
   position: relative;
   overflow: hidden;
-  scroll-margin-top: 0;
+  scroll-margin-top: 120px;
   background: #ffffff;
   min-height: 100svh;
   height: 100svh;
@@ -1709,6 +1843,49 @@ a {
     width: min(100%, 380px);
   }
 
+  .team-section {
+    padding: 34px 0 94px;
+  }
+
+  .team-shell {
+    width: min(760px, calc(100vw - 40px));
+    min-height: 0;
+    display: grid;
+    gap: 32px;
+  }
+
+  .team-center {
+    position: relative;
+    inset: auto;
+    width: 100%;
+    transform: none;
+  }
+
+  .team-center h2 {
+    font-size: clamp(3rem, 8vw, 4.8rem);
+  }
+
+  .team-constellation {
+    position: relative;
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 16px;
+  }
+
+  .team-card,
+  .team-card--romain,
+  .team-card--aymeric,
+  .team-card--lyndon {
+    position: relative;
+    inset: auto;
+    width: auto;
+    transform: none;
+  }
+
+  .team-card-copy {
+    padding: 15px 14px 17px;
+  }
+
   .portfolio-section {
     min-height: 100svh;
     height: 100svh;
@@ -2018,6 +2195,45 @@ a {
   .commerce-dashboard {
     width: min(100%, 290px);
     border-radius: 14px;
+  }
+
+  .team-section {
+    padding: 24px 0 78px;
+  }
+
+  .team-shell {
+    width: calc(100vw - 30px);
+    gap: 26px;
+  }
+
+  .team-center {
+    gap: 14px;
+  }
+
+  .team-center h2 {
+    font-size: clamp(2.5rem, 13vw, 4.1rem);
+  }
+
+  .team-logo {
+    width: 68px;
+  }
+
+  .team-constellation {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+
+  .team-card {
+    max-width: 360px;
+    margin: 0 auto;
+  }
+
+  .team-photo-frame {
+    aspect-ratio: 1 / 0.96;
+  }
+
+  .team-card-copy {
+    padding: 16px 16px 18px;
   }
 
   .portfolio-section {

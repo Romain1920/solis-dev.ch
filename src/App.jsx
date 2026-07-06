@@ -5,8 +5,11 @@ import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import ReactLenis from "lenis/react";
+import aymericPortrait from "../assets/team/aymeric-sarrasin.jpg";
 import iphoneFrameImage from "../assets/iphone-17-black-portrait.png";
+import lyndonPortrait from "../assets/team/lyndon-vouilloz.jpg";
 import macBookFrameImage from "../assets/macbook-pro-m5.png";
+import romainPortrait from "../assets/team/romain-darioli.jpg";
 import solisLogoNav from "../assets/solis-logo-nav.png";
 import studioDisplayImage from "../assets/studio-display-light.png";
 import { portfolioProjects, projects } from "./data/projects";
@@ -100,6 +103,30 @@ const metrics = [
     descriptionLines: ["CHF générés sur les sites", "e-commerce réalisés en 2025"],
     visual: "commerce",
     variant: "commerce",
+  },
+];
+
+const teamMembers = [
+  {
+    id: "romain",
+    name: "Romain Darioli",
+    role: "Contact client, design d’interface, maquettage et développement front-end.",
+    image: romainPortrait,
+    imageClassName: "team-photo--romain",
+  },
+  {
+    id: "aymeric",
+    name: "Aymeric Sarrasin",
+    role: "Développement full stack, architecture front-end et back-end.",
+    image: aymericPortrait,
+    imageClassName: "team-photo--aymeric",
+  },
+  {
+    id: "lyndon",
+    name: "Lyndon Vouilloz",
+    role: "Partenaire en stratégie digitale, SEO, Google Ads et Meta Business Ads.",
+    image: lyndonPortrait,
+    imageClassName: "team-photo--lyndon",
   },
 ];
 
@@ -311,6 +338,7 @@ function App() {
         <Hero />
         <div className="content-section-wrapper">
           <MetricsSection />
+          <TeamSection />
           <PortfolioSection />
         </div>
       </main>
@@ -651,6 +679,108 @@ function MetricsSection() {
             </div>
           </article>
         ))}
+      </div>
+    </section>
+  );
+}
+
+function TeamSection() {
+  const teamRef = useRef(null);
+
+  useGSAP(
+    () => {
+      const mm = gsap.matchMedia();
+
+      mm.add(
+        {
+          reduceMotion: "(prefers-reduced-motion: reduce)",
+          all: "(min-width: 0px)",
+        },
+        (context) => {
+          const { reduceMotion } = context.conditions;
+          const revealItems = gsap.utils.toArray(".team-reveal");
+
+          if (reduceMotion) {
+            gsap.set(revealItems, {
+              autoAlpha: 1,
+              y: 0,
+              filter: "blur(0px)",
+            });
+            return undefined;
+          }
+
+          gsap.fromTo(
+            revealItems,
+            {
+              autoAlpha: 0,
+              y: 28,
+              filter: "blur(6px)",
+            },
+            {
+              autoAlpha: 1,
+              y: 0,
+              filter: "blur(0px)",
+              duration: 0.64,
+              ease: "power3.out",
+              stagger: 0.08,
+              immediateRender: false,
+              scrollTrigger: {
+                trigger: teamRef.current,
+                start: "top 74%",
+                toggleActions: "play none none reverse",
+              },
+            }
+          );
+
+          return undefined;
+        }
+      );
+
+      return () => mm.revert();
+    },
+    { scope: teamRef }
+  );
+
+  return (
+    <section
+      className="team-section"
+      ref={teamRef}
+      aria-labelledby="team-title"
+    >
+      <div className="team-shell">
+        <div className="team-center team-reveal">
+          <h2 id="team-title">Qui est Solis&nbsp;?</h2>
+          <img
+            src={solisLogoNav}
+            alt=""
+            className="team-logo"
+            aria-hidden="true"
+            decoding="async"
+          />
+        </div>
+
+        <div className="team-constellation" aria-label="Équipe SOLIS">
+          {teamMembers.map((member) => (
+            <article
+              className={`team-card team-card--${member.id} team-reveal`}
+              key={member.id}
+            >
+              <div className="team-photo-frame">
+                <img
+                  src={member.image}
+                  alt={member.name}
+                  className={`team-photo ${member.imageClassName}`}
+                  loading="eager"
+                  decoding="async"
+                />
+              </div>
+              <div className="team-card-copy">
+                <h3>{member.name}</h3>
+                <p>{member.role}</p>
+              </div>
+            </article>
+          ))}
+        </div>
       </div>
     </section>
   );
