@@ -40,8 +40,6 @@ const serviceNavItems = [
 const screenshotIntervalMs = 1500;
 
 const lenisOptions = { lerp: 0.08, wheelMultiplier: 0.9 };
-const ENABLE_OIL_TRAIL = true;
-const ENABLE_ASCII_TRAIL = false;
 const projectById = new Map(projects.map((project) => [project.id, project]));
 const portfolioProjectById = new Map(
   portfolioProjects.map((project) => [project.id, project])
@@ -306,20 +304,14 @@ const getPrefersReducedMotion = () =>
   typeof window !== "undefined" &&
   window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
 
-const asciiTrailCharacters = [
-  ".",
-  ".",
-  "·",
-  ":",
-  ":",
-  "+",
-  "+",
-  "*",
-  "x",
-  "o",
-  "0",
-  "#",
-  "%",
+const asciiTrailCharacters = ["0", "1"];
+const asciiTrailColors = [
+  "69, 157, 240",
+  "66, 194, 234",
+  "145, 222, 255",
+  "255, 154, 56",
+  "232, 117, 36",
+  "255, 208, 154",
 ];
 
 const getShouldDisableMouseTrail = () => {
@@ -422,11 +414,7 @@ const techLogos = [
 function App() {
   return (
     <ReactLenis root options={lenisOptions}>
-      {ENABLE_OIL_TRAIL ? (
-        <OilMouseTrail />
-      ) : ENABLE_ASCII_TRAIL ? (
-        <AsciiMouseTrail />
-      ) : null}
+      <AsciiMouseTrail />
 
       <a className="skip-link" href="#contenu">
         Aller au contenu
@@ -446,245 +434,6 @@ function App() {
       <Footer />
     </ReactLenis>
   );
-}
-
-function OilMouseTrail() {
-  const canvasRef = useRef(null);
-  const particlesRef = useRef([]);
-  const lastPointRef = useRef(null);
-  const rafRef = useRef(null);
-  const [enabled, setEnabled] = useState(false);
-
-  useEffect(() => {
-    const queries = [
-      window.matchMedia("(prefers-reduced-motion: reduce)"),
-      window.matchMedia("(pointer: coarse)"),
-      window.matchMedia("(hover: none)"),
-      window.matchMedia("(max-width: 760px)"),
-    ];
-    const updateEnabled = () => setEnabled(!getShouldDisableMouseTrail());
-
-    updateEnabled();
-    queries.forEach((query) => query.addEventListener("change", updateEnabled));
-
-    return () => {
-      queries.forEach((query) => query.removeEventListener("change", updateEnabled));
-    };
-  }, []);
-
-  useEffect(() => {
-    if (!enabled) {
-      particlesRef.current = [];
-      return undefined;
-    }
-
-    const canvas = canvasRef.current;
-    const context = canvas?.getContext("2d", { alpha: true });
-
-    if (!canvas || !context) {
-      return undefined;
-    }
-
-    let width = 0;
-    let height = 0;
-    let dpr = 1;
-    let targetTrailAlpha = 1;
-    let trailAlpha = 1;
-    const maxParticles = 64;
-
-    const resize = () => {
-      width = window.innerWidth;
-      height = window.innerHeight;
-      dpr = Math.min(window.devicePixelRatio || 1, 2);
-      canvas.width = Math.round(width * dpr);
-      canvas.height = Math.round(height * dpr);
-      canvas.style.width = `${width}px`;
-      canvas.style.height = `${height}px`;
-      context.setTransform(dpr, 0, 0, dpr, 0, 0);
-    };
-
-    const pushOilParticle = (x, y, dx = 0, dy = 0, speed = 0) => {
-      const particles = particlesRef.current;
-      const angle = Math.atan2(dy, dx || 1);
-      const speedRatio = Math.min(1, speed / 120);
-      const radius = 30 + Math.random() * 22 + speedRatio * 34;
-
-      particles.push({
-        x: x + (Math.random() - 0.5) * 14,
-        y: y + (Math.random() - 0.5) * 10,
-        vx: dx * 0.004 + (Math.random() - 0.5) * 0.16,
-        vy: dy * 0.004 + (Math.random() - 0.5) * 0.16,
-        radius,
-        angle: angle + (Math.random() - 0.5) * 0.36,
-        stretch: 1.18 + speedRatio * 1.45 + Math.random() * 0.24,
-        life: 1,
-        decay: 0.948 + Math.random() * 0.012,
-        ripple: Math.random() * Math.PI * 2,
-      });
-
-      if (particles.length > maxParticles) {
-        particles.splice(0, particles.length - maxParticles);
-      }
-    };
-
-    const spawnOilTrail = (x, y, dx = 0, dy = 0, speed = 0) => {
-      const count = speed > 95 ? 4 : speed > 35 ? 3 : 2;
-
-      for (let index = 0; index < count; index += 1) {
-        pushOilParticle(x, y, dx, dy, speed);
-      }
-    };
-
-    const handleMouseMove = (event) => {
-      const nextPoint = { x: event.clientX, y: event.clientY };
-      const lastPoint = lastPointRef.current;
-
-      if (!lastPoint) {
-        lastPointRef.current = nextPoint;
-        spawnOilTrail(nextPoint.x, nextPoint.y, 0, 0, 0);
-        return;
-      }
-
-      const dx = nextPoint.x - lastPoint.x;
-      const dy = nextPoint.y - lastPoint.y;
-      const distance = Math.hypot(dx, dy);
-      const steps = Math.min(8, Math.max(1, Math.floor(distance / 24)));
-
-      for (let index = 1; index <= steps; index += 1) {
-        const progress = index / steps;
-        spawnOilTrail(
-          lastPoint.x + dx * progress,
-          lastPoint.y + dy * progress,
-          dx,
-          dy,
-          distance
-        );
-      }
-
-      lastPointRef.current = nextPoint;
-    };
-
-    const observePortfolio = () => {
-      const portfolio = document.querySelector(".portfolio-section");
-
-      if (!portfolio || !("IntersectionObserver" in window)) {
-        return null;
-      }
-
-      const observer = new IntersectionObserver(
-        ([entry]) => {
-          targetTrailAlpha =
-            entry.isIntersecting && entry.intersectionRatio > 0.18 ? 0.52 : 1;
-        },
-        { threshold: [0, 0.18, 0.45] }
-      );
-
-      observer.observe(portfolio);
-      return observer;
-    };
-
-    const drawOilBlob = (particle) => {
-      const life = particle.life * trailAlpha;
-      const radius = particle.radius;
-      const timeRipple = Math.sin(particle.ripple + particle.life * 8) * 0.08;
-
-      context.save();
-      context.translate(particle.x, particle.y);
-      context.rotate(particle.angle + timeRipple);
-      context.scale(particle.stretch, 1);
-
-      const baseGradient = context.createRadialGradient(0, 0, 0, 0, 0, radius);
-      baseGradient.addColorStop(0, `rgba(255, 255, 255, ${0.46 * life})`);
-      baseGradient.addColorStop(0.32, `rgba(232, 246, 252, ${0.32 * life})`);
-      baseGradient.addColorStop(0.58, `rgba(117, 205, 242, ${0.2 * life})`);
-      baseGradient.addColorStop(0.78, `rgba(252, 171, 105, ${0.2 * life})`);
-      baseGradient.addColorStop(1, "rgba(255, 255, 255, 0)");
-
-      context.globalCompositeOperation = "source-over";
-      context.fillStyle = baseGradient;
-      context.beginPath();
-      context.ellipse(0, 0, radius, radius * 0.42, 0, 0, Math.PI * 2);
-      context.fill();
-
-      context.globalCompositeOperation = "screen";
-      context.strokeStyle = `rgba(101, 205, 246, ${0.35 * life})`;
-      context.lineWidth = 2.2;
-      context.beginPath();
-      context.ellipse(-radius * 0.04, -radius * 0.03, radius * 0.95, radius * 0.38, 0, 0, Math.PI * 2);
-      context.stroke();
-
-      context.strokeStyle = `rgba(255, 145, 82, ${0.3 * life})`;
-      context.lineWidth = 1.8;
-      context.beginPath();
-      context.ellipse(radius * 0.05, radius * 0.03, radius * 0.84, radius * 0.34, 0, 0, Math.PI * 2);
-      context.stroke();
-
-      const highlightGradient = context.createLinearGradient(
-        -radius,
-        -radius * 0.24,
-        radius,
-        radius * 0.22
-      );
-      highlightGradient.addColorStop(0, `rgba(255, 255, 255, ${0.18 * life})`);
-      highlightGradient.addColorStop(0.38, `rgba(125, 211, 248, ${0.14 * life})`);
-      highlightGradient.addColorStop(0.66, `rgba(255, 218, 168, ${0.14 * life})`);
-      highlightGradient.addColorStop(1, "rgba(255, 255, 255, 0)");
-
-      context.globalCompositeOperation = "source-over";
-      context.fillStyle = highlightGradient;
-      context.beginPath();
-      context.ellipse(-radius * 0.12, -radius * 0.08, radius * 0.64, radius * 0.16, 0, 0, Math.PI * 2);
-      context.fill();
-
-      context.restore();
-    };
-
-    const render = () => {
-      context.clearRect(0, 0, width, height);
-      trailAlpha += (targetTrailAlpha - trailAlpha) * 0.08;
-
-      particlesRef.current = particlesRef.current.filter((particle) => {
-        particle.x += particle.vx;
-        particle.y += particle.vy;
-        particle.radius *= 1.006;
-        particle.stretch *= 0.996;
-        particle.life *= particle.decay;
-        drawOilBlob(particle);
-
-        return particle.life > 0.035;
-      });
-
-      rafRef.current = window.requestAnimationFrame(render);
-    };
-
-    resize();
-    const portfolioObserver = observePortfolio();
-
-    window.addEventListener("resize", resize);
-    window.addEventListener("mousemove", handleMouseMove, { passive: true });
-    rafRef.current = window.requestAnimationFrame(render);
-
-    return () => {
-      window.removeEventListener("resize", resize);
-      window.removeEventListener("mousemove", handleMouseMove);
-      portfolioObserver?.disconnect();
-
-      if (rafRef.current) {
-        window.cancelAnimationFrame(rafRef.current);
-        rafRef.current = null;
-      }
-
-      particlesRef.current = [];
-      lastPointRef.current = null;
-      context.clearRect(0, 0, width, height);
-    };
-  }, [enabled]);
-
-  if (!enabled) {
-    return null;
-  }
-
-  return <canvas className="oil-mouse-trail" ref={canvasRef} aria-hidden="true" />;
 }
 
 function AsciiMouseTrail() {
@@ -747,19 +496,25 @@ function AsciiMouseTrail() {
 
     const pushParticle = (x, y, intensity = 1) => {
       const particles = particlesRef.current;
+      const isSlow = intensity < 0.35;
+      const drift = isSlow ? 1.7 : 1.05;
 
       particles.push({
         x,
         y,
-        vx: (Math.random() - 0.5) * 1.25,
-        vy: (Math.random() - 0.5) * 1.25,
-        life: Math.min(1, 0.88 + intensity * 0.18),
-        decay: 0.965 + Math.random() * 0.008,
-        size: 13.5 + Math.random() * 6,
+        vx: (Math.random() - 0.5) * drift,
+        vy: (Math.random() - 0.5) * drift,
+        life: Math.min(1, 0.84 + intensity * 0.18),
+        decay: 0.962 + Math.random() * 0.009,
+        size: 13 + Math.random() * 5.5,
         weight: Math.random() > 0.62 ? 650 : 540,
         char:
           asciiTrailCharacters[
             Math.floor(Math.random() * asciiTrailCharacters.length)
+          ],
+        color:
+          asciiTrailColors[
+            Math.floor(Math.random() * asciiTrailColors.length)
           ],
       });
 
@@ -769,12 +524,16 @@ function AsciiMouseTrail() {
     };
 
     const spawnParticleCluster = (x, y, intensity = 1) => {
-      for (let index = 0; index < particlesPerStep; index += 1) {
-        const spread = index === 0 ? 5 : 22;
+      const isSlow = intensity < 0.35;
+      const count = isSlow ? particlesPerStep + 3 : particlesPerStep;
+      const spread = isSlow ? 68 : 24 + intensity * 18;
+
+      for (let index = 0; index < count; index += 1) {
+        const localSpread = isSlow || index > 0 ? spread : 7;
 
         pushParticle(
-          x + (Math.random() - 0.5) * spread,
-          y + (Math.random() - 0.5) * spread,
+          x + (Math.random() - 0.5) * localSpread,
+          y + (Math.random() - 0.5) * localSpread,
           intensity
         );
       }
@@ -847,12 +606,12 @@ function AsciiMouseTrail() {
         particle.y += particle.vy;
         particle.life *= particle.decay;
 
-        const alpha = Math.min(0.86, particle.life * particle.life * 0.92) * trailAlpha;
+        const alpha = Math.min(0.8, particle.life * particle.life * 0.78) * trailAlpha;
 
         context.font = `${particle.weight} ${particle.size}px "SF Pro Display", "SF Pro Text", -apple-system, BlinkMacSystemFont, sans-serif`;
         context.textAlign = "center";
         context.textBaseline = "middle";
-        context.fillStyle = `rgba(18, 18, 18, ${alpha})`;
+        context.fillStyle = `rgba(${particle.color}, ${alpha})`;
         context.fillText(particle.char, particle.x, particle.y);
 
         return particle.life > 0.025;

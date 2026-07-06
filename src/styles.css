@@ -82,7 +82,6 @@ a {
   text-decoration: none;
 }
 
-.oil-mouse-trail,
 .ascii-mouse-trail {
   position: fixed;
   inset: 0;
@@ -90,17 +89,8 @@ a {
   height: 100vh;
   pointer-events: none;
   contain: strict;
-}
-
-.oil-mouse-trail {
-  z-index: 18;
-  opacity: 0.88;
-}
-
-.ascii-mouse-trail {
-  z-index: 20;
-  opacity: 0.98;
-  mix-blend-mode: multiply;
+  z-index: 3;
+  opacity: 0.92;
 }
 
 ::selection {
@@ -370,9 +360,22 @@ a {
 }
 
 .hero-shell {
+  position: relative;
+  z-index: 4;
   width: min(1240px, calc(100vw - 48px));
   margin: 0 auto;
   padding-top: clamp(18px, 4svh, 54px);
+}
+
+.metrics-shell,
+.client-logo-band,
+.team-shell,
+.portfolio-category-selector,
+.portfolio-shell,
+.footer-shell,
+.footer-bottom {
+  position: relative;
+  z-index: 4;
 }
 
 .hero-title {
@@ -1643,7 +1646,7 @@ a {
 .footer-shell,
 .footer-bottom {
   position: relative;
-  z-index: 1;
+  z-index: 4;
   width: min(1150px, calc(100vw - 56px));
   margin: 0 auto;
 }
@@ -2454,7 +2457,6 @@ a {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .oil-mouse-trail,
   .ascii-mouse-trail {
     display: none !important;
   }
