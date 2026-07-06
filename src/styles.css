@@ -739,6 +739,20 @@ a {
   transform: none;
 }
 
+.website-shot--mobile {
+  flex-basis: clamp(44px, 4.7vw, 58px);
+  height: calc(100% - clamp(8px, 0.8vw, 12px));
+  aspect-ratio: 9 / 19.5;
+  align-self: center;
+  padding: 3px;
+  border: 1px solid rgba(255, 255, 255, 0.86);
+  border-radius: clamp(13px, 1.35vw, 18px);
+  background: #111414;
+  box-shadow:
+    0 16px 34px rgba(19, 58, 87, 0.16),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.18);
+}
+
 .website-shot:nth-child(3n + 2) {
   transform: none;
 }
@@ -750,6 +764,10 @@ a {
 .website-shot img {
   object-position: top center;
   filter: none;
+}
+
+.website-shot--mobile img {
+  border-radius: clamp(10px, 1.05vw, 15px);
 }
 
 .tech-fan {
@@ -1973,6 +1991,17 @@ a {
 
   .website-shot {
     flex-basis: 122px;
+    border-radius: 10px;
+  }
+
+  .website-shot--mobile {
+    flex-basis: 37px;
+    height: 70px;
+    padding: 2px;
+    border-radius: 12px;
+  }
+
+  .website-shot--mobile img {
     border-radius: 10px;
   }
 

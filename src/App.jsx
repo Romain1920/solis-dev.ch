@@ -42,21 +42,27 @@ const getCarouselProjectImageSrc = (project) => project?.carouselSrc ?? project?
 
 const metricTopProjectOrder = [
   "ecommerce",
+  "kinn-mobile",
   "le-fournil-de-melchior",
   "platform",
+  "contact-mind-mobile",
   "mille-vadrouilles",
   "saas",
+  "popup-mobile",
   "mobile-app",
   "institutional",
 ];
 const metricBottomProjectOrder = [
   "mille-vadrouilles",
   "institutional",
+  "popup-mobile",
   "mobile-app",
   "ecommerce",
   "platform",
+  "kinn-mobile",
   "saas",
   "le-fournil-de-melchior",
+  "contact-mind-mobile",
 ];
 const metricCarouselRows = {
   top: metricTopProjectOrder.map(getProjectById).filter(Boolean),
@@ -1475,7 +1481,9 @@ function WebsiteCarouselRow({ projects: rowProjects, direction }) {
           >
             {rowProjects.map((project) => (
               <span
-                className="website-shot"
+                className={`website-shot${
+                  project.type === "mobile" ? " website-shot--mobile" : ""
+                }`}
                 key={`${direction}-${groupIndex}-${project.id}`}
               >
                 <img

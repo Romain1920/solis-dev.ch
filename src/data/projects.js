@@ -1,12 +1,12 @@
 import ecommerceImage from "../../assets/hella-boutique-desktop.png";
 import ecommerceCarouselImage from "../../assets/project-carousel/hella.webp";
 import contactMindImage from "../../assets/projects/contact-mind.svg";
-import contactMindMobileImage from "../../assets/projects/contact-mind-mobile.svg";
+import contactMindMobileImage from "../../assets/project-screenshots/contact-mind-mobile.webp";
 import kinnImage from "../../assets/projects/kinn.svg";
-import kinnMobileImage from "../../assets/projects/kinn-mobile.svg";
+import kinnMobileImage from "../../assets/project-screenshots/kinn-mobile.webp";
 import ozamImage from "../../assets/projects/ozam.svg";
 import popupChallengeImage from "../../assets/projects/popup-challenge.svg";
-import popupMobileImage from "../../assets/projects/popup-mobile.svg";
+import popupMobileImage from "../../assets/project-screenshots/popup-mobile.webp";
 import julTerrassementCarouselImage from "../../assets/project-carousel/jul-terrassement.webp";
 import julTerrassementScreenshot from "../../assets/project-screenshots/jul-terrassement.png";
 import laGouttiereCarouselImage from "../../assets/project-carousel/la-gouttiere.webp";
@@ -34,11 +34,27 @@ export const projects = [
     carouselSrc: julTerrassementCarouselImage,
   },
   {
+    id: "kinn-mobile",
+    title: "Kinn",
+    category: "Application mobile",
+    type: "mobile",
+    src: kinnMobileImage,
+    carouselSrc: kinnMobileImage,
+  },
+  {
     id: "platform",
     title: "La Gouttière",
     category: "Carte digitale",
     src: laGouttiereScreenshot,
     carouselSrc: laGouttiereCarouselImage,
+  },
+  {
+    id: "contact-mind-mobile",
+    title: "Contact Mind",
+    category: "Application mobile",
+    type: "mobile",
+    src: contactMindMobileImage,
+    carouselSrc: contactMindMobileImage,
   },
   {
     id: "le-fournil-de-melchior",
@@ -60,6 +76,14 @@ export const projects = [
     category: "Portfolio",
     src: mmArchitectesScreenshot,
     carouselSrc: mmArchitectesCarouselImage,
+  },
+  {
+    id: "popup-mobile",
+    title: "Pop-up",
+    category: "Application mobile",
+    type: "mobile",
+    src: popupMobileImage,
+    carouselSrc: popupMobileImage,
   },
   {
     id: "saas",
