@@ -1030,31 +1030,30 @@ a {
   transform: translateX(-50%);
 }
 
-.portfolio-load-plane-image {
+.transition-clone-image,
+.portfolio-screen-image {
   position: absolute;
-  left: -4px;
-  top: -4px;
-  right: auto;
-  bottom: auto;
-  z-index: 1;
+  left: 0;
+  top: 0;
   display: block;
-  width: calc(100% + 8px);
-  height: calc(100% + 8px);
+  width: 108%;
+  height: 108%;
   max-width: none;
   object-fit: cover;
-  object-position: top center;
+  object-position: center center;
+  transform: translate(-4%, -4%);
+}
+
+.portfolio-load-plane-image {
+  z-index: 1;
   transform-origin: center center;
   backface-visibility: hidden;
   will-change: transform, opacity;
 }
 
 .portfolio-load-plane[data-device="mobile"] .portfolio-load-plane-image {
-  left: -4px;
-  top: -4px;
-  right: auto;
-  bottom: auto;
-  width: calc(100% + 8px);
-  height: calc(100% + 8px);
+  width: 108%;
+  height: 108%;
 }
 
 .portfolio-list-column {
@@ -1282,18 +1281,7 @@ a {
 }
 
 .studio-screen-shot {
-  position: absolute;
-  left: -4px;
-  top: -4px;
-  right: auto;
-  bottom: auto;
   z-index: 1;
-  display: block;
-  width: calc(100% + 8px);
-  height: calc(100% + 8px);
-  max-width: none;
-  object-fit: cover;
-  object-position: top center;
   transform-origin: center;
 }
 
@@ -1351,15 +1339,7 @@ a {
 }
 
 .iphone-screen-shot {
-  position: absolute;
-  left: -4px;
-  top: -4px;
-  display: block;
-  width: calc(100% + 8px);
-  height: calc(100% + 8px);
-  max-width: none;
-  object-fit: cover;
-  object-position: top center;
+  z-index: 1;
 }
 
 .iphone-frame-image {

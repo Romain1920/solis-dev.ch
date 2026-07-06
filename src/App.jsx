@@ -821,12 +821,7 @@ function PortfolioSection() {
       "--mobile-island-opacity": isMobileTransfer ? 0 : 1,
     });
 
-    gsap.set(image, {
-      autoAlpha: 1,
-      xPercent: 0,
-      yPercent: 0,
-      scale: 1,
-    });
+    gsap.set(image, { autoAlpha: 1 });
 
     const cubicPoint = (from, controlOne, controlTwo, to, progress) => {
       const inverse = 1 - progress;
@@ -1039,7 +1034,7 @@ function PortfolioSection() {
               ref={transferPlaneRef}
             >
               <img
-                className="portfolio-load-plane-image"
+                className="portfolio-load-plane-image transition-clone-image"
                 ref={transferImageRef}
                 src={transfer.previewSrc}
                 alt=""
@@ -1102,7 +1097,7 @@ function PortfolioSection() {
                       />
                     ) : (
                       <motion.img
-                        className="studio-screen-shot"
+                        className="studio-screen-shot portfolio-screen-image"
                         key={displayProject.id}
                         src={displayProject.src}
                         alt={`Aperçu du projet ${displayProject.title}`}
@@ -1172,7 +1167,7 @@ function PortfolioSection() {
                   <AnimatePresence mode={isInstantReveal || prefersReducedMotion ? "sync" : "wait"}>
                     {!isTransferBlanking && phonePreview ? (
                       <motion.img
-                        className="iphone-screen-shot"
+                        className="iphone-screen-shot portfolio-screen-image"
                         key={`${displayProject.id}-phone`}
                         src={phonePreview}
                         loading="eager"
