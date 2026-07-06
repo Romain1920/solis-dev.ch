@@ -39,17 +39,35 @@ const portfolioProjectById = new Map(
 );
 const getProjectById = (projectId) => projectById.get(projectId) ?? null;
 
-const metricProjectOrder = ["ecommerce", "saas", "platform", "mobile-app", "institutional"];
-const metricCarouselProjects = metricProjectOrder.map(getProjectById).filter(Boolean);
+const metricTopProjectOrder = [
+  "ecommerce",
+  "le-fournil-de-melchior",
+  "platform",
+  "mille-vadrouilles",
+  "saas",
+  "mobile-app",
+  "institutional",
+];
+const metricBottomProjectOrder = [
+  "mille-vadrouilles",
+  "institutional",
+  "mobile-app",
+  "ecommerce",
+  "platform",
+  "saas",
+  "le-fournil-de-melchior",
+];
 const metricCarouselRows = {
-  top: metricCarouselProjects,
-  bottom: [...metricCarouselProjects].reverse(),
+  top: metricTopProjectOrder.map(getProjectById).filter(Boolean),
+  bottom: metricBottomProjectOrder.map(getProjectById).filter(Boolean),
 };
 const commerceProject = getProjectById("ecommerce");
 
 const heroReelProjectIds = [
   "ecommerce",
+  "le-fournil-de-melchior",
   "platform",
+  "mille-vadrouilles",
   "saas",
   "mobile-app",
   "institutional",

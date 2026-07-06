@@ -8,7 +8,9 @@ import popupChallengeImage from "../../assets/projects/popup-challenge.svg";
 import popupMobileImage from "../../assets/projects/popup-mobile.svg";
 import julTerrassementScreenshot from "../../assets/project-screenshots/jul-terrassement.png";
 import laGouttiereScreenshot from "../../assets/project-screenshots/la-gouttiere.png";
+import leFournilDeMelchiorScreenshot from "../../assets/project-screenshots/le-fournil-de-melchior.png";
 import mmArchitectesScreenshot from "../../assets/project-screenshots/mm-architectes.png";
+import milleVadrouillesScreenshot from "../../assets/project-screenshots/mille-vadrouilles.png";
 import philippeDarioliScreenshot from "../../assets/project-screenshots/philippe-darioli.png";
 
 export const projects = [
@@ -29,6 +31,18 @@ export const projects = [
     title: "La Gouttière",
     category: "Carte digitale",
     src: laGouttiereScreenshot,
+  },
+  {
+    id: "le-fournil-de-melchior",
+    title: "Le Fournil de Melchior",
+    category: "Site vitrine",
+    src: leFournilDeMelchiorScreenshot,
+  },
+  {
+    id: "mille-vadrouilles",
+    title: "Mille.vadrouilles",
+    category: "Carte interactive",
+    src: milleVadrouillesScreenshot,
   },
   {
     id: "institutional",

@@ -418,10 +418,10 @@ a {
   overflow: hidden;
   border: 1.5px solid rgba(255, 255, 255, 0.94);
   border-radius: 12px;
-  background: linear-gradient(135deg, #ffffff 0%, #dfeaf0 100%);
+  background: rgba(255, 255, 255, 0.18);
   box-shadow:
     0 0 28px rgba(20, 26, 31, 0.1),
-    0 0 54px rgba(255, 255, 255, 0.7),
+    0 0 34px rgba(255, 255, 255, 0.36),
     inset 0 0 0 1px rgba(9, 10, 10, 0.045);
   margin: 0;
   transform: translate3d(0, 0, 0);
@@ -433,8 +433,8 @@ a {
   inset: 0;
   pointer-events: none;
   background:
-    linear-gradient(90deg, rgba(255, 255, 255, 0.18), transparent 28%, transparent 70%, rgba(255, 255, 255, 0.2)),
-    linear-gradient(180deg, rgba(255, 255, 255, 0.24), transparent 42%);
+    linear-gradient(90deg, rgba(255, 255, 255, 0.05), transparent 28%, transparent 70%, rgba(255, 255, 255, 0.06)),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.05), transparent 42%);
   mix-blend-mode: screen;
 }
 
