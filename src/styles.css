@@ -576,9 +576,9 @@ a {
 }
 
 .client-logo-eyebrow {
-  margin: 0 0 18px;
-  color: rgba(9, 10, 10, 0.42);
-  font-size: 0.78rem;
+  margin: 0 0 20px;
+  color: rgba(9, 10, 10, 0.5);
+  font-size: 0.88rem;
   font-weight: 600;
   letter-spacing: 0.02em;
   text-align: center;
@@ -586,19 +586,22 @@ a {
 
 .client-marquee {
   width: 100%;
+  min-height: 66px;
   overflow: hidden;
+  display: flex;
+  align-items: center;
   mask-image: linear-gradient(
     to right,
     transparent 0%,
-    #000000 8%,
-    #000000 92%,
+    #000000 5%,
+    #000000 95%,
     transparent 100%
   );
   -webkit-mask-image: linear-gradient(
     to right,
     transparent 0%,
-    #000000 8%,
-    #000000 92%,
+    #000000 5%,
+    #000000 95%,
     transparent 100%
   );
 }
@@ -607,38 +610,38 @@ a {
   display: flex;
   width: max-content;
   align-items: center;
-  gap: clamp(56px, 6vw, 80px);
+  gap: clamp(52px, 5vw, 72px);
   animation: clientMarquee 32s linear infinite;
   will-change: transform;
 }
 
 .client-logo {
   width: auto;
-  max-width: 168px;
-  max-height: 38px;
+  max-width: 190px;
+  max-height: 46px;
   object-fit: contain;
-  filter: grayscale(1) brightness(0.58) contrast(1.04);
-  opacity: 0.7;
+  filter: grayscale(1) brightness(0.5) contrast(1.08);
+  opacity: 0.82;
 }
 
 .client-logo--ozam,
 .client-logo--ville-de-martigny,
 .client-logo--la-gouttiere {
-  max-height: 44px;
+  max-height: 52px;
 }
 
 .client-logo--ville-de-martigny,
 .client-logo--la-gouttiere {
-  max-height: 50px;
+  max-height: 58px;
 }
 
 .client-logo--philippe-darioli {
-  max-height: 34px;
+  max-height: 40px;
 }
 
 .client-logo--jul-terrassement {
-  filter: grayscale(1) brightness(0.36) contrast(1.08);
-  opacity: 0.82;
+  filter: grayscale(1) brightness(0.28) contrast(1.12);
+  opacity: 0.92;
 }
 
 @keyframes clientMarquee {
@@ -2197,18 +2200,18 @@ a {
   }
 
   .client-logo-eyebrow {
-    margin-bottom: 14px;
-    font-size: 0.74rem;
+    margin-bottom: 16px;
+    font-size: 0.82rem;
   }
 
   .client-marquee-track {
-    gap: 48px;
+    gap: 44px;
     animation-duration: 28s;
   }
 
   .client-logo {
-    max-width: 142px;
-    max-height: 32px;
+    max-width: 156px;
+    max-height: 40px;
   }
 
   .metric-item {
