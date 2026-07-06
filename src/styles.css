@@ -584,13 +584,13 @@ a {
 .metric-item:nth-child(2) {
   background:
     linear-gradient(155deg, rgba(255, 255, 255, 0.24) 0%, transparent 34%),
-    linear-gradient(145deg, #b9eeff 0%, #62bdf2 54%, #45c9df 100%);
+    linear-gradient(145deg, #d2f4ff 0%, #7bc8f4 54%, #5fb6e8 100%);
 }
 
 .metric-item:nth-child(3) {
   background:
     linear-gradient(150deg, rgba(234, 248, 255, 0.42) 0%, transparent 36%),
-    linear-gradient(145deg, #c8f4ff 0%, #6ec6f3 48%, #35c8df 100%);
+    linear-gradient(145deg, #baf6ff 0%, #4bc8de 48%, #2fb4c8 100%);
 }
 
 .metric-item::before,
