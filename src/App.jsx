@@ -6,7 +6,6 @@ import { useGSAP } from "@gsap/react";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import ReactLenis from "lenis/react";
 import iphoneFrameImage from "../assets/iphone-17-black-portrait.png";
-import macBookFrameImage from "../assets/macbook-pro-m5.png";
 import solisLogoNav from "../assets/solis-logo-nav.png";
 import studioDisplayImage from "../assets/studio-display-light.png";
 import { portfolioProjects, projects } from "./data/projects";
@@ -38,6 +37,7 @@ const portfolioProjectById = new Map(
   portfolioProjects.map((project) => [project.id, project])
 );
 const getProjectById = (projectId) => projectById.get(projectId) ?? null;
+const getCarouselProjectImageSrc = (project) => project?.carouselSrc ?? project?.src;
 
 const metricTopProjectOrder = [
   "ecommerce",
@@ -100,22 +100,16 @@ const portfolioCategoryOptions = [
   {
     id: "desktop",
     label: "Références sites web",
-    visual: macBookFrameImage,
-    visualAlt: "",
     visualClassName: "portfolio-category-device--macbook",
   },
   {
     id: "mobile",
     label: "Applications mobiles",
-    visual: iphoneFrameImage,
-    visualAlt: "",
     visualClassName: "portfolio-category-device--iphone",
   },
   {
     id: "business",
     label: "Logiciels métiers",
-    visual: studioDisplayImage,
-    visualAlt: "",
     visualClassName: "portfolio-category-device--studio",
   },
 ];
@@ -525,18 +519,35 @@ function ProjectReel() {
     return () => window.clearInterval(interval);
   }, [reducedMotion, reelProjects.length]);
 
+  useEffect(() => {
+    if (reelProjects.length <= 1) {
+      return undefined;
+    }
+
+    const preloadCount = Math.min(2, reelProjects.length - 1);
+
+    for (let offset = 1; offset <= preloadCount; offset += 1) {
+      const projectToPreload = reelProjects[(index + offset) % reelProjects.length];
+      preloadImage(getCarouselProjectImageSrc(projectToPreload), "low");
+    }
+
+    return undefined;
+  }, [index, reelProjects]);
+
   const currentProject = reelProjects[index % reelProjects.length];
+  const currentProjectImageSrc = getCarouselProjectImageSrc(currentProject);
 
   return (
     <span className="project-reel" aria-label="Aperçus de projets SOLIS">
       <span className="reel-slide" key={currentProject.id}>
         <img
-          src={currentProject.src}
+          src={currentProjectImageSrc}
           alt=""
           className="carousel-project-screenshot"
           aria-hidden="true"
           decoding="async"
           fetchPriority="high"
+          loading="eager"
         />
       </span>
     </span>
@@ -1273,7 +1284,7 @@ function PortfolioCategoryVisualSelector({ activeSegment, reducedMotion, onChang
             <motion.span
               className="portfolio-category-visual"
               animate={{
-                opacity: isActive ? 1 : 0.46,
+                opacity: isActive ? 1 : 0.76,
                 y: isActive ? 0 : 4,
                 scale: isActive ? 1 : 0.96,
                 filter: isActive
@@ -1287,12 +1298,8 @@ function PortfolioCategoryVisualSelector({ activeSegment, reducedMotion, onChang
               }
               aria-hidden="true"
             >
-              <img
+              <span
                 className={`portfolio-category-device ${category.visualClassName}`}
-                src={category.visual}
-                alt={category.visualAlt}
-                loading="lazy"
-                decoding="async"
               />
             </motion.span>
             <span className="portfolio-category-label">{category.label}</span>
@@ -1455,7 +1462,7 @@ function WebsiteCarouselRow({ projects: rowProjects, direction }) {
                 key={`${direction}-${groupIndex}-${project.id}`}
               >
                 <img
-                  src={project.src}
+                  src={getCarouselProjectImageSrc(project)}
                   alt={project.title}
                   className="carousel-project-screenshot"
                   loading="lazy"

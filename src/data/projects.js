@@ -1,4 +1,5 @@
 import ecommerceImage from "../../assets/hella-boutique-desktop.png";
+import ecommerceCarouselImage from "../../assets/project-carousel/hella.webp";
 import contactMindImage from "../../assets/projects/contact-mind.svg";
 import contactMindMobileImage from "../../assets/projects/contact-mind-mobile.svg";
 import kinnImage from "../../assets/projects/kinn.svg";
@@ -6,11 +7,15 @@ import kinnMobileImage from "../../assets/projects/kinn-mobile.svg";
 import ozamImage from "../../assets/projects/ozam.svg";
 import popupChallengeImage from "../../assets/projects/popup-challenge.svg";
 import popupMobileImage from "../../assets/projects/popup-mobile.svg";
+import julTerrassementCarouselImage from "../../assets/project-carousel/jul-terrassement.webp";
 import julTerrassementScreenshot from "../../assets/project-screenshots/jul-terrassement.png";
+import laGouttiereCarouselImage from "../../assets/project-carousel/la-gouttiere.webp";
 import laGouttiereScreenshot from "../../assets/project-screenshots/la-gouttiere.png";
-import leFournilDeMelchiorScreenshot from "../../assets/project-screenshots/le-fournil-de-melchior.png";
+import leFournilDeMelchiorCarouselImage from "../../assets/project-carousel/le-fournil-de-melchior.webp";
+import mmArchitectesCarouselImage from "../../assets/project-carousel/mm-architectes.webp";
 import mmArchitectesScreenshot from "../../assets/project-screenshots/mm-architectes.png";
-import milleVadrouillesScreenshot from "../../assets/project-screenshots/mille-vadrouilles.png";
+import milleVadrouillesCarouselImage from "../../assets/project-carousel/mille-vadrouilles.webp";
+import philippeDarioliCarouselImage from "../../assets/project-carousel/philippe-darioli.webp";
 import philippeDarioliScreenshot from "../../assets/project-screenshots/philippe-darioli.png";
 
 export const projects = [
@@ -19,42 +24,49 @@ export const projects = [
     title: "Hella",
     category: "Boutique premium",
     src: ecommerceImage,
+    carouselSrc: ecommerceCarouselImage,
   },
   {
     id: "mobile-app",
     title: "Jul Terrassement",
     category: "Site vitrine",
     src: julTerrassementScreenshot,
+    carouselSrc: julTerrassementCarouselImage,
   },
   {
     id: "platform",
     title: "La Gouttière",
     category: "Carte digitale",
     src: laGouttiereScreenshot,
+    carouselSrc: laGouttiereCarouselImage,
   },
   {
     id: "le-fournil-de-melchior",
     title: "Le Fournil de Melchior",
     category: "Site vitrine",
-    src: leFournilDeMelchiorScreenshot,
+    src: leFournilDeMelchiorCarouselImage,
+    carouselSrc: leFournilDeMelchiorCarouselImage,
   },
   {
     id: "mille-vadrouilles",
     title: "Mille.vadrouilles",
     category: "Carte interactive",
-    src: milleVadrouillesScreenshot,
+    src: milleVadrouillesCarouselImage,
+    carouselSrc: milleVadrouillesCarouselImage,
   },
   {
     id: "institutional",
     title: "MM Architectes",
     category: "Portfolio",
     src: mmArchitectesScreenshot,
+    carouselSrc: mmArchitectesCarouselImage,
   },
   {
     id: "saas",
     title: "Philippe Darioli",
     category: "E-commerce",
     src: philippeDarioliScreenshot,
+    carouselSrc: philippeDarioliCarouselImage,
   },
 ];
 
