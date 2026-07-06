@@ -1036,12 +1036,12 @@ a {
   left: 0;
   top: 0;
   display: block;
-  width: 108%;
-  height: 108%;
+  width: 110%;
+  height: 110%;
   max-width: none;
   object-fit: cover;
   object-position: center center;
-  transform: translate(-4%, -4%);
+  transform: translate(-5%, -5%);
 }
 
 .portfolio-load-plane-image {
@@ -1052,8 +1052,8 @@ a {
 }
 
 .portfolio-load-plane[data-device="mobile"] .portfolio-load-plane-image {
-  width: 108%;
-  height: 108%;
+  width: 110%;
+  height: 110%;
 }
 
 .portfolio-list-column {
