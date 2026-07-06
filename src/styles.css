@@ -934,6 +934,7 @@ a {
   width: 100%;
   height: 100%;
   overflow: hidden;
+  background: #ffffff;
   pointer-events: none;
 }
 
@@ -951,7 +952,7 @@ a {
 
 .portfolio-shell[data-transfer-device="web"] .studio-screen,
 .portfolio-shell[data-transfer-device="mobile"] .iphone-screen {
-  background: transparent;
+  background: #ffffff;
 }
 
 .portfolio-shell[data-transfer-device="web"] .studio-screen-blank {
@@ -1042,6 +1043,24 @@ a {
   object-fit: cover;
   object-position: center center;
   transform: none;
+}
+
+.desktop-screen,
+.iphone-screen,
+.device-screen,
+.portfolio-device-screen,
+.portfolio-screen-content,
+.portfolio-empty-screen,
+.portfolio-device-transition-layer {
+  background: #ffffff;
+}
+
+.portfolio-empty-screen {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  width: 100%;
+  height: 100%;
 }
 
 .portfolio-load-plane-image {
@@ -1260,7 +1279,7 @@ a {
   height: calc(69.2308% + 2px);
   overflow: hidden;
   border-radius: 0;
-  background: #050505;
+  background: #ffffff;
 }
 
 .studio-screen::after {

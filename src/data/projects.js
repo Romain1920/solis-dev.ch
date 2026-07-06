@@ -1,15 +1,11 @@
 import ecommerceImage from "../../assets/hella-boutique-desktop.png";
 import contactMindImage from "../../assets/projects/contact-mind.svg";
 import contactMindMobileImage from "../../assets/projects/contact-mind-mobile.svg";
-import institutionalImage from "../../assets/projects/institutional.svg";
 import kinnImage from "../../assets/projects/kinn.svg";
 import kinnMobileImage from "../../assets/projects/kinn-mobile.svg";
-import mobileAppImage from "../../assets/projects/mobile-app.svg";
 import ozamImage from "../../assets/projects/ozam.svg";
 import popupChallengeImage from "../../assets/projects/popup-challenge.svg";
 import popupMobileImage from "../../assets/projects/popup-mobile.svg";
-import platformImage from "../../assets/projects/platform.svg";
-import saasImage from "../../assets/projects/saas.svg";
 import julTerrassementScreenshot from "../../assets/project-screenshots/jul-terrassement.png";
 import laGouttiereScreenshot from "../../assets/project-screenshots/la-gouttiere.png";
 import mmArchitectesScreenshot from "../../assets/project-screenshots/mm-architectes.png";
@@ -18,33 +14,33 @@ import philippeDarioliScreenshot from "../../assets/project-screenshots/philippe
 export const projects = [
   {
     id: "ecommerce",
-    title: "Site e-commerce",
+    title: "Hella",
     category: "Boutique premium",
     src: ecommerceImage,
   },
   {
     id: "mobile-app",
-    title: "Application mobile",
-    category: "Produit digital",
-    src: mobileAppImage,
+    title: "Jul Terrassement",
+    category: "Site vitrine",
+    src: julTerrassementScreenshot,
   },
   {
     id: "platform",
-    title: "Plateforme métier",
-    category: "Outil opérationnel",
-    src: platformImage,
+    title: "La Gouttière",
+    category: "Carte digitale",
+    src: laGouttiereScreenshot,
   },
   {
     id: "institutional",
-    title: "Site institutionnel",
-    category: "Présence publique",
-    src: institutionalImage,
+    title: "MM Architectes",
+    category: "Portfolio",
+    src: mmArchitectesScreenshot,
   },
   {
     id: "saas",
-    title: "Logiciel SaaS",
-    category: "Interface métier",
-    src: saasImage,
+    title: "Philippe Darioli",
+    category: "E-commerce",
+    src: philippeDarioliScreenshot,
   },
 ];
 

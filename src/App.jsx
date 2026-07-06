@@ -1084,7 +1084,7 @@ function PortfolioSection() {
                   <AnimatePresence mode={isInstantReveal || prefersReducedMotion ? "sync" : "wait"}>
                     {isTransferBlanking || isMobileShowcase || displayProject?.type !== "web" ? (
                       <motion.div
-                        className="studio-screen-blank"
+                        className="studio-screen-blank portfolio-empty-screen"
                         key={`studio-blank-${activeSegment}`}
                         initial={prefersReducedMotion || isInstantReveal ? false : { opacity: 0 }}
                         animate={{ opacity: 1 }}
@@ -1195,7 +1195,20 @@ function PortfolioSection() {
                             : iphoneShotTransition
                         }
                       />
-                    ) : null}
+                    ) : (
+                      <motion.div
+                        className="portfolio-empty-screen"
+                        key={`iphone-empty-${activeSegment}`}
+                        initial={prefersReducedMotion || isInstantReveal ? false : { opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        transition={
+                          prefersReducedMotion || isInstantReveal
+                            ? linearInstantTransition
+                            : iphoneShotTransition
+                        }
+                      />
+                    )}
                   </AnimatePresence>
                 </div>
                 <img
