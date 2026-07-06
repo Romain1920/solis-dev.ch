@@ -547,7 +547,7 @@ function ProjectReel() {
         <img
           src={currentProjectImageSrc}
           alt=""
-          className="carousel-project-screenshot"
+          className="carousel-project-screenshot hero-carousel-image"
           aria-hidden="true"
           decoding="async"
           fetchPriority="high"
@@ -1471,7 +1471,7 @@ function WebsiteCarouselRow({ projects: rowProjects, direction }) {
                 <img
                   src={getCarouselProjectImageSrc(project)}
                   alt={project.title}
-                  className="carousel-project-screenshot"
+                  className="carousel-project-screenshot kpi-carousel-image"
                   loading="lazy"
                   decoding="async"
                 />
