@@ -110,17 +110,13 @@ const metrics = [
   },
 ];
 
-const clientLogoAssets = import.meta.glob("../assets/client-logos/*.{svg,png,webp,avif}", {
+const clientLogoAssets = import.meta.glob("../assets/client-logos/*.webp", {
   eager: true,
   import: "default",
 });
 
 const getClientLogo = (fileName) =>
-  clientLogoAssets[`../assets/client-logos/${fileName}.svg`] ??
-  clientLogoAssets[`../assets/client-logos/${fileName}.png`] ??
-  clientLogoAssets[`../assets/client-logos/${fileName}.webp`] ??
-  clientLogoAssets[`../assets/client-logos/${fileName}.avif`] ??
-  null;
+  clientLogoAssets[`../assets/client-logos/${fileName}.webp`] ?? null;
 
 const clientLogoReferences = [
   {
@@ -157,11 +153,6 @@ const clientLogoReferences = [
     id: "jul-terrassement",
     name: "Jul Terrassement",
     logo: getClientLogo("jul-terrassement"),
-  },
-  {
-    id: "contact-mind",
-    name: "Contact Mind",
-    logo: getClientLogo("contact-mind"),
   },
   {
     id: "popup-challenge",
@@ -765,7 +756,7 @@ function ClientLogoMarquee() {
         <div className="client-marquee-track">
           {marqueeLogos.map((client, index) => (
             <img
-              className="client-logo"
+              className={`client-logo client-logo--${client.id}`}
               key={`${client.id}-${index}`}
               src={client.logo}
               alt=""
