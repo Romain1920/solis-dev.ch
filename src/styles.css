@@ -1032,14 +1032,14 @@ a {
 
 .portfolio-load-plane-image {
   position: absolute;
-  left: -3px;
-  top: -3px;
+  left: -4px;
+  top: -4px;
   right: auto;
   bottom: auto;
   z-index: 1;
   display: block;
-  width: calc(100% + 6px);
-  height: calc(100% + 6px);
+  width: calc(100% + 8px);
+  height: calc(100% + 8px);
   max-width: none;
   object-fit: cover;
   object-position: top center;
@@ -1049,12 +1049,12 @@ a {
 }
 
 .portfolio-load-plane[data-device="mobile"] .portfolio-load-plane-image {
-  left: 0;
-  top: 0;
+  left: -2px;
+  top: -2px;
   right: auto;
   bottom: auto;
-  width: 100%;
-  height: 100%;
+  width: calc(100% + 4px);
+  height: calc(100% + 4px);
 }
 
 .portfolio-list-column {
@@ -1283,14 +1283,14 @@ a {
 
 .studio-screen-shot {
   position: absolute;
-  left: -3px;
-  top: -3px;
+  left: -4px;
+  top: -4px;
   right: auto;
   bottom: auto;
   z-index: 1;
   display: block;
-  width: calc(100% + 6px);
-  height: calc(100% + 6px);
+  width: calc(100% + 8px);
+  height: calc(100% + 8px);
   max-width: none;
   object-fit: cover;
   object-position: top center;
@@ -1352,10 +1352,12 @@ a {
 
 .iphone-screen-shot {
   position: absolute;
-  inset: 0;
+  left: -2px;
+  top: -2px;
   display: block;
-  width: 100%;
-  height: 100%;
+  width: calc(100% + 4px);
+  height: calc(100% + 4px);
+  max-width: none;
   object-fit: cover;
   object-position: top center;
 }

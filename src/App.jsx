@@ -111,6 +111,89 @@ const portfolioProjectsBySegment = Object.fromEntries(
   ])
 );
 
+const imagePreloadCache = new Map();
+
+const scheduleIdleWork = (callback) => {
+  if (typeof window === "undefined") {
+    return null;
+  }
+
+  if ("requestIdleCallback" in window) {
+    return window.requestIdleCallback(callback, { timeout: 1200 });
+  }
+
+  return window.setTimeout(callback, 180);
+};
+
+const cancelIdleWork = (id) => {
+  if (id == null || typeof window === "undefined") {
+    return;
+  }
+
+  if ("cancelIdleCallback" in window) {
+    window.cancelIdleCallback(id);
+    return;
+  }
+
+  window.clearTimeout(id);
+};
+
+const preloadImage = (src, priority = "auto") => {
+  if (!src || typeof window === "undefined") {
+    return Promise.resolve();
+  }
+
+  const cachedPreload = imagePreloadCache.get(src);
+
+  if (cachedPreload) {
+    return cachedPreload;
+  }
+
+  const preload = new Promise((resolve) => {
+    const image = new Image();
+
+    image.decoding = "async";
+    image.loading = "eager";
+
+    if ("fetchPriority" in image) {
+      image.fetchPriority = priority;
+    }
+
+    image.onload = () => {
+      if (typeof image.decode === "function") {
+        image
+          .decode()
+          .catch(() => undefined)
+          .finally(resolve);
+        return;
+      }
+
+      resolve();
+    };
+
+    image.onerror = resolve;
+    image.src = src;
+  });
+
+  imagePreloadCache.set(src, preload);
+  return preload;
+};
+
+const getProjectPreviewSources = (project) =>
+  [project?.src, project?.mobileSrc].filter(Boolean);
+
+const preloadProjectImages = (project, priority = "auto") => {
+  getProjectPreviewSources(project).forEach((src) => {
+    preloadImage(src, priority);
+  });
+};
+
+const preloadProjectGroup = (projectsToPreload, priority = "auto") => {
+  projectsToPreload.forEach((project) => {
+    preloadProjectImages(project, priority);
+  });
+};
+
 const getPrefersReducedMotion = () =>
   typeof window !== "undefined" &&
   window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
@@ -567,6 +650,31 @@ function PortfolioSection() {
     []
   );
 
+  useEffect(() => {
+    if (typeof window === "undefined") {
+      return undefined;
+    }
+
+    const [firstProject, ...remainingProjects] = segmentProjects;
+
+    if (firstProject) {
+      preloadProjectImages(firstProject, "high");
+    }
+
+    preloadProjectGroup(remainingProjects, "auto");
+
+    const otherSegmentProjects = portfolioCategoryOptions
+      .filter((category) => category.id !== activeSegment)
+      .flatMap((category) => portfolioProjectsBySegment[category.id] ?? []);
+    const idleId = scheduleIdleWork(() => {
+      preloadProjectGroup(otherSegmentProjects, "low");
+    });
+
+    return () => {
+      cancelIdleWork(idleId);
+    };
+  }, [activeSegment, segmentProjects]);
+
   const clearTransfer = () => {
     if (transferFrameRef.current) {
       window.cancelAnimationFrame(transferFrameRef.current);
@@ -859,6 +967,7 @@ function PortfolioSection() {
     }
 
     clearTransfer();
+    preloadProjectImages(project, "high");
     setSelectedId(project.id);
 
     if (prefersReducedMotion || getPrefersReducedMotion()) {
@@ -934,6 +1043,8 @@ function PortfolioSection() {
                 ref={transferImageRef}
                 src={transfer.previewSrc}
                 alt=""
+                decoding="async"
+                fetchPriority="high"
               />
             </div>
           </div>
@@ -995,7 +1106,9 @@ function PortfolioSection() {
                         key={displayProject.id}
                         src={displayProject.src}
                         alt={`Aperçu du projet ${displayProject.title}`}
+                        loading="eager"
                         decoding="async"
+                        fetchPriority="high"
                         initial={
                           prefersReducedMotion || isInstantReveal
                             ? false
@@ -1063,7 +1176,9 @@ function PortfolioSection() {
                         className="iphone-screen-shot"
                         key={`${displayProject.id}-phone`}
                         src={phonePreview}
+                        loading="eager"
                         decoding="async"
+                        fetchPriority="high"
                         alt={
                           isMobileShowcase
                             ? `Aperçu mobile du projet ${displayProject.title}`
