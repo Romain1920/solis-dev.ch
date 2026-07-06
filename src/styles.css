@@ -82,16 +82,25 @@ a {
   text-decoration: none;
 }
 
+.oil-mouse-trail,
 .ascii-mouse-trail {
   position: fixed;
   inset: 0;
-  z-index: 20;
   width: 100vw;
   height: 100vh;
   pointer-events: none;
+  contain: strict;
+}
+
+.oil-mouse-trail {
+  z-index: 18;
+  opacity: 0.88;
+}
+
+.ascii-mouse-trail {
+  z-index: 20;
   opacity: 0.98;
   mix-blend-mode: multiply;
-  contain: strict;
 }
 
 ::selection {
@@ -2445,6 +2454,7 @@ a {
 }
 
 @media (prefers-reduced-motion: reduce) {
+  .oil-mouse-trail,
   .ascii-mouse-trail {
     display: none !important;
   }
