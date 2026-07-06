@@ -751,7 +751,6 @@ function ClientLogoMarquee() {
 
   return (
     <div className="client-logo-band" aria-label="Références clients">
-      <p className="client-logo-eyebrow">Ils nous ont fait confiance</p>
       <div className="client-marquee" aria-hidden="true">
         <div className="client-marquee-track">
           {marqueeLogos.map((client, index) => (
