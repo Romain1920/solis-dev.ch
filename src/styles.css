@@ -89,7 +89,7 @@ a {
   width: 100vw;
   height: 100vh;
   pointer-events: none;
-  opacity: 0.9;
+  opacity: 0.98;
   mix-blend-mode: multiply;
   contain: strict;
 }

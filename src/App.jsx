@@ -304,7 +304,21 @@ const getPrefersReducedMotion = () =>
   typeof window !== "undefined" &&
   window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
 
-const asciiTrailCharacters = [".", "·", ":", "+", "*"];
+const asciiTrailCharacters = [
+  ".",
+  ".",
+  "·",
+  ":",
+  ":",
+  "+",
+  "+",
+  "*",
+  "x",
+  "o",
+  "0",
+  "#",
+  "%",
+];
 
 const getShouldDisableAsciiTrail = () => {
   if (typeof window === "undefined" || !window.matchMedia) {
@@ -472,7 +486,8 @@ function AsciiMouseTrail() {
     let lastPoint = null;
     let targetTrailAlpha = 1;
     let trailAlpha = 1;
-    const maxParticles = window.innerWidth >= 1440 ? 132 : 112;
+    const maxParticles = 180;
+    const particlesPerStep = window.innerWidth >= 1440 ? 5 : 4;
 
     const resize = () => {
       width = window.innerWidth;
@@ -491,11 +506,12 @@ function AsciiMouseTrail() {
       particles.push({
         x,
         y,
-        vx: (Math.random() - 0.5) * 0.3,
-        vy: (Math.random() - 0.5) * 0.3,
-        life: Math.min(1, 0.82 + intensity * 0.24),
-        decay: 0.958 + Math.random() * 0.014,
-        size: 12 + Math.random() * 4.5,
+        vx: (Math.random() - 0.5) * 1.25,
+        vy: (Math.random() - 0.5) * 1.25,
+        life: Math.min(1, 0.88 + intensity * 0.18),
+        decay: 0.965 + Math.random() * 0.008,
+        size: 13.5 + Math.random() * 6,
+        weight: Math.random() > 0.62 ? 650 : 540,
         char:
           asciiTrailCharacters[
             Math.floor(Math.random() * asciiTrailCharacters.length)
@@ -504,6 +520,18 @@ function AsciiMouseTrail() {
 
       if (particles.length > maxParticles) {
         particles.splice(0, particles.length - maxParticles);
+      }
+    };
+
+    const spawnParticleCluster = (x, y, intensity = 1) => {
+      for (let index = 0; index < particlesPerStep; index += 1) {
+        const spread = index === 0 ? 5 : 22;
+
+        pushParticle(
+          x + (Math.random() - 0.5) * spread,
+          y + (Math.random() - 0.5) * spread,
+          intensity
+        );
       }
     };
 
@@ -518,18 +546,18 @@ function AsciiMouseTrail() {
       if (!lastPoint) {
         delayedPointerRef.current = nextPoint;
         lastPoint = nextPoint;
-        pushParticle(nextPoint.x, nextPoint.y);
+        spawnParticleCluster(nextPoint.x, nextPoint.y);
         return;
       }
 
       const dx = nextPoint.x - lastPoint.x;
       const dy = nextPoint.y - lastPoint.y;
       const distance = Math.hypot(dx, dy);
-      const steps = Math.min(10, Math.max(1, Math.floor(distance / 7)));
+      const steps = Math.min(10, Math.max(1, Math.floor(distance / 12)));
 
       for (let index = 1; index <= steps; index += 1) {
         const progress = index / steps;
-        pushParticle(
+        spawnParticleCluster(
           lastPoint.x + dx * progress,
           lastPoint.y + dy * progress,
           Math.min(1, distance / 80)
@@ -568,21 +596,21 @@ function AsciiMouseTrail() {
       trailAlpha += (targetTrailAlpha - trailAlpha) * 0.08;
 
       particlesRef.current = particlesRef.current.filter((particle) => {
-        particle.vx += (delayedPointer.x - particle.x) * 0.00018 * particle.life;
-        particle.vy += (delayedPointer.y - particle.y) * 0.00018 * particle.life;
+        particle.vx += (delayedPointer.x - particle.x) * 0.00024 * particle.life;
+        particle.vy += (delayedPointer.y - particle.y) * 0.00024 * particle.life;
         particle.x += particle.vx;
         particle.y += particle.vy;
         particle.life *= particle.decay;
 
-        const alpha = Math.min(0.72, particle.life * particle.life * 0.82) * trailAlpha;
+        const alpha = Math.min(0.86, particle.life * particle.life * 0.92) * trailAlpha;
 
-        context.font = `${particle.size}px var(--font-main)`;
+        context.font = `${particle.weight} ${particle.size}px "SF Pro Display", "SF Pro Text", -apple-system, BlinkMacSystemFont, sans-serif`;
         context.textAlign = "center";
         context.textBaseline = "middle";
-        context.fillStyle = `rgba(9, 10, 10, ${alpha})`;
+        context.fillStyle = `rgba(18, 18, 18, ${alpha})`;
         context.fillText(particle.char, particle.x, particle.y);
 
-        return particle.life > 0.035;
+        return particle.life > 0.025;
       });
 
       rafRef.current = window.requestAnimationFrame(render);
