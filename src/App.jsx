@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { flushSync } from "react-dom";
 import gsap from "gsap";
@@ -38,10 +38,11 @@ const serviceNavItems = [
 ];
 
 const screenshotIntervalMs = 1500;
-const ENABLE_HERO_PICTURE_TRAIL = true;
+const ENABLE_HERO_MOUSE_TRAIL = true;
 const SHOW_HERO_INLINE_REFERENCE_SCREEN = false;
-const heroPictureTrailSpawnIntervalMs = 96;
-const heroPictureTrailPoolSize = 8;
+const heroMouseTrailStagger = 0.03;
+const heroMouseTrailDuration = 0.5;
+const heroMouseTrailPoolSize = 10;
 
 const lenisOptions = { lerp: 0.08, wheelMultiplier: 0.9 };
 const projectById = new Map(projects.map((project) => [project.id, project]));
@@ -91,7 +92,7 @@ const heroReelProjectIds = [
   "institutional",
 ];
 const heroReelProjects = heroReelProjectIds.map(getProjectById).filter(Boolean);
-const heroTrailProjectIds = [
+const heroTrailDesktopProjectIds = [
   "mobile-app",
   "ecommerce",
   "platform",
@@ -99,20 +100,102 @@ const heroTrailProjectIds = [
   "institutional",
   "le-fournil-de-melchior",
   "mille-vadrouilles",
+];
+const heroTrailMobileProjectIds = [
   "kinn-mobile",
   "contact-mind-mobile",
   "popup-mobile",
 ];
-const heroTrailImages = heroTrailProjectIds
+
+const getHeroTrailImage = (project, type) => ({
+  id: project.id,
+  title: project.title,
+  type,
+  src: getCarouselProjectImageSrc(project),
+});
+
+const heroTrailDesktopImages = heroTrailDesktopProjectIds
   .map(getProjectById)
   .filter(Boolean)
-  .map((project) => ({
-    id: project.id,
-    title: project.title,
-    type: project.type,
-    src: getCarouselProjectImageSrc(project),
-  }))
+  .map((project) => getHeroTrailImage(project, "desktop"))
   .filter((project) => Boolean(project.src));
+const heroTrailMobileImages = heroTrailMobileProjectIds
+  .map(getProjectById)
+  .filter(Boolean)
+  .map((project) => getHeroTrailImage(project, "mobile"))
+  .filter((project) => Boolean(project.src));
+const heroTrailImages = [...heroTrailDesktopImages, ...heroTrailMobileImages];
+
+const shuffleArray = (items) => {
+  const shuffledItems = [...items];
+
+  for (let index = shuffledItems.length - 1; index > 0; index -= 1) {
+    const targetIndex = Math.floor(Math.random() * (index + 1));
+    [shuffledItems[index], shuffledItems[targetIndex]] = [
+      shuffledItems[targetIndex],
+      shuffledItems[index],
+    ];
+  }
+
+  return shuffledItems;
+};
+
+const getRandomizedHeroTrailImages = () => {
+  const desktopImages = shuffleArray(heroTrailDesktopImages);
+  const mobileImages = shuffleArray(heroTrailMobileImages);
+  const mixedImages = [];
+  let useMobileNext = Math.random() > 0.55;
+
+  while (desktopImages.length > 0 || mobileImages.length > 0) {
+    const preferredImages = useMobileNext ? mobileImages : desktopImages;
+    const fallbackImages = useMobileNext ? desktopImages : mobileImages;
+    const sourceImages = preferredImages.length > 0 ? preferredImages : fallbackImages;
+
+    if (sourceImages.length > 0) {
+      mixedImages.push(sourceImages.shift());
+    }
+
+    useMobileNext = Math.random() > 0.55;
+  }
+
+  const availableImages = mixedImages.length > 0 ? mixedImages : shuffleArray(heroTrailImages);
+
+  return Array.from({ length: heroMouseTrailPoolSize }, (_, index) => {
+    return availableImages[index % availableImages.length];
+  }).filter(Boolean);
+};
+
+const getHeroTrailOffsets = (count) => {
+  const center = (count - 1) / 2;
+
+  return Array.from({ length: count }, (_, index) => {
+    const distanceFromCenter = index - center;
+
+    return {
+      x: distanceFromCenter * 34 + (Math.random() - 0.5) * 12,
+      y: distanceFromCenter * 12 + Math.sin(index * 1.45) * 18,
+      rotation: (Math.random() - 0.5) * 12,
+      scale: 1 - Math.abs(distanceFromCenter) * 0.012,
+    };
+  });
+};
+
+const getHeroTrailInitialPoint = (hero) => ({
+  x: hero.clientWidth * 0.5,
+  y: hero.clientHeight * 0.44,
+});
+
+const getHeroTrailPointFromEvent = (hero, event) => {
+  const rect = hero.getBoundingClientRect();
+  const x = event.clientX - rect.left;
+  const y = event.clientY - rect.top;
+
+  return {
+    x,
+    y,
+    isInside: x >= 0 && y >= 0 && x <= rect.width && y <= rect.height,
+  };
+};
 
 const metrics = [
   {
@@ -578,7 +661,7 @@ function Hero() {
       ref={heroRef}
       aria-labelledby="hero-title"
     >
-      {ENABLE_HERO_PICTURE_TRAIL ? <HeroPictureTrail /> : null}
+      {ENABLE_HERO_MOUSE_TRAIL ? <HeroMouseTrail /> : null}
       <div className="hero-shell">
         <h1 id="hero-title" className="hero-title">
           <span className="hero-line hero-reveal">
@@ -627,8 +710,10 @@ function Hero() {
   );
 }
 
-function HeroPictureTrail() {
+function HeroMouseTrail() {
   const layerRef = useRef(null);
+  const trailImages = useMemo(() => getRandomizedHeroTrailImages(), []);
+  const trailOffsets = useMemo(() => getHeroTrailOffsets(trailImages.length), [trailImages.length]);
   const reducedMotion = usePrefersReducedMotion();
 
   useEffect(() => {
@@ -640,8 +725,8 @@ function HeroPictureTrail() {
   useEffect(() => {
     if (
       reducedMotion ||
-      !ENABLE_HERO_PICTURE_TRAIL ||
-      heroTrailImages.length === 0 ||
+      !ENABLE_HERO_MOUSE_TRAIL ||
+      trailImages.length === 0 ||
       typeof window === "undefined"
     ) {
       return undefined;
@@ -649,135 +734,128 @@ function HeroPictureTrail() {
 
     const layer = layerRef.current;
     const hero = layer?.closest(".hero-section");
-    const canUseTrail = window.matchMedia("(hover: hover) and (pointer: fine)").matches;
+    const canUseTrail =
+      window.matchMedia("(hover: hover) and (pointer: fine)").matches &&
+      !window.matchMedia("(pointer: coarse)").matches;
 
     if (!layer || !hero || !canUseTrail) {
       return undefined;
     }
 
-    const items = Array.from(layer.querySelectorAll(".hero-picture-trail-item"));
-    let imageIndex = 0;
-    let itemIndex = 0;
-    let lastSpawnAt = 0;
-    let runId = 0;
+    const items = Array.from(layer.querySelectorAll(".hero-mouse-trail-item"));
+    const initialPoint = getHeroTrailInitialPoint(hero);
+    let animationFrameId = 0;
+    let isInsideHero = false;
+    let lastPoint = { x: Number.NaN, y: Number.NaN };
+    let targetPoint = initialPoint;
 
-    const randomBetween = (min, max) => min + Math.random() * (max - min);
+    gsap.set(items, {
+      xPercent: -50,
+      yPercent: -50,
+      x: (index) => initialPoint.x + trailOffsets[index].x,
+      y: (index) => initialPoint.y + trailOffsets[index].y,
+      rotation: (index) => trailOffsets[index].rotation,
+      scale: (index) => trailOffsets[index].scale * 0.94,
+      autoAlpha: 0,
+      transformOrigin: "50% 50%",
+      zIndex: (index) => index + 1,
+    });
 
-    const clearTrail = () => {
-      items.forEach((item) => {
-        item.getAnimations().forEach((animation) => animation.cancel());
-        item.classList.remove("is-active");
-        item.style.opacity = "0";
+    const renderTrail = () => {
+      animationFrameId = 0;
+
+      if (!isInsideHero) {
+        return;
+      }
+
+      const distanceX = targetPoint.x - lastPoint.x;
+      const distanceY = targetPoint.y - lastPoint.y;
+      const hasMovedEnough =
+        Number.isNaN(distanceX) ||
+        Number.isNaN(distanceY) ||
+        distanceX * distanceX + distanceY * distanceY > 16;
+
+      if (!hasMovedEnough) {
+        return;
+      }
+
+      lastPoint = targetPoint;
+
+      gsap.to(items, {
+        x: (index) => targetPoint.x + trailOffsets[index].x,
+        y: (index) => targetPoint.y + trailOffsets[index].y,
+        rotation: (index) => trailOffsets[index].rotation + gsap.utils.clamp(-5, 5, distanceX * 0.025),
+        scale: (index) => trailOffsets[index].scale,
+        autoAlpha: 0.94,
+        duration: heroMouseTrailDuration,
+        ease: "power3.out",
+        stagger: heroMouseTrailStagger,
+        overwrite: "auto",
       });
     };
 
-    const spawnTrailItem = (event) => {
-      const now = window.performance.now();
-
-      if (now - lastSpawnAt < heroPictureTrailSpawnIntervalMs) {
+    const requestTrailRender = () => {
+      if (animationFrameId) {
         return;
       }
 
-      const rect = hero.getBoundingClientRect();
-      const x = event.clientX - rect.left;
-      const y = event.clientY - rect.top;
-
-      if (x < 0 || y < 0 || x > rect.width || y > rect.height) {
-        return;
-      }
-
-      lastSpawnAt = now;
-
-      const item = items[itemIndex % items.length];
-      const image = item.querySelector("img");
-      const project = heroTrailImages[imageIndex % heroTrailImages.length];
-      const offsetX = randomBetween(-24, 24);
-      const offsetY = randomBetween(-20, 18);
-      const driftX = randomBetween(-8, 8);
-      const driftY = randomBetween(-22, -12);
-      const rotation = randomBetween(-5, 5);
-      const currentRunId = String((runId += 1));
-
-      itemIndex += 1;
-      imageIndex += 1;
-
-      item.getAnimations().forEach((animation) => animation.cancel());
-      item.dataset.runId = currentRunId;
-      item.classList.toggle("is-mobile", project.type === "mobile");
-      item.style.left = `${x + offsetX}px`;
-      item.style.top = `${y + offsetY}px`;
-      item.style.opacity = "0";
-
-      if (image && image.getAttribute("src") !== project.src) {
-        image.src = project.src;
-      }
-
-      item.classList.add("is-active");
-
-      const animation = item.animate(
-        [
-          {
-            opacity: 0,
-            transform: `translate3d(-50%, -46%, 0) scale(0.92) rotate(${rotation}deg)`,
-          },
-          {
-            opacity: 0.86,
-            transform: `translate3d(-50%, -50%, 0) scale(1) rotate(${rotation}deg)`,
-            offset: 0.2,
-          },
-          {
-            opacity: 0.8,
-            transform: `translate3d(-50%, -50%, 0) scale(1) rotate(${rotation}deg)`,
-            offset: 0.55,
-          },
-          {
-            opacity: 0,
-            transform: `translate3d(calc(-50% + ${driftX}px), calc(-50% + ${driftY}px), 0) scale(0.96) rotate(${
-              rotation * 0.45
-            }deg)`,
-          },
-        ],
-        {
-          duration: 1120,
-          easing: "cubic-bezier(0.4, 0, 0.2, 1)",
-          fill: "forwards",
-        }
-      );
-
-      animation.onfinish = () => {
-        if (item.dataset.runId === currentRunId) {
-          item.classList.remove("is-active");
-          item.style.opacity = "0";
-        }
-      };
+      animationFrameId = window.requestAnimationFrame(renderTrail);
     };
 
-    hero.addEventListener("pointermove", spawnTrailItem);
+    const handlePointerMove = (event) => {
+      const nextPoint = getHeroTrailPointFromEvent(hero, event);
+
+      if (!nextPoint.isInside) {
+        return;
+      }
+
+      targetPoint = nextPoint;
+      isInsideHero = true;
+      requestTrailRender();
+    };
+
+    const clearTrail = () => {
+      isInsideHero = false;
+      lastPoint = { x: Number.NaN, y: Number.NaN };
+
+      if (animationFrameId) {
+        window.cancelAnimationFrame(animationFrameId);
+        animationFrameId = 0;
+      }
+
+      gsap.to(items, {
+        autoAlpha: 0,
+        scale: 0.9,
+        duration: 0.28,
+        ease: "power2.out",
+        stagger: { each: 0.018, from: "end" },
+        overwrite: true,
+      });
+    };
+
+    hero.addEventListener("pointermove", handlePointerMove);
     hero.addEventListener("pointerleave", clearTrail);
 
     return () => {
-      hero.removeEventListener("pointermove", spawnTrailItem);
+      hero.removeEventListener("pointermove", handlePointerMove);
       hero.removeEventListener("pointerleave", clearTrail);
-      clearTrail();
+      if (animationFrameId) {
+        window.cancelAnimationFrame(animationFrameId);
+      }
+      gsap.killTweensOf(items);
     };
-  }, [reducedMotion]);
+  }, [reducedMotion, trailImages.length, trailOffsets]);
 
   return (
-    <div className="hero-picture-trail-layer" ref={layerRef} aria-hidden="true">
-      {Array.from({ length: heroPictureTrailPoolSize }, (_, index) => {
-        const project = heroTrailImages[index % heroTrailImages.length];
-
-        return (
-          <span
-            className={`hero-picture-trail-item${
-              project?.type === "mobile" ? " is-mobile" : ""
-            }`}
-            key={index}
-          >
-            <img src={project?.src} alt="" decoding="async" loading="eager" />
-          </span>
-        );
-      })}
+    <div className="hero-mouse-trail-layer" ref={layerRef} aria-hidden="true">
+      {trailImages.map((project, index) => (
+        <span
+          className={`hero-mouse-trail-item is-${project.type}`}
+          key={`${project.id}-${index}`}
+        >
+          <img src={project.src} alt="" decoding="async" loading="eager" />
+        </span>
+      ))}
     </div>
   );
 }

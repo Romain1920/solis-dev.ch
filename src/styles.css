@@ -468,7 +468,7 @@ a {
   transform: none;
 }
 
-.hero-picture-trail-layer {
+.hero-mouse-trail-layer {
   position: absolute;
   inset: 0;
   z-index: 3;
@@ -477,32 +477,36 @@ a {
   contain: layout paint;
 }
 
-.hero-picture-trail-item {
+.hero-mouse-trail-item {
   position: absolute;
-  width: clamp(136px, 13vw, 236px);
-  aspect-ratio: 16 / 10;
+  top: 0;
+  left: 0;
   display: block;
   overflow: hidden;
-  border: 1px solid rgba(255, 255, 255, 0.86);
-  border-radius: 18px;
-  background: rgba(255, 255, 255, 0.32);
+  border: 1px solid rgba(255, 255, 255, 0.68);
+  background: rgba(255, 255, 255, 0.24);
   box-shadow:
-    0 18px 50px rgba(16, 17, 18, 0.14),
-    0 0 34px rgba(255, 255, 255, 0.34),
+    0 18px 42px rgba(16, 17, 18, 0.13),
     inset 0 0 0 1px rgba(9, 10, 10, 0.035);
   opacity: 0;
+  visibility: hidden;
   pointer-events: none;
-  transform: translate3d(-50%, -50%, 0) scale(0.96);
   will-change: transform, opacity;
 }
 
-.hero-picture-trail-item.is-mobile {
-  width: clamp(76px, 7.2vw, 126px);
+.hero-mouse-trail-item.is-desktop {
+  width: clamp(130px, 11vw, 210px);
+  aspect-ratio: 16 / 10;
+  border-radius: 18px;
+}
+
+.hero-mouse-trail-item.is-mobile {
+  width: clamp(70px, 6vw, 110px);
   aspect-ratio: 9 / 16;
   border-radius: 22px;
 }
 
-.hero-picture-trail-item img {
+.hero-mouse-trail-item img {
   width: 100%;
   height: 100%;
   display: block;
@@ -1911,7 +1915,7 @@ a {
     height: clamp(68px, 14vw, 92px);
   }
 
-  .hero-picture-trail-layer {
+  .hero-mouse-trail-layer {
     display: none;
   }
 
@@ -2506,7 +2510,7 @@ a {
 
   .portfolio-transfer-layer,
   .portfolio-load-plane,
-  .hero-picture-trail-layer {
+  .hero-mouse-trail-layer {
     display: none !important;
   }
 
