@@ -551,6 +551,7 @@ a {
 
 .hero-form-card {
   width: 100%;
+  height: 560px;
   min-height: 560px;
   display: flex;
   flex-direction: column;
@@ -569,6 +570,7 @@ a {
 }
 
 .hero-form-card.is-reward-draw-mode {
+  height: 560px;
   min-height: 560px;
 }
 
@@ -612,6 +614,10 @@ a {
   background: rgba(9, 10, 10, 0.07);
 }
 
+.lead-progress--solo {
+  margin: 0 0 30px;
+}
+
 .lead-progress span {
   display: block;
   height: 100%;
@@ -627,6 +633,13 @@ a {
 .hero-form-card.is-reward-draw-mode .lead-step-frame {
   flex: 1;
   display: flex;
+  min-height: 0;
+}
+
+.hero-form-card.is-post-reward-flow .lead-step-frame {
+  flex: 1;
+  display: flex;
+  min-height: 0;
 }
 
 .lead-step {
@@ -642,6 +655,32 @@ a {
 .hero-form-card.is-reward-draw-mode .lead-step--reward {
   min-height: 100%;
   flex: 1;
+}
+
+.hero-form-card.is-post-reward-flow .lead-step {
+  flex: 1;
+  min-height: 0;
+}
+
+.hero-form-card.is-post-reward-flow .lead-step-heading {
+  justify-items: center;
+  margin-bottom: 28px;
+  text-align: center;
+}
+
+.hero-form-card.is-post-reward-flow .lead-step-heading p {
+  max-width: 330px;
+}
+
+.hero-form-card.is-post-reward-flow .lead-field {
+  width: 100%;
+  max-width: 340px;
+  margin: 0 auto;
+}
+
+.hero-form-card.is-post-reward-flow .lead-option-grid,
+.hero-form-card.is-post-reward-flow .lead-recap-list {
+  width: 100%;
 }
 
 .lead-step-heading {
@@ -3009,12 +3048,14 @@ a {
   }
 
   .hero-form-card {
-    min-height: 0;
+    height: 500px;
+    min-height: 500px;
     border-radius: 22px;
     padding: 18px;
   }
 
   .hero-form-card.is-reward-draw-mode {
+    height: 500px;
     min-height: 500px;
   }
 
@@ -3030,6 +3071,10 @@ a {
 
   .lead-progress {
     margin: 18px 0 22px;
+  }
+
+  .lead-progress--solo {
+    margin: 0 0 24px;
   }
 
   .lead-step {

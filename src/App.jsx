@@ -951,6 +951,9 @@ function HeroLeadForm() {
   const branchValue = isMobileProject ? leadData.appPlatform : leadData.websiteType;
   const timelineOptions = isMobileProject ? mobileTimelineOptions : websiteTimelineOptions;
   const isRewardDrawMode = step === "reward" && hasSpun;
+  const isPostRewardFlow = hasSpun && step !== "reward";
+  const shouldShowFormIntro = !hasSpun;
+  const shouldShowProgress = !isRewardDrawMode;
   const progressByStep = {
     reward: hasSpun ? 18 : 8,
     email: 26,
@@ -1346,23 +1349,28 @@ function HeroLeadForm() {
   };
 
   return (
-    <div className={`hero-form-card${isRewardDrawMode ? " is-reward-draw-mode" : ""}`} ref={formRef}>
-      {!isRewardDrawMode ? (
-        <>
-          <div className="hero-form-intro">
-            <h2>Besoin de vous projeter&nbsp;?</h2>
-            <p>
-              Recevez une maquette sur mesure, offerte et sans engagement, pour imaginer
-              un site ou une application mobile sur mesure, sans template, pensé pour attirer
-              et convertir.
-            </p>
-            <small>Premier rendez-vous offert. Café compris&nbsp;☕</small>
-          </div>
+    <div
+      className={`hero-form-card${isRewardDrawMode ? " is-reward-draw-mode" : ""}${
+        isPostRewardFlow ? " is-post-reward-flow" : ""
+      }`}
+      ref={formRef}
+    >
+      {shouldShowFormIntro ? (
+        <div className="hero-form-intro">
+          <h2>Besoin de vous projeter&nbsp;?</h2>
+          <p>
+            Recevez une maquette sur mesure, offerte et sans engagement, pour imaginer
+            un site ou une application mobile sur mesure, sans template, pensé pour attirer
+            et convertir.
+          </p>
+          <small>Premier rendez-vous offert. Café compris&nbsp;☕</small>
+        </div>
+      ) : null}
 
-          <div className="lead-progress" aria-hidden="true">
-            <span style={{ width: `${progress}%` }} />
-          </div>
-        </>
+      {shouldShowProgress ? (
+        <div className={`lead-progress${shouldShowFormIntro ? "" : " lead-progress--solo"}`} aria-hidden="true">
+          <span style={{ width: `${progress}%` }} />
+        </div>
       ) : null}
 
       <AnimatePresence mode="wait" initial={false}>
