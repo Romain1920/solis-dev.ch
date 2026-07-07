@@ -38,7 +38,10 @@ const serviceNavItems = [
 ];
 
 const screenshotIntervalMs = 1500;
-const ENABLE_HERO_MOUSE_TRAIL = true;
+const ENABLE_NEW_HERO_FORM = true;
+const ENABLE_OLD_HERO_CTA = false;
+const ENABLE_HERO_PICTURE_TRAIL = false;
+const ENABLE_HERO_MOUSE_TRAIL = ENABLE_HERO_PICTURE_TRAIL;
 const SHOW_HERO_INLINE_REFERENCE_SCREEN = false;
 const heroMouseTrailImageWidth = 140;
 const heroMouseTrailImageHeight = 200;
@@ -242,6 +245,39 @@ const clientLogoReferences = [
 
 const activeClientLogos = clientLogoReferences.filter((client) => client.logo);
 
+const leadRewardOptions = [
+  { label: "Nom de domaine offert", weight: 50 },
+  { label: "Pas de chance", weight: 35 },
+  { label: "1 heure de support offerte", weight: 5 },
+  { label: "1 mois d’hébergement offert", weight: 5 },
+  { label: "Surprise", weight: 5 },
+];
+
+const leadProjectTypeOptions = [
+  { id: "website", label: "Site internet" },
+  { id: "mobile", label: "Application mobile" },
+];
+
+const websiteTypeOptions = ["Site vitrine", "E-commerce"];
+const appPlatformOptions = ["iOS", "Android", "iOS + Android"];
+const leadBudgetOptions = [
+  "5’000 à 10’000 CHF",
+  "10’000 à 15’000 CHF",
+  "Plus de 15’000 CHF",
+];
+const websiteTimelineOptions = [
+  "Urgent — moins d’un mois",
+  "1 à 3 mois",
+  "3 à 6 mois",
+  "Pas de contrainte",
+];
+const mobileTimelineOptions = [
+  "1 à 3 mois",
+  "3 à 6 mois",
+  "6 à 12 mois",
+  "Pas de contrainte",
+];
+
 const teamMembers = [
   {
     id: "romain",
@@ -265,6 +301,12 @@ const teamMembers = [
     imageClassName: "team-photo--lyndon",
   },
 ];
+
+const heroTrustAvatars = teamMembers.map((member) => ({
+  id: member.id,
+  image: member.image,
+  imageClassName: member.imageClassName,
+}));
 
 const portfolioCategoryOptions = [
   {
@@ -530,6 +572,20 @@ function Header() {
   );
 }
 
+const pickWeightedReward = () => {
+  const totalWeight = leadRewardOptions.reduce((total, reward) => total + reward.weight, 0);
+  let cursor = Math.random() * totalWeight;
+
+  return (
+    leadRewardOptions.find((reward) => {
+      cursor -= reward.weight;
+      return cursor <= 0;
+    })?.label ?? leadRewardOptions[0].label
+  );
+};
+
+const isValidLeadEmail = (email) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim());
+
 function Hero() {
   const heroRef = useRef(null);
 
@@ -540,12 +596,16 @@ function Hero() {
       mm.add(
         {
           reduceMotion: "(prefers-reduced-motion: reduce)",
+          desktopHero: "(min-width: 681px)",
           all: "(min-width: 0px)",
         },
         (context) => {
-          const { reduceMotion } = context.conditions;
-          const titleItems = gsap.utils.toArray(".hero-reveal");
+          const { reduceMotion, desktopHero } = context.conditions;
+          const revealItems = gsap.utils.toArray(".hero-reveal");
           const arrowPath = heroRef.current?.querySelector(".arrow-path");
+          const formCard = heroRef.current?.querySelector(".hero-form-card");
+          const heroRequest = heroRef.current?.querySelector(".hero-request");
+          const projectReel = heroRef.current?.querySelector(".project-reel");
 
           if (arrowPath) {
             const length = arrowPath.getTotalLength();
@@ -556,19 +616,23 @@ function Hero() {
             });
           }
 
-          if (reduceMotion) {
-            gsap.set(titleItems, { autoAlpha: 1, y: 0, scale: 1 });
+          if (reduceMotion || !desktopHero) {
+            gsap.set([revealItems, formCard, heroRequest, projectReel].filter(Boolean), {
+              autoAlpha: 1,
+              y: 0,
+              scale: 1,
+              filter: "blur(0px)",
+            });
             return undefined;
           }
 
           const timeline = gsap.timeline({
             defaults: { ease: "power3.out" },
           });
-          const projectReel = heroRef.current?.querySelector(".project-reel");
 
-          timeline
-            .fromTo(
-              titleItems,
+          if (revealItems.length > 0) {
+            timeline.fromTo(
+              revealItems,
               {
                 autoAlpha: 0,
                 filter: "blur(7px)",
@@ -578,11 +642,14 @@ function Hero() {
                 autoAlpha: 1,
                 filter: "blur(0px)",
                 x: 0,
-                duration: 0.86,
-                stagger: 0.07,
+                duration: 0.76,
+                stagger: 0.06,
               }
-            )
-            .to(
+            );
+          }
+
+          if (arrowPath) {
+            timeline.to(
               arrowPath,
               {
                 autoAlpha: 1,
@@ -591,9 +658,25 @@ function Hero() {
                 ease: "power1.inOut",
               },
               0.42
-            )
-            .from(
-              ".hero-request",
+            );
+          }
+
+          if (formCard) {
+            timeline.from(
+              formCard,
+              {
+                autoAlpha: 0,
+                y: 22,
+                scale: 0.985,
+                duration: 0.62,
+              },
+              0.26
+            );
+          }
+
+          if (heroRequest) {
+            timeline.from(
+              heroRequest,
               {
                 autoAlpha: 0,
                 y: 18,
@@ -601,6 +684,7 @@ function Hero() {
               },
               0.7
             );
+          }
 
           if (projectReel) {
             timeline.from(
@@ -632,51 +716,555 @@ function Hero() {
       aria-labelledby="hero-title"
     >
       {ENABLE_HERO_MOUSE_TRAIL ? <HeroMouseTrail /> : null}
-      <div className="hero-shell">
-        <h1 id="hero-title" className="hero-title">
-          <span className="hero-line hero-reveal">
-            On transforme <br className="mobile-only" />
-            vos projets
-          </span>
-          <span className="hero-line hero-line-arrow hero-reveal">
-            <HandDrawnArrow />
-            <span>
-              en sites webs <br className="mobile-only" />
-              et en apps
-            </span>
-          </span>
-          <span className="hero-line hero-line-reel hero-reveal">
-            <span>
-              mobiles <br className="mobile-only" />
-              sur-mesure
-            </span>
-            {SHOW_HERO_INLINE_REFERENCE_SCREEN ? <ProjectReel /> : null}
-          </span>
-          <span className="hero-line hero-reveal">dont les gens se souviennent</span>
-        </h1>
-
-        <a
-          className="hero-request"
-          href={`${contactHref}&body=${encodeURIComponent(
-            "Bonjour, j'aimerais recevoir une maquette sur mesure, offerte et sans engagement, pour imaginer un site unique, performant sur Google et pensé pour convertir mes visiteurs en clients."
-          )}`}
-          data-track="hero-maquette-offerte"
-        >
-          <span className="request-icon" aria-hidden="true">
-            <span />
-          </span>
-          <span className="request-copy">
-            <strong>Besoin de vous projeter&nbsp;?</strong>
-            <span>
-              Recevez une maquette sur mesure, offerte et sans engagement, pour imaginer un site unique, performant sur Google et pensé pour convertir vos visiteurs en clients.
-            </span>
-            <small>
-              Le premier rendez-vous est également offert. Et le café est pour nous 😉
-            </small>
-          </span>
-        </a>
+      <div className={`hero-shell${ENABLE_NEW_HERO_FORM ? " hero-shell--split" : ""}`}>
+        {ENABLE_NEW_HERO_FORM ? <HeroSplitContent /> : <HeroLegacyContent />}
       </div>
     </section>
+  );
+}
+
+function HeroSplitContent() {
+  return (
+    <>
+      <div className="hero-layout">
+        <div className="hero-copy">
+          <h1 id="hero-title" className="hero-title hero-title--split">
+            <span className="hero-line hero-reveal">Des sites et apps</span>
+            <span className="hero-line hero-reveal">
+              pensés pour <br className="mobile-only" />
+              générer
+            </span>
+            <span className="hero-line hero-reveal">des résultats</span>
+          </h1>
+          <p className="hero-support hero-reveal">
+            Agence de développement sur mesure en Suisse romande pour sites web,
+            e-commerce et applications mobiles.
+          </p>
+        </div>
+
+        <div className="hero-form-column">
+          <HeroLeadForm />
+        </div>
+      </div>
+
+      <HeroTrustBand />
+    </>
+  );
+}
+
+function HeroLegacyContent() {
+  return (
+    <>
+      <h1 id="hero-title" className="hero-title">
+        <span className="hero-line hero-reveal">
+          On transforme <br className="mobile-only" />
+          vos projets
+        </span>
+        <span className="hero-line hero-line-arrow hero-reveal">
+          <HandDrawnArrow />
+          <span>
+            en sites webs <br className="mobile-only" />
+            et en apps
+          </span>
+        </span>
+        <span className="hero-line hero-line-reel hero-reveal">
+          <span>
+            mobiles <br className="mobile-only" />
+            sur-mesure
+          </span>
+          {SHOW_HERO_INLINE_REFERENCE_SCREEN ? <ProjectReel /> : null}
+        </span>
+        <span className="hero-line hero-reveal">dont les gens se souviennent</span>
+      </h1>
+
+      {ENABLE_OLD_HERO_CTA ? <HeroOldRequestCta /> : null}
+    </>
+  );
+}
+
+function HeroOldRequestCta() {
+  return (
+    <a
+      className="hero-request"
+      href={`${contactHref}&body=${encodeURIComponent(
+        "Bonjour, j'aimerais recevoir une maquette sur mesure, offerte et sans engagement, pour imaginer un site unique, performant sur Google et pensé pour convertir mes visiteurs en clients."
+      )}`}
+      data-track="hero-maquette-offerte"
+    >
+      <span className="request-icon" aria-hidden="true">
+        <span />
+      </span>
+      <span className="request-copy">
+        <strong>Besoin de vous projeter&nbsp;?</strong>
+        <span>
+          Recevez une maquette sur mesure, offerte et sans engagement, pour imaginer un site unique, performant sur Google et pensé pour convertir vos visiteurs en clients.
+        </span>
+        <small>
+          Le premier rendez-vous est également offert. Et le café est pour nous 😉
+        </small>
+      </span>
+    </a>
+  );
+}
+
+function HeroLeadForm() {
+  const reducedMotion = usePrefersReducedMotion();
+  const spinTimeoutRef = useRef(null);
+  const [step, setStep] = useState("reward");
+  const [leadData, setLeadData] = useState({
+    email: "",
+    projectType: "",
+    websiteType: "",
+    appPlatform: "",
+    budget: "",
+    timeline: "",
+  });
+  const [reward, setReward] = useState("");
+  const [pendingReward, setPendingReward] = useState("");
+  const [hasSpun, setHasSpun] = useState(false);
+  const [isSpinning, setIsSpinning] = useState(false);
+  const [emailError, setEmailError] = useState("");
+  const [submittedPayload, setSubmittedPayload] = useState(null);
+
+  useEffect(() => {
+    return () => {
+      if (spinTimeoutRef.current) {
+        window.clearTimeout(spinTimeoutRef.current);
+      }
+    };
+  }, []);
+
+  const isMobileProject = leadData.projectType === "Application mobile";
+  const branchStep = isMobileProject ? "appPlatform" : "websiteType";
+  const branchLabel = isMobileProject ? "Plateforme" : "Type de site";
+  const branchValue = isMobileProject ? leadData.appPlatform : leadData.websiteType;
+  const timelineOptions = isMobileProject ? mobileTimelineOptions : websiteTimelineOptions;
+  const progressByStep = {
+    reward: hasSpun ? 18 : 8,
+    email: 26,
+    projectType: 42,
+    websiteType: 58,
+    appPlatform: 58,
+    budget: 74,
+    timeline: 88,
+    recap: 100,
+    submitted: 100,
+  };
+  const progress = progressByStep[step] ?? 8;
+  const currentRewardLabel = pendingReward || reward || "Votre bonus";
+  const slotItems = [
+    ...leadRewardOptions.map((option) => option.label),
+    ...leadRewardOptions.map((option) => option.label),
+    currentRewardLabel,
+  ];
+
+  const updateLeadData = (field, value) => {
+    setLeadData((current) => ({
+      ...current,
+      [field]: value,
+    }));
+  };
+
+  const handleRewardSpin = () => {
+    if (hasSpun || isSpinning) {
+      return;
+    }
+
+    const selectedReward = pickWeightedReward();
+    setHasSpun(true);
+    setPendingReward(selectedReward);
+    setIsSpinning(true);
+
+    if (reducedMotion) {
+      setReward(selectedReward);
+      setPendingReward("");
+      setIsSpinning(false);
+      return;
+    }
+
+    spinTimeoutRef.current = window.setTimeout(() => {
+      setReward(selectedReward);
+      setPendingReward("");
+      setIsSpinning(false);
+    }, 920);
+  };
+
+  const handleRewardContinue = () => {
+    if (reward) {
+      setStep("email");
+    }
+  };
+
+  const handleEmailSubmit = (event) => {
+    event.preventDefault();
+
+    if (!isValidLeadEmail(leadData.email)) {
+      setEmailError("Indiquez un email valide pour continuer.");
+      return;
+    }
+
+    setEmailError("");
+    setStep("projectType");
+  };
+
+  const handleProjectTypeChange = (projectType) => {
+    setLeadData((current) => ({
+      ...current,
+      projectType,
+      websiteType: projectType === "Site internet" ? current.websiteType : "",
+      appPlatform: projectType === "Application mobile" ? current.appPlatform : "",
+      budget: "",
+      timeline: "",
+    }));
+  };
+
+  const goBack = () => {
+    if (step === "email") {
+      setStep("reward");
+      return;
+    }
+
+    if (step === "projectType") {
+      setStep("email");
+      return;
+    }
+
+    if (step === "websiteType" || step === "appPlatform") {
+      setStep("projectType");
+      return;
+    }
+
+    if (step === "budget") {
+      setStep(branchStep);
+      return;
+    }
+
+    if (step === "timeline") {
+      setStep("budget");
+      return;
+    }
+
+    if (step === "recap") {
+      setStep("timeline");
+    }
+  };
+
+  const handleSubmitLead = () => {
+    const payload = {
+      email: leadData.email.trim(),
+      projectType: leadData.projectType,
+      websiteType: leadData.projectType === "Site internet" ? leadData.websiteType : "",
+      appPlatform: leadData.projectType === "Application mobile" ? leadData.appPlatform : "",
+      budget: leadData.budget,
+      timeline: leadData.timeline,
+      reward,
+      createdAt: new Date().toISOString(),
+    };
+
+    setSubmittedPayload(payload);
+    setStep("submitted");
+  };
+
+  const summaryItems = [
+    ["Email", leadData.email.trim()],
+    ["Type de projet", leadData.projectType],
+    [branchLabel, branchValue],
+    ["Budget", leadData.budget],
+    ["Délai", leadData.timeline],
+    ["Bonus", reward],
+  ].filter(([, value]) => Boolean(value));
+
+  const renderStep = () => {
+    if (step === "reward") {
+      return (
+        <div className="lead-step">
+          <div className="lead-step-heading">
+            <h3>Tentez de débloquer un bonus pour votre projet.</h3>
+            <p>Votre bonus sera ajouté à votre demande une fois le formulaire complété.</p>
+          </div>
+
+          <div className={`lead-reward-window${reward ? " is-revealed" : ""}`}>
+            <div className="lead-reward-marker" aria-hidden="true" />
+            {isSpinning ? (
+              <div className="lead-reward-track" aria-hidden="true">
+                {slotItems.map((item, index) => (
+                  <span key={`${item}-${index}`}>{item}</span>
+                ))}
+              </div>
+            ) : (
+              <strong>{reward || "Votre bonus"}</strong>
+            )}
+          </div>
+
+          <div className="lead-actions">
+            {!hasSpun ? (
+              <button className="lead-primary-button" type="button" onClick={handleRewardSpin}>
+                Tenter ma chance
+              </button>
+            ) : (
+              <button
+                className="lead-primary-button"
+                type="button"
+                onClick={handleRewardContinue}
+                disabled={!reward || isSpinning}
+              >
+                Continuer ma demande
+              </button>
+            )}
+          </div>
+        </div>
+      );
+    }
+
+    if (step === "email") {
+      return (
+        <form className="lead-step" onSubmit={handleEmailSubmit} noValidate>
+          <div className="lead-step-heading">
+            <h3>Votre email</h3>
+            <p>On vous recontacte pour préparer votre maquette offerte.</p>
+          </div>
+
+          <label className="lead-field">
+            <span>Email</span>
+            <input
+              type="email"
+              inputMode="email"
+              autoComplete="email"
+              value={leadData.email}
+              onChange={(event) => {
+                updateLeadData("email", event.target.value);
+                if (emailError) {
+                  setEmailError("");
+                }
+              }}
+              placeholder="vous@entreprise.ch"
+              aria-invalid={Boolean(emailError)}
+            />
+          </label>
+
+          {emailError ? (
+            <p className="lead-error" role="alert">
+              {emailError}
+            </p>
+          ) : null}
+
+          <div className="lead-actions">
+            <button className="lead-secondary-button" type="button" onClick={goBack}>
+              Retour
+            </button>
+            <button className="lead-primary-button" type="submit">
+              Continuer
+            </button>
+          </div>
+        </form>
+      );
+    }
+
+    if (step === "projectType") {
+      return (
+        <LeadChoiceStep
+          title="Quel projet souhaitez-vous lancer ?"
+          options={leadProjectTypeOptions}
+          value={leadData.projectType}
+          onSelect={handleProjectTypeChange}
+          onBack={goBack}
+          onNext={() => setStep(leadData.projectType === "Application mobile" ? "appPlatform" : "websiteType")}
+        />
+      );
+    }
+
+    if (step === "websiteType") {
+      return (
+        <LeadChoiceStep
+          title="Type de site"
+          options={websiteTypeOptions}
+          value={leadData.websiteType}
+          onSelect={(value) => updateLeadData("websiteType", value)}
+          onBack={goBack}
+          onNext={() => setStep("budget")}
+        />
+      );
+    }
+
+    if (step === "appPlatform") {
+      return (
+        <LeadChoiceStep
+          title="Plateforme"
+          options={appPlatformOptions}
+          value={leadData.appPlatform}
+          onSelect={(value) => updateLeadData("appPlatform", value)}
+          onBack={goBack}
+          onNext={() => setStep("budget")}
+        />
+      );
+    }
+
+    if (step === "budget") {
+      return (
+        <LeadChoiceStep
+          title="Budget"
+          options={leadBudgetOptions}
+          value={leadData.budget}
+          onSelect={(value) => updateLeadData("budget", value)}
+          onBack={goBack}
+          onNext={() => setStep("timeline")}
+        />
+      );
+    }
+
+    if (step === "timeline") {
+      return (
+        <LeadChoiceStep
+          title="Délai souhaité"
+          options={timelineOptions}
+          value={leadData.timeline}
+          onSelect={(value) => updateLeadData("timeline", value)}
+          onBack={goBack}
+          onNext={() => setStep("recap")}
+        />
+      );
+    }
+
+    if (step === "submitted") {
+      return (
+        <div className="lead-step lead-step--submitted">
+          <div className="lead-step-heading">
+            <h3>Merci, votre demande est prête.</h3>
+            <p>
+              Nous vous recontacterons dans les 24 heures pour échanger sur votre projet
+              et préparer votre maquette offerte.
+            </p>
+          </div>
+          {submittedPayload ? (
+            <span className="lead-local-note">Demande enregistrée localement.</span>
+          ) : null}
+        </div>
+      );
+    }
+
+    return (
+      <div className="lead-step">
+        <div className="lead-step-heading">
+          <h3>Votre demande est prête.</h3>
+          <p>Vérifiez les éléments avant l’envoi.</p>
+        </div>
+
+        <dl className="lead-recap-list">
+          {summaryItems.map(([label, value]) => (
+            <div key={label}>
+              <dt>{label}</dt>
+              <dd>{value}</dd>
+            </div>
+          ))}
+        </dl>
+
+        <div className="lead-actions">
+          <button className="lead-secondary-button" type="button" onClick={goBack}>
+            Retour
+          </button>
+          <button className="lead-primary-button" type="button" onClick={handleSubmitLead}>
+            Envoyer la demande
+          </button>
+        </div>
+      </div>
+    );
+  };
+
+  return (
+    <div className="hero-form-card">
+      <div className="hero-form-intro">
+        <h2>Besoin de vous projeter&nbsp;?</h2>
+        <p>
+          Recevez une maquette sur mesure, offerte et sans engagement, pour imaginer
+          un site unique, sans template, pensé pour attirer et convertir.
+        </p>
+        <small>Premier rendez-vous offert. Café compris 😉</small>
+      </div>
+
+      <div className="lead-progress" aria-hidden="true">
+        <span style={{ width: `${progress}%` }} />
+      </div>
+
+      <AnimatePresence mode="wait" initial={false}>
+        <motion.div
+          key={step}
+          initial={reducedMotion ? false : { opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={reducedMotion ? { opacity: 0 } : { opacity: 0, y: -8 }}
+          transition={
+            reducedMotion
+              ? instantTransition
+              : { duration: 0.28, ease: [0.4, 0, 0.2, 1] }
+          }
+        >
+          {renderStep()}
+        </motion.div>
+      </AnimatePresence>
+    </div>
+  );
+}
+
+function LeadChoiceStep({ title, options, value, onSelect, onBack, onNext }) {
+  const normalizedOptions = options.map((option) =>
+    typeof option === "string" ? { id: option, label: option } : option
+  );
+
+  return (
+    <div className="lead-step">
+      <div className="lead-step-heading">
+        <h3>{title}</h3>
+      </div>
+
+      <div className="lead-option-grid">
+        {normalizedOptions.map((option) => (
+          <button
+            className={`lead-option${value === option.label ? " is-selected" : ""}`}
+            key={option.id}
+            type="button"
+            onClick={() => onSelect(option.label)}
+            aria-pressed={value === option.label}
+          >
+            {option.label}
+          </button>
+        ))}
+      </div>
+
+      <div className="lead-actions">
+        <button className="lead-secondary-button" type="button" onClick={onBack}>
+          Retour
+        </button>
+        <button className="lead-primary-button" type="button" onClick={onNext} disabled={!value}>
+          Continuer
+        </button>
+      </div>
+    </div>
+  );
+}
+
+function HeroTrustBand() {
+  return (
+    <div className="hero-trust-band" aria-label="Preuve sociale">
+      <div className="hero-trust-avatars" aria-hidden="true">
+        {heroTrustAvatars.map((avatar) => (
+          <span className="hero-trust-avatar" key={avatar.id}>
+            <img
+              className={avatar.imageClassName}
+              src={avatar.image}
+              alt=""
+              loading="eager"
+              decoding="async"
+            />
+          </span>
+        ))}
+      </div>
+      <div className="hero-trust-copy">
+        <span className="hero-trust-stars" aria-label="5 étoiles">
+          ★★★★★
+        </span>
+        <strong>Plus de 60 clients nous ont fait confiance</strong>
+        <small>Avis Google vérifié</small>
+      </div>
+    </div>
   );
 }
 
