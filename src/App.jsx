@@ -2450,11 +2450,15 @@ function PortfolioSection() {
         },
         (context) => {
           const { reduceMotion, desktopPortfolio } = context.conditions;
-          const categoryButtons = gsap.utils.toArray(".portfolio-category-button", root);
+          const categorySelector = root.querySelector(".portfolio-category-selector");
+          const categoryDevices = gsap.utils.toArray(".portfolio-category-device", root);
+          const categoryLabels = gsap.utils.toArray(".portfolio-category-label", root);
+          const categoryRevealItems = [...categoryDevices, ...categoryLabels];
           const listColumn = root.querySelector(".portfolio-list-column");
           const displayColumn = root.querySelector(".portfolio-display-column");
           const revealTargets = [
-            ...categoryButtons,
+            categorySelector,
+            ...categoryRevealItems,
             listColumn,
             displayColumn,
           ].filter(Boolean);
@@ -2478,22 +2482,39 @@ function PortfolioSection() {
             },
           });
 
-          if (categoryButtons.length > 0) {
+          if (categorySelector) {
             timeline.fromTo(
-              categoryButtons,
+              categorySelector,
               {
                 autoAlpha: 0,
-                y: 12,
-                filter: "blur(6px)",
+                y: 10,
+                filter: "blur(5px)",
               },
               {
                 autoAlpha: 1,
                 y: 0,
                 filter: "blur(0px)",
-                duration: 0.58,
-                stagger: 0.055,
+                duration: 0.62,
               },
               0
+            );
+          }
+
+          if (categoryRevealItems.length > 0) {
+            timeline.fromTo(
+              categoryRevealItems,
+              {
+                autoAlpha: 0,
+                y: 6,
+                scale: 0.99,
+              },
+              {
+                autoAlpha: 1,
+                y: 0,
+                scale: 1,
+                duration: 0.62,
+              },
+              0.04
             );
           }
 
@@ -3163,8 +3184,9 @@ function PortfolioCategoryVisualSelector({ activeSegment, reducedMotion, onChang
                 className={`portfolio-category-device ${category.visualClassName}`}
                 src={category.deviceAsset}
                 alt={category.label}
-                loading="lazy"
+                loading="eager"
                 decoding="async"
+                fetchPriority="high"
               />
             </motion.span>
             <span className="portfolio-category-label">{category.label}</span>
