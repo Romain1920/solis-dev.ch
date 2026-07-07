@@ -297,11 +297,14 @@ const leadRewardOptions = [
 ];
 
 const leadRewardWheelOptions = [
-  { label: "Nom de domaine offert", wheelLabel: "Domaine", tone: "blue" },
-  { label: "Pas de chance", wheelLabel: "Rien", tone: "neutral" },
-  { label: "1 heure de formation offerte", wheelLabel: "Formation", tone: "orange" },
-  { label: "1 mois d’hébergement offert", wheelLabel: "Héberg.", tone: "soft" },
-  { label: "Surprise", wheelLabel: "Surprise", tone: "warm" },
+  { id: "domain", label: "Nom de domaine offert", wheelLabel: "Domaine", tone: "blue" },
+  { id: "empty-1", label: "Pas de chance", wheelLabel: "Rien", tone: "neutral" },
+  { id: "training", label: "1 heure de formation offerte", wheelLabel: "Formation", tone: "orange" },
+  { id: "empty-2", label: "Pas de chance", wheelLabel: "Rien", tone: "neutral" },
+  { id: "hosting", label: "1 mois d’hébergement offert", wheelLabel: "Héberg.", tone: "soft" },
+  { id: "empty-3", label: "Pas de chance", wheelLabel: "Rien", tone: "neutral" },
+  { id: "surprise", label: "Surprise", wheelLabel: "Surprise", tone: "warm" },
+  { id: "empty-4", label: "Pas de chance", wheelLabel: "Rien", tone: "neutral" },
 ];
 
 const leadRewardWheelTurns = 5;
@@ -1663,7 +1666,7 @@ function LeadRewardWheel({ wheelRef, isSpinning, showCelebration }) {
             const labelRotation = getRewardWheelLabelRotation(index);
 
             return (
-              <g className={`lead-roulette-segment lead-roulette-segment--${option.tone}`} key={option.label}>
+              <g className={`lead-roulette-segment lead-roulette-segment--${option.tone}`} key={option.id}>
                 <path d={getRewardWheelSegmentPath(index)} />
                 <g
                   className="lead-roulette-label"
