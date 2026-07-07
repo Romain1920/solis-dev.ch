@@ -301,6 +301,12 @@ const leadRewardParticles = [
   { x: -34, y: 82, delay: "225ms", size: 5, tone: "peach" },
   { x: 38, y: 82, delay: "205ms", size: 5, tone: "orange" },
   { x: 88, y: 18, delay: "215ms", size: 5, tone: "cyan" },
+  { x: -96, y: 36, delay: "235ms", size: 4, tone: "cyan" },
+  { x: -82, y: 74, delay: "255ms", size: 4, tone: "blue" },
+  { x: -4, y: 96, delay: "245ms", size: 5, tone: "peach" },
+  { x: 78, y: 78, delay: "250ms", size: 4, tone: "orange" },
+  { x: 98, y: -18, delay: "240ms", size: 4, tone: "blue" },
+  { x: 48, y: -88, delay: "230ms", size: 4, tone: "peach" },
 ];
 const leadChoiceAutoAdvanceDelayMs = 140;
 

@@ -411,7 +411,7 @@ a {
 
 .hero-gradient-word {
   display: inline-block;
-  background: linear-gradient(96deg, rgba(69, 157, 240, 0.98) 0%, rgba(45, 197, 218, 0.96) 48%, rgba(238, 124, 66, 0.98) 100%);
+  background: linear-gradient(96deg, rgba(94, 169, 238, 0.82) 0%, rgba(90, 196, 209, 0.72) 54%, rgba(224, 151, 104, 0.68) 100%);
   background-clip: text;
   -webkit-background-clip: text;
   color: transparent;
