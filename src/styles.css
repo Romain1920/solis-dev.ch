@@ -388,11 +388,11 @@ a {
 
 .hero-title--split {
   width: 100%;
-  max-width: 720px;
+  max-width: 760px;
   margin: 0;
-  font-size: clamp(3.25rem, 4.75vw, 4.95rem);
+  font-size: clamp(2.62rem, 3.35vw, 4.1rem);
   font-weight: 600;
-  line-height: 0.99;
+  line-height: 1.01;
   text-wrap: balance;
 }
 
@@ -407,6 +407,15 @@ a {
 
 .hero-title--split .hero-line {
   white-space: normal;
+}
+
+.hero-gradient-word {
+  display: inline-block;
+  background: linear-gradient(96deg, rgba(69, 157, 240, 0.98) 0%, rgba(45, 197, 218, 0.96) 48%, rgba(238, 124, 66, 0.98) 100%);
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
 }
 
 .hero-reveal {
@@ -2682,7 +2691,7 @@ a {
   }
 
   .hero-title--split {
-    font-size: clamp(3rem, 4.55vw, 4.45rem);
+    font-size: clamp(2.36rem, 3vw, 3.35rem);
   }
 
   .portfolio-shell {
@@ -2752,8 +2761,8 @@ a {
   }
 
   .hero-title--split {
-    font-size: clamp(3.2rem, 8.2vw, 4.9rem);
-    line-height: 1;
+    font-size: clamp(2.58rem, 6.45vw, 3.92rem);
+    line-height: 1.02;
   }
 
   .hero-form-card {
@@ -3034,8 +3043,8 @@ a {
 
   .hero-title--split {
     max-width: 100%;
-    font-size: clamp(2.12rem, 9.1vw, 2.52rem);
-    line-height: 1.02;
+    font-size: clamp(1.82rem, 7.55vw, 2.18rem);
+    line-height: 1.06;
   }
 
   .hero-title--split .hero-line,
