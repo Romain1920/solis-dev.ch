@@ -3029,6 +3029,7 @@ function PortfolioCategoryVisualSelector({ activeSegment, reducedMotion, onChang
           >
             <motion.span
               className="portfolio-category-visual"
+              initial={false}
               animate={{
                 opacity: isActive ? 1 : 0.76,
                 y: isActive ? 0 : 4,
