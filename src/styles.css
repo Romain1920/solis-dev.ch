@@ -878,42 +878,50 @@ a {
   font-weight: 700;
 }
 
-.hero-trust-band {
-  width: fit-content;
-  max-width: 100%;
-  margin: clamp(32px, 4.3vw, 56px) auto 0;
+.hero-trust-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(390px, 470px);
+  align-items: center;
+  gap: clamp(42px, 6vw, 86px);
+  margin-top: clamp(34px, 4.2vw, 54px);
+}
+
+.hero-trust-left {
+  min-width: 0;
   display: flex;
   align-items: center;
-  gap: clamp(14px, 2vw, 22px);
-  border: 1px solid rgba(9, 10, 10, 0.07);
-  border-radius: 22px;
-  background: rgba(255, 255, 255, 0.56);
-  padding: 12px 17px 12px 13px;
-  box-shadow:
-    0 16px 44px rgba(20, 26, 31, 0.06),
-    inset 0 1px 0 rgba(255, 255, 255, 0.74);
-  backdrop-filter: blur(14px);
+  gap: clamp(26px, 3.4vw, 46px);
+}
+
+.hero-trust-band {
+  flex: 0 0 auto;
+  width: min(292px, 40%);
+  max-width: 292px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
 }
 
 .hero-trust-avatars {
   display: flex;
   align-items: center;
-  padding-left: 8px;
+  flex: 0 0 auto;
+  padding-left: 6px;
 }
 
 .hero-trust-avatar {
-  width: 42px;
-  height: 42px;
+  width: 36px;
+  height: 36px;
   display: block;
   overflow: hidden;
   border: 2px solid rgba(255, 255, 255, 0.92);
   border-radius: 50%;
   background: #eaf4f8;
-  box-shadow: 0 10px 22px rgba(16, 17, 18, 0.1);
+  box-shadow: 0 9px 18px rgba(16, 17, 18, 0.08);
 }
 
 .hero-trust-avatar + .hero-trust-avatar {
-  margin-left: -12px;
+  margin-left: -11px;
 }
 
 .hero-trust-avatar img {
@@ -925,19 +933,19 @@ a {
 .hero-trust-copy {
   min-width: 0;
   display: grid;
-  gap: 1px;
+  gap: 2px;
 }
 
 .hero-trust-stars {
   color: #090a0a;
-  font-size: 0.86rem;
+  font-size: 0.76rem;
   line-height: 1;
-  letter-spacing: 2px;
+  letter-spacing: 1.6px;
 }
 
 .hero-trust-copy strong {
   color: #111212;
-  font-size: clamp(0.94rem, 1vw, 1.04rem);
+  font-size: clamp(0.9rem, 0.92vw, 0.98rem);
   font-weight: 750;
   line-height: 1.12;
 }
@@ -947,6 +955,43 @@ a {
   font-size: 0.8rem;
   font-weight: 700;
   line-height: 1.1;
+}
+
+.client-logo-band.client-logo-band--hero {
+  flex: 1 1 auto;
+  min-width: 0;
+  width: auto;
+  margin: 0;
+}
+
+.client-marquee.hero-client-marquee {
+  min-height: 46px;
+  mask-image: linear-gradient(
+    to right,
+    transparent 0%,
+    #000000 10%,
+    #000000 90%,
+    transparent 100%
+  );
+  -webkit-mask-image: linear-gradient(
+    to right,
+    transparent 0%,
+    #000000 10%,
+    #000000 90%,
+    transparent 100%
+  );
+}
+
+.client-logo-band--hero .client-marquee-track {
+  gap: clamp(34px, 3.9vw, 54px);
+  animation-duration: 26s;
+}
+
+.client-logo-band--hero .client-logo {
+  max-width: 142px;
+  max-height: 34px;
+  filter: grayscale(1) brightness(0.52) contrast(1.05);
+  opacity: 0.55;
 }
 
 .hero-request {
@@ -2287,6 +2332,11 @@ a {
     gap: clamp(32px, 5vw, 58px);
   }
 
+  .hero-trust-row {
+    grid-template-columns: minmax(0, 1fr) minmax(370px, 440px);
+    gap: clamp(32px, 5vw, 58px);
+  }
+
   .hero-title {
     font-size: clamp(3.05rem, 5vw, 4.72rem);
   }
@@ -2370,9 +2420,24 @@ a {
     min-height: 540px;
   }
 
+  .hero-trust-row {
+    grid-template-columns: minmax(0, 1fr);
+    margin-top: 30px;
+  }
+
+  .hero-trust-left {
+    width: min(100%, 560px);
+    display: grid;
+    gap: 18px;
+  }
+
   .hero-trust-band {
-    margin-left: 0;
-    margin-right: auto;
+    width: 100%;
+    max-width: 320px;
+  }
+
+  .client-logo-band.client-logo-band--hero {
+    width: 100%;
   }
 
   .hero-line {
@@ -2702,14 +2767,21 @@ a {
     gap: 3px;
   }
 
-  .hero-trust-band {
+  .hero-trust-row {
     width: min(100%, 330px);
-    max-width: 330px;
+    margin-top: 24px;
+  }
+
+  .hero-trust-left {
+    width: 100%;
+    gap: 14px;
+  }
+
+  .hero-trust-band {
+    width: 100%;
+    max-width: 100%;
     align-items: center;
     gap: 12px;
-    margin-top: 24px;
-    border-radius: 18px;
-    padding: 11px 12px;
   }
 
   .hero-trust-avatar {
@@ -2724,6 +2796,40 @@ a {
 
   .hero-trust-copy small {
     font-size: 0.74rem;
+  }
+
+  .client-logo-band.client-logo-band--hero {
+    width: 100%;
+    max-width: 100%;
+  }
+
+  .client-marquee.hero-client-marquee {
+    min-height: 38px;
+    mask-image: linear-gradient(
+      to right,
+      transparent 0%,
+      #000000 14%,
+      #000000 86%,
+      transparent 100%
+    );
+    -webkit-mask-image: linear-gradient(
+      to right,
+      transparent 0%,
+      #000000 14%,
+      #000000 86%,
+      transparent 100%
+    );
+  }
+
+  .client-logo-band--hero .client-marquee-track {
+    gap: 32px;
+    animation-duration: 24s;
+  }
+
+  .client-logo-band--hero .client-logo {
+    max-width: 118px;
+    max-height: 28px;
+    opacity: 0.5;
   }
 
   .hero-line {

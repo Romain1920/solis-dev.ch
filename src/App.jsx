@@ -729,16 +729,17 @@ function HeroSplitContent() {
       <div className="hero-layout">
         <div className="hero-copy">
           <h1 id="hero-title" className="hero-title hero-title--split">
-            <span className="hero-line hero-reveal">Des sites et apps</span>
+            <span className="hero-line hero-reveal">Sites et apps mobiles</span>
             <span className="hero-line hero-reveal">
               pensés pour <br className="mobile-only" />
               générer
             </span>
-            <span className="hero-line hero-reveal">des résultats</span>
+            <span className="hero-line hero-reveal">des résultats.</span>
           </h1>
           <p className="hero-support hero-reveal">
-            Agence de développement sur mesure en Suisse romande pour sites web,
-            e-commerce et applications mobiles.
+            Agence de développement sur mesure pour sites web, e-commerce et
+            applications mobiles, pensée pour les PME, startups et boutiques en
+            ligne en Suisse romande.
           </p>
         </div>
 
@@ -747,7 +748,7 @@ function HeroSplitContent() {
         </div>
       </div>
 
-      <HeroTrustBand />
+      <HeroTrustRow />
     </>
   );
 }
@@ -1241,6 +1242,17 @@ function LeadChoiceStep({ title, options, value, onSelect, onBack, onNext }) {
   );
 }
 
+function HeroTrustRow() {
+  return (
+    <div className="hero-trust-row">
+      <div className="hero-trust-left">
+        <HeroTrustBand />
+        <ClientLogoMarquee variant="hero" />
+      </div>
+    </div>
+  );
+}
+
 function HeroTrustBand() {
   return (
     <div className="hero-trust-band" aria-label="Preuve sociale">
@@ -1641,21 +1653,24 @@ function MetricsSection() {
           </article>
         ))}
       </div>
-      <ClientLogoMarquee />
     </section>
   );
 }
 
-function ClientLogoMarquee() {
+function ClientLogoMarquee({ variant = "section" } = {}) {
   if (activeClientLogos.length === 0) {
     return null;
   }
 
   const marqueeLogos = [...activeClientLogos, ...activeClientLogos];
+  const isHeroVariant = variant === "hero";
 
   return (
-    <div className="client-logo-band" aria-label="Références clients">
-      <div className="client-marquee" aria-hidden="true">
+    <div
+      className={`client-logo-band client-logo-band--${variant}`}
+      aria-label={isHeroVariant ? "Références clients dans le hero" : "Références clients"}
+    >
+      <div className={`client-marquee${isHeroVariant ? " hero-client-marquee" : ""}`} aria-hidden="true">
         <div className="client-marquee-track">
           {marqueeLogos.map((client, index) => (
             <img
