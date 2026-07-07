@@ -1120,7 +1120,7 @@ function HeroLeadForm() {
           }`}
         >
           <div className="lead-step-heading lead-step-heading--reward">
-            <h3>Gagnez un bonus pour votre projet</h3>
+            <h3>Avant de remplir la demande, on vous propose de tenter de gagner un petit cadeau 🙂</h3>
           </div>
 
           <div
