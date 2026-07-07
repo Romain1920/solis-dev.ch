@@ -1360,10 +1360,9 @@ function HeroLeadForm() {
           <h2>Besoin de vous projeter&nbsp;?</h2>
           <p>
             Recevez une maquette sur mesure, offerte et sans engagement, pour imaginer
-            un site ou une application mobile sur mesure, sans template, pensé pour attirer
-            et convertir.
+            un site ou une app mobile pensée pour attirer et convertir.
           </p>
-          <small>Premier rendez-vous offert. Café compris&nbsp;☕</small>
+          <small>Premier rendez-vous également offert. Café compris&nbsp;☕</small>
         </div>
       ) : null}
 
