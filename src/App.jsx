@@ -265,12 +265,21 @@ const leadRewardOptions = [
   { label: "Nom de domaine offert", wheelLabel: "Domaine", weight: 80, tone: "blue" },
   { label: "1 heure de formation offerte", wheelLabel: "Formation", weight: 20, tone: "orange" },
 ];
+
+const leadRewardWheelOptions = [
+  { label: "Nom de domaine offert", wheelLabel: "Domaine", tone: "blue" },
+  { label: "Pas de chance", wheelLabel: "Rien", tone: "neutral" },
+  { label: "1 heure de formation offerte", wheelLabel: "Formation", tone: "orange" },
+  { label: "1 mois d’hébergement offert", wheelLabel: "Héberg.", tone: "soft" },
+  { label: "Surprise", wheelLabel: "Surprise", tone: "warm" },
+];
+
 const leadRewardWheelTurns = 5;
 const leadRewardSpinDuration = 2.9;
-const leadRewardSegmentAngle = 360 / leadRewardOptions.length;
+const leadRewardSegmentAngle = 360 / leadRewardWheelOptions.length;
 const leadRewardWheelCenter = 50;
 const leadRewardWheelRadius = 48;
-const leadRewardWheelLabelRadius = 29;
+const leadRewardWheelLabelRadius = 34;
 const leadRewardParticles = [
   { x: -48, y: -26, delay: "0ms", size: 6, tone: "blue" },
   { x: -34, y: -46, delay: "70ms", size: 4, tone: "cyan" },
@@ -620,7 +629,12 @@ const pickWeightedReward = () => {
 
 const getRewardIndexByLabel = (label) =>
   Math.max(
-    leadRewardOptions.findIndex((option) => option.label === label),
+    leadRewardWheelOptions.findIndex(
+      (option) =>
+        option.wheelLabel ===
+        (leadRewardOptions.find((rewardOption) => rewardOption.label === label)?.wheelLabel ??
+          leadRewardWheelOptions[0].wheelLabel)
+    ),
     0
   );
 
@@ -932,6 +946,7 @@ function HeroLeadForm() {
   const branchStep = isMobileProject ? "appPlatform" : "websiteType";
   const branchValue = isMobileProject ? leadData.appPlatform : leadData.websiteType;
   const timelineOptions = isMobileProject ? mobileTimelineOptions : websiteTimelineOptions;
+  const isRewardDrawMode = step === "reward" && hasSpun;
   const progressByStep = {
     reward: hasSpun ? 18 : 8,
     email: 26,
@@ -1320,23 +1335,28 @@ function HeroLeadForm() {
   };
 
   return (
-    <div className="hero-form-card" ref={formRef}>
-      <div className="hero-form-intro">
-        <h2>Besoin de vous projeter&nbsp;?</h2>
-        <p>
-          Recevez une maquette sur mesure, offerte et sans engagement, pour imaginer
-          un site ou une application mobile sur mesure, sans template, pensé pour attirer
-          et convertir.
-        </p>
-        <small>Premier rendez-vous offert. Café compris&nbsp;☕</small>
-      </div>
+    <div className={`hero-form-card${isRewardDrawMode ? " is-reward-draw-mode" : ""}`} ref={formRef}>
+      {!isRewardDrawMode ? (
+        <>
+          <div className="hero-form-intro">
+            <h2>Besoin de vous projeter&nbsp;?</h2>
+            <p>
+              Recevez une maquette sur mesure, offerte et sans engagement, pour imaginer
+              un site ou une application mobile sur mesure, sans template, pensé pour attirer
+              et convertir.
+            </p>
+            <small>Premier rendez-vous offert. Café compris&nbsp;☕</small>
+          </div>
 
-      <div className="lead-progress" aria-hidden="true">
-        <span style={{ width: `${progress}%` }} />
-      </div>
+          <div className="lead-progress" aria-hidden="true">
+            <span style={{ width: `${progress}%` }} />
+          </div>
+        </>
+      ) : null}
 
       <AnimatePresence mode="wait" initial={false}>
         <motion.div
+          className="lead-step-frame"
           key={step}
           initial={reducedMotion ? false : { opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
@@ -1379,7 +1399,7 @@ function LeadRewardWheel({ wheelRef, isSpinning, showCelebration }) {
       <div className="lead-roulette-pointer" />
       <div className="lead-roulette-wheel" ref={wheelRef}>
         <svg viewBox="0 0 100 100" role="presentation" focusable="false">
-          {leadRewardOptions.map((option, index) => {
+          {leadRewardWheelOptions.map((option, index) => {
             const labelPoint = getRewardWheelLabelPoint(index);
             const labelRotation = getRewardWheelLabelRotation(index);
 
@@ -1398,8 +1418,8 @@ function LeadRewardWheel({ wheelRef, isSpinning, showCelebration }) {
             );
           })}
           <circle className="lead-roulette-rim" cx="50" cy="50" r="48" />
-          <circle className="lead-roulette-center" cx="50" cy="50" r="16" />
-          <circle className="lead-roulette-pin" cx="50" cy="50" r="4.5" />
+          <circle className="lead-roulette-center" cx="50" cy="50" r="10.8" />
+          <circle className="lead-roulette-pin" cx="50" cy="50" r="4.2" />
         </svg>
       </div>
       <div className={`lead-roulette-glow${isSpinning ? " is-active" : ""}`} />
