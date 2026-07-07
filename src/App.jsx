@@ -496,6 +496,35 @@ const preloadImage = (src, priority = "auto") => {
   return preload;
 };
 
+const waitForImageElementDecode = (image) => {
+  if (!image || typeof window === "undefined") {
+    return Promise.resolve();
+  }
+
+  const decodeImage = () => {
+    if (typeof image.decode !== "function") {
+      return Promise.resolve();
+    }
+
+    return image.decode().catch(() => undefined);
+  };
+
+  if (image.complete) {
+    return decodeImage();
+  }
+
+  return new Promise((resolve) => {
+    const finish = () => {
+      image.removeEventListener("load", finish);
+      image.removeEventListener("error", finish);
+      decodeImage().finally(resolve);
+    };
+
+    image.addEventListener("load", finish, { once: true });
+    image.addEventListener("error", finish, { once: true });
+  });
+};
+
 const getProjectPreviewSources = (project) =>
   [project?.src, project?.mobileSrc].filter(Boolean);
 
@@ -2464,6 +2493,7 @@ function PortfolioSection() {
           ].filter(Boolean);
 
           if (reduceMotion || !desktopPortfolio) {
+            root.classList.add("portfolio-section--entry-ready");
             gsap.set(revealTargets, {
               autoAlpha: 1,
               x: 0,
@@ -2475,89 +2505,110 @@ function PortfolioSection() {
             return undefined;
           }
 
-          const timeline = gsap.timeline({
-            defaults: { ease: "power3.out" },
-            onComplete: () => {
-              gsap.set(revealTargets, { clearProps: "transform,filter" });
-            },
-          });
-
           if (categorySelector) {
-            timeline.fromTo(
-              categorySelector,
-              {
-                autoAlpha: 0,
-                y: 10,
-                filter: "blur(5px)",
-              },
-              {
-                autoAlpha: 1,
-                y: 0,
-                filter: "blur(0px)",
-                duration: 0.62,
-              },
-              0
-            );
+            gsap.set(categorySelector, {
+              autoAlpha: 0,
+              y: 10,
+              filter: "blur(5px)",
+            });
           }
-
-          if (categoryRevealItems.length > 0) {
-            timeline.fromTo(
-              categoryRevealItems,
-              {
-                autoAlpha: 0,
-                y: 6,
-                scale: 0.99,
-              },
-              {
-                autoAlpha: 1,
-                y: 0,
-                scale: 1,
-                duration: 0.62,
-              },
-              0.04
-            );
-          }
-
+          gsap.set(categoryRevealItems, {
+            autoAlpha: 0,
+            y: 6,
+            scale: 0.99,
+          });
           if (listColumn) {
-            timeline.fromTo(
-              listColumn,
-              {
-                autoAlpha: 0,
-                x: -18,
-                filter: "blur(7px)",
-              },
-              {
-                autoAlpha: 1,
-                x: 0,
-                filter: "blur(0px)",
-                duration: 0.68,
-              },
-              0.18
-            );
+            gsap.set(listColumn, {
+              autoAlpha: 0,
+              x: -18,
+              filter: "blur(7px)",
+            });
+          }
+          if (displayColumn) {
+            gsap.set(displayColumn, {
+              autoAlpha: 0,
+              y: 24,
+              scale: 0.985,
+              filter: "blur(9px)",
+            });
           }
 
-          if (displayColumn) {
-            timeline.fromTo(
-              displayColumn,
-              {
-                autoAlpha: 0,
-                y: 24,
-                scale: 0.985,
-                filter: "blur(9px)",
+          let timeline;
+          let isCancelled = false;
+
+          const playReveal = () => {
+            if (isCancelled) {
+              return;
+            }
+
+            root.classList.add("portfolio-section--entry-ready");
+
+            timeline = gsap.timeline({
+              defaults: { ease: "power3.out" },
+              onComplete: () => {
+                gsap.set(revealTargets, { clearProps: "transform,filter" });
               },
-              {
-                autoAlpha: 1,
-                y: 0,
-                scale: 1,
-                filter: "blur(0px)",
-                duration: 0.78,
-              },
-              0.24
-            );
-          }
+            });
+
+            if (categorySelector) {
+              timeline.to(
+                categorySelector,
+                {
+                  autoAlpha: 1,
+                  y: 0,
+                  filter: "blur(0px)",
+                  duration: 0.62,
+                },
+                0
+              );
+            }
+
+            if (categoryRevealItems.length > 0) {
+              timeline.to(
+                categoryRevealItems,
+                {
+                  autoAlpha: 1,
+                  y: 0,
+                  scale: 1,
+                  duration: 0.62,
+                },
+                0.04
+              );
+            }
+
+            if (listColumn) {
+              timeline.to(
+                listColumn,
+                {
+                  autoAlpha: 1,
+                  x: 0,
+                  filter: "blur(0px)",
+                  duration: 0.68,
+                },
+                0.18
+              );
+            }
+
+            if (displayColumn) {
+              timeline.to(
+                displayColumn,
+                {
+                  autoAlpha: 1,
+                  y: 0,
+                  scale: 1,
+                  filter: "blur(0px)",
+                  duration: 0.78,
+                },
+                0.24
+              );
+            }
+          };
+
+          Promise.all(categoryDevices.map(waitForImageElementDecode)).then(playReveal);
 
           return () => {
-            timeline.kill();
+            isCancelled = true;
+            timeline?.kill();
           };
         }
       );
