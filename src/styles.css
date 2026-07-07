@@ -618,6 +618,7 @@ a {
 .lead-progress {
   width: 100%;
   height: 3px;
+  flex: 0 0 3px;
   margin: 26px 0 30px;
   overflow: hidden;
   border-radius: 999px;
