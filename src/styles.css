@@ -1985,8 +1985,9 @@ a {
   flex-direction: column;
   align-items: center;
   justify-content: center;
+  justify-content: safe center;
   gap: clamp(8px, 1.4svh, 16px);
-  padding: clamp(70px, 9svh, 104px) 0 clamp(24px, 4svh, 44px);
+  padding: clamp(108px, 13svh, 124px) 0 clamp(24px, 4svh, 44px);
 }
 
 .portfolio-category-selector {
@@ -2994,7 +2995,7 @@ a {
     min-height: 100svh;
     height: 100svh;
     gap: 8px;
-    padding: 66px 0 28px;
+    padding: clamp(96px, 12svh, 110px) 0 28px;
   }
 
   .portfolio-category-selector {
@@ -3653,7 +3654,7 @@ a {
     min-height: auto;
     height: auto;
     gap: 20px;
-    padding: 68px 0 86px;
+    padding: clamp(92px, 12svh, 104px) 0 86px;
   }
 
   .portfolio-category-selector {
