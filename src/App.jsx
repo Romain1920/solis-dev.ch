@@ -265,7 +265,7 @@ const leadRewardOptions = [
   { label: "Nom de domaine offert", wheelLabel: "Domaine", weight: 50, tone: "blue" },
   { label: "Pas de chance", wheelLabel: "Rien", weight: 35, tone: "neutral" },
   { label: "1 heure de support offerte", wheelLabel: "Support", weight: 5, tone: "orange" },
-  { label: "1 mois d’hébergement offert", wheelLabel: "Héberg.", weight: 5, tone: "soft" },
+  { label: "1 mois d’hébergement offert", wheelLabel: "Hébergement", weight: 5, tone: "soft" },
   { label: "Surprise", wheelLabel: "Surprise", weight: 5, tone: "warm" },
 ];
 const leadRewardWheelTurns = 5;
@@ -648,6 +648,21 @@ const getRewardWheelSegmentPath = (index) => {
 
 const getRewardWheelLabelPoint = (index) =>
   getRewardWheelPoint(getRewardSegmentCenterAngle(index), leadRewardWheelLabelRadius);
+
+const getRewardWheelLabelRotation = (index) => {
+  const radialRotation = getRewardSegmentCenterAngle(index) - 90;
+  const normalizedRotation = ((radialRotation + 180) % 360) - 180;
+
+  if (normalizedRotation > 90) {
+    return normalizedRotation - 180;
+  }
+
+  if (normalizedRotation < -90) {
+    return normalizedRotation + 180;
+  }
+
+  return normalizedRotation;
+};
 
 const isValidLeadEmail = (email) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim());
 
@@ -1061,11 +1076,14 @@ function HeroLeadForm() {
 
   const renderStep = () => {
     if (step === "reward") {
+      const isRewardActionHidden = hasSpun && !reward;
+      const rewardActionLabel =
+        reward || isRewardActionHidden ? "Continuer ma demande" : "Tenter ma chance";
+
       return (
         <div className="lead-step">
-          <div className="lead-step-heading">
-            <h3>Débloquez un bonus pour votre projet</h3>
-            <p>Votre bonus sera ajouté à votre demande.</p>
+          <div className="lead-step-heading lead-step-heading--reward">
+            <h3>Tentez de gagner un bonus</h3>
           </div>
 
           <div
@@ -1091,16 +1109,16 @@ function HeroLeadForm() {
             </motion.div>
           </div>
 
-          <div className="lead-actions">
-            {!hasSpun ? (
-              <button className="lead-primary-button" type="button" onClick={handleRewardSpin}>
-                Tenter ma chance
-              </button>
-            ) : reward ? (
-              <button className="lead-primary-button" type="button" onClick={handleRewardContinue}>
-                Continuer ma demande
-              </button>
-            ) : null}
+          <div className="lead-actions lead-actions--reward">
+            <button
+              className={`lead-primary-button${isRewardActionHidden ? " is-hidden" : ""}`}
+              type="button"
+              onClick={reward ? handleRewardContinue : handleRewardSpin}
+              aria-hidden={isRewardActionHidden ? "true" : undefined}
+              tabIndex={isRewardActionHidden ? -1 : undefined}
+            >
+              {rewardActionLabel}
+            </button>
           </div>
         </div>
       );
@@ -1323,21 +1341,23 @@ function LeadRewardWheel({ wheelRef, isSpinning }) {
         <svg viewBox="0 0 100 100" role="presentation" focusable="false">
           {leadRewardOptions.map((option, index) => {
             const labelPoint = getRewardWheelLabelPoint(index);
+            const labelRotation = getRewardWheelLabelRotation(index);
 
             return (
               <g className={`lead-roulette-segment lead-roulette-segment--${option.tone}`} key={option.label}>
                 <path d={getRewardWheelSegmentPath(index)} />
-                <text
-                  x={labelPoint.x}
-                  y={labelPoint.y}
-                  textAnchor="middle"
-                  dominantBaseline="middle"
+                <g
+                  className="lead-roulette-label"
+                  transform={`translate(${labelPoint.x.toFixed(3)} ${labelPoint.y.toFixed(3)}) rotate(${labelRotation.toFixed(3)})`}
                 >
-                  {option.wheelLabel}
-                </text>
+                  <text textAnchor="middle" dominantBaseline="middle">
+                    {option.wheelLabel}
+                  </text>
+                </g>
               </g>
             );
           })}
+          <circle className="lead-roulette-rim" cx="50" cy="50" r="48" />
           <circle className="lead-roulette-center" cx="50" cy="50" r="16" />
           <circle className="lead-roulette-pin" cx="50" cy="50" r="4.5" />
         </svg>
