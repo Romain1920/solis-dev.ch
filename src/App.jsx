@@ -1351,7 +1351,7 @@ function HeroLeadForm() {
     if (step === "reward") {
       const isRewardActionHidden = hasSpun && !reward;
       const rewardActionLabel =
-        reward || isRewardActionHidden ? "Continuer avec mon bonus" : "Tenter ma chance";
+        reward || isRewardActionHidden ? "Continuer ma demande" : "Tenter ma chance";
 
       return (
         <div
@@ -1360,7 +1360,9 @@ function HeroLeadForm() {
           }`}
         >
           <div className="lead-step-heading lead-step-heading--reward">
-            <h3>Avant d&apos;envoyer votre demande, on vous offre une chance de recevoir un bonus pour votre projet 🙂</h3>
+            <h3>
+              Et parce qu&apos;on aime bien les petits plus, tentez de gagner un bonus pour votre projet 🙂 !
+            </h3>
           </div>
 
           <div
@@ -1597,11 +1599,11 @@ function HeroLeadForm() {
     >
       {shouldShowFormIntro ? (
         <div className="hero-form-intro">
-          <h2>Besoin de vous projeter&nbsp;?</h2>
+          <h2>Remplissez le formulaire pour recevoir votre maquette offerte</h2>
           <p>
-            Recevez une maquette sur mesure, offerte et sans engagement.
+            Recevez un premier aperçu sur mesure pour votre site ou votre app mobile,
+            sans engagement.
           </p>
-          <small>Premier rendez-vous également offert. Café compris&nbsp;☕</small>
         </div>
       ) : null}
 
