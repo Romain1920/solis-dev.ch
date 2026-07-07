@@ -880,26 +880,24 @@ a {
 
 .hero-trust-row {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(390px, 470px);
+  grid-template-columns: minmax(0, 1fr) minmax(250px, 340px) max-content;
   align-items: center;
-  gap: clamp(42px, 6vw, 86px);
+  column-gap: clamp(22px, 3vw, 38px);
   margin-top: clamp(34px, 4.2vw, 54px);
 }
 
-.hero-trust-left {
+.hero-trust-spacer {
   min-width: 0;
-  display: flex;
-  align-items: center;
-  gap: clamp(26px, 3.4vw, 46px);
 }
 
 .hero-trust-band {
   flex: 0 0 auto;
-  width: min(292px, 40%);
-  max-width: 292px;
+  width: max-content;
+  max-width: none;
   display: flex;
   align-items: center;
   gap: 12px;
+  justify-self: end;
 }
 
 .hero-trust-avatars {
@@ -948,6 +946,7 @@ a {
   font-size: clamp(0.9rem, 0.92vw, 0.98rem);
   font-weight: 750;
   line-height: 1.12;
+  white-space: nowrap;
 }
 
 .hero-trust-copy small {
@@ -958,10 +957,10 @@ a {
 }
 
 .client-logo-band.client-logo-band--hero {
-  flex: 1 1 auto;
   min-width: 0;
-  width: auto;
+  width: 100%;
   margin: 0;
+  justify-self: stretch;
 }
 
 .client-marquee.hero-client-marquee {
@@ -2333,8 +2332,8 @@ a {
   }
 
   .hero-trust-row {
-    grid-template-columns: minmax(0, 1fr) minmax(370px, 440px);
-    gap: clamp(32px, 5vw, 58px);
+    grid-template-columns: minmax(0, 1fr) minmax(220px, 300px) max-content;
+    column-gap: clamp(20px, 3vw, 32px);
   }
 
   .hero-title {
@@ -2425,19 +2424,31 @@ a {
     margin-top: 30px;
   }
 
-  .hero-trust-left {
+  .hero-trust-spacer {
+    display: none;
+  }
+
+  .hero-trust-row > .client-logo-band--hero {
+    order: 2;
+  }
+
+  .hero-trust-row > .hero-trust-band {
+    order: 1;
+  }
+
+  .client-logo-band.client-logo-band--hero,
+  .hero-trust-band {
     width: min(100%, 560px);
-    display: grid;
-    gap: 18px;
   }
 
   .hero-trust-band {
-    width: 100%;
     max-width: 320px;
+    justify-self: start;
   }
 
   .client-logo-band.client-logo-band--hero {
-    width: 100%;
+    justify-self: start;
+    margin-top: 18px;
   }
 
   .hero-line {
@@ -2772,11 +2783,6 @@ a {
     margin-top: 24px;
   }
 
-  .hero-trust-left {
-    width: 100%;
-    gap: 14px;
-  }
-
   .hero-trust-band {
     width: 100%;
     max-width: 100%;
@@ -2792,6 +2798,7 @@ a {
   .hero-trust-copy strong {
     font-size: 0.88rem;
     overflow-wrap: anywhere;
+    white-space: normal;
   }
 
   .hero-trust-copy small {

@@ -737,8 +737,9 @@ function HeroSplitContent() {
             <span className="hero-line hero-reveal">des résultats.</span>
           </h1>
           <p className="hero-support hero-reveal">
-            Agence de développement sur mesure pour sites web, e-commerce et
-            applications mobiles, pensée pour les PME, startups et boutiques en
+            Agence de développement sur mesure pour la création de sites web et
+            de boutiques e-commerce, ainsi que pour le développement
+            d’applications mobiles pensées pour les PME, startups et boutiques en
             ligne en Suisse romande.
           </p>
         </div>
@@ -1245,10 +1246,9 @@ function LeadChoiceStep({ title, options, value, onSelect, onBack, onNext }) {
 function HeroTrustRow() {
   return (
     <div className="hero-trust-row">
-      <div className="hero-trust-left">
-        <HeroTrustBand />
-        <ClientLogoMarquee variant="hero" />
-      </div>
+      <span className="hero-trust-spacer" aria-hidden="true" />
+      <ClientLogoMarquee variant="hero" />
+      <HeroTrustBand />
     </div>
   );
 }
