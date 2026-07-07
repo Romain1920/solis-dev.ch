@@ -279,20 +279,24 @@ const leadRewardSpinDuration = 2.9;
 const leadRewardSegmentAngle = 360 / leadRewardWheelOptions.length;
 const leadRewardWheelCenter = 50;
 const leadRewardWheelRadius = 48;
-const leadRewardWheelLabelRadius = 34;
+const leadRewardWheelLabelRadius = 30.5;
 const leadRewardParticles = [
-  { x: -48, y: -26, delay: "0ms", size: 6, tone: "blue" },
-  { x: -34, y: -46, delay: "70ms", size: 4, tone: "cyan" },
-  { x: -18, y: -34, delay: "110ms", size: 5, tone: "orange" },
-  { x: 4, y: -52, delay: "30ms", size: 6, tone: "peach" },
-  { x: 24, y: -35, delay: "90ms", size: 4, tone: "blue" },
-  { x: 42, y: -20, delay: "140ms", size: 5, tone: "cyan" },
-  { x: -52, y: 4, delay: "120ms", size: 4, tone: "peach" },
-  { x: -30, y: 22, delay: "40ms", size: 5, tone: "orange" },
-  { x: -8, y: 34, delay: "150ms", size: 4, tone: "blue" },
-  { x: 16, y: 28, delay: "80ms", size: 5, tone: "peach" },
-  { x: 36, y: 12, delay: "20ms", size: 4, tone: "orange" },
-  { x: 52, y: 0, delay: "130ms", size: 6, tone: "cyan" },
+  { x: -64, y: -34, delay: "0ms", size: 7, tone: "blue" },
+  { x: -48, y: -60, delay: "70ms", size: 5, tone: "cyan" },
+  { x: -24, y: -48, delay: "110ms", size: 6, tone: "orange" },
+  { x: 4, y: -70, delay: "30ms", size: 7, tone: "peach" },
+  { x: 30, y: -52, delay: "90ms", size: 5, tone: "blue" },
+  { x: 58, y: -28, delay: "140ms", size: 6, tone: "cyan" },
+  { x: -72, y: 2, delay: "120ms", size: 5, tone: "peach" },
+  { x: -48, y: 34, delay: "40ms", size: 6, tone: "orange" },
+  { x: -18, y: 54, delay: "150ms", size: 5, tone: "blue" },
+  { x: 18, y: 48, delay: "80ms", size: 6, tone: "peach" },
+  { x: 50, y: 26, delay: "20ms", size: 5, tone: "orange" },
+  { x: 72, y: 0, delay: "130ms", size: 7, tone: "cyan" },
+  { x: -56, y: 62, delay: "170ms", size: 4, tone: "cyan" },
+  { x: 60, y: 58, delay: "155ms", size: 4, tone: "blue" },
+  { x: -74, y: -58, delay: "190ms", size: 4, tone: "orange" },
+  { x: 76, y: -50, delay: "185ms", size: 4, tone: "peach" },
 ];
 const leadChoiceAutoAdvanceDelayMs = 140;
 
@@ -1129,20 +1133,27 @@ function HeroLeadForm() {
               isSpinning={isSpinning}
               showCelebration={Boolean(reward) && !reducedMotion}
             />
-            <motion.div
-              className="lead-reward-result"
-              key={reward || pendingReward || "lead-reward-placeholder"}
-              initial={reducedMotion ? false : { opacity: 0, y: 5 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={
-                reducedMotion
-                  ? instantTransition
-                  : { duration: 0.22, ease: [0.4, 0, 0.2, 1] }
-              }
-            >
-              <span>{reward ? "Bonus débloqué" : isSpinning ? "La roue tourne" : "À vous de jouer"}</span>
-              <strong>{reward || (isSpinning ? "Sélection en cours..." : "Votre bonus")}</strong>
-            </motion.div>
+            {hasSpun || reward ? (
+              <motion.div
+                className={`lead-reward-result${reward ? "" : " is-empty"}`}
+                key={reward || pendingReward || "lead-reward-placeholder"}
+                initial={reducedMotion || !reward ? false : { opacity: 0, y: 5 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={
+                  reducedMotion || !reward
+                    ? instantTransition
+                    : { duration: 0.22, ease: [0.4, 0, 0.2, 1] }
+                }
+                aria-hidden={reward ? undefined : "true"}
+              >
+                {reward ? (
+                  <>
+                    <span>Bonus débloqué</span>
+                    <strong>{reward}</strong>
+                  </>
+                ) : null}
+              </motion.div>
+            ) : null}
           </div>
 
           <div className="lead-actions lead-actions--reward">
@@ -1418,8 +1429,8 @@ function LeadRewardWheel({ wheelRef, isSpinning, showCelebration }) {
             );
           })}
           <circle className="lead-roulette-rim" cx="50" cy="50" r="48" />
-          <circle className="lead-roulette-center" cx="50" cy="50" r="10.8" />
-          <circle className="lead-roulette-pin" cx="50" cy="50" r="4.2" />
+          <circle className="lead-roulette-center" cx="50" cy="50" r="8.8" />
+          <circle className="lead-roulette-pin" cx="50" cy="50" r="3.7" />
         </svg>
       </div>
       <div className={`lead-roulette-glow${isSpinning ? " is-active" : ""}`} />
