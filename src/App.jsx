@@ -269,11 +269,25 @@ const leadRewardOptions = [
   { label: "Surprise", wheelLabel: "Surprise", weight: 5, tone: "warm" },
 ];
 const leadRewardWheelTurns = 5;
-const leadRewardSpinDuration = 2.6;
+const leadRewardSpinDuration = 2.9;
 const leadRewardSegmentAngle = 360 / leadRewardOptions.length;
 const leadRewardWheelCenter = 50;
 const leadRewardWheelRadius = 48;
 const leadRewardWheelLabelRadius = 29;
+const leadRewardParticles = [
+  { x: -48, y: -26, delay: "0ms", size: 6, tone: "blue" },
+  { x: -34, y: -46, delay: "70ms", size: 4, tone: "cyan" },
+  { x: -18, y: -34, delay: "110ms", size: 5, tone: "orange" },
+  { x: 4, y: -52, delay: "30ms", size: 6, tone: "peach" },
+  { x: 24, y: -35, delay: "90ms", size: 4, tone: "blue" },
+  { x: 42, y: -20, delay: "140ms", size: 5, tone: "cyan" },
+  { x: -52, y: 4, delay: "120ms", size: 4, tone: "peach" },
+  { x: -30, y: 22, delay: "40ms", size: 5, tone: "orange" },
+  { x: -8, y: 34, delay: "150ms", size: 4, tone: "blue" },
+  { x: 16, y: 28, delay: "80ms", size: 5, tone: "peach" },
+  { x: 36, y: 12, delay: "20ms", size: 4, tone: "orange" },
+  { x: 52, y: 0, delay: "130ms", size: 6, tone: "cyan" },
+];
 const leadChoiceAutoAdvanceDelayMs = 140;
 
 const leadProjectTypeOptions = [
@@ -1081,18 +1095,28 @@ function HeroLeadForm() {
         reward || isRewardActionHidden ? "Continuer ma demande" : "Tenter ma chance";
 
       return (
-        <div className="lead-step">
+        <div
+          className={`lead-step lead-step--reward${hasSpun ? " is-playing" : ""}${
+            reward ? " is-complete" : ""
+          }`}
+        >
           <div className="lead-step-heading lead-step-heading--reward">
-            <h3>Tentez de gagner un bonus</h3>
+            <h3>Gagnez un bonus pour votre projet</h3>
           </div>
 
           <div
-            className={`lead-reward-panel${reward ? " is-revealed" : ""}${
+            className={`lead-reward-stage${hasSpun ? " is-expanded" : ""}${
+              reward ? " is-revealed" : ""
+            }${
               isSpinning ? " is-spinning" : ""
             }`}
             aria-live="polite"
           >
-            <LeadRewardWheel wheelRef={rewardWheelRef} isSpinning={isSpinning} />
+            <LeadRewardWheel
+              wheelRef={rewardWheelRef}
+              isSpinning={isSpinning}
+              showCelebration={Boolean(reward) && !reducedMotion}
+            />
             <motion.div
               className="lead-reward-result"
               key={reward || pendingReward || "lead-reward-placeholder"}
@@ -1333,7 +1357,26 @@ function HeroLeadForm() {
   );
 }
 
-function LeadRewardWheel({ wheelRef, isSpinning }) {
+function LeadRewardCelebration({ isVisible }) {
+  return (
+    <div className={`lead-reward-celebration${isVisible ? " is-visible" : ""}`} aria-hidden="true">
+      {leadRewardParticles.map((particle, index) => (
+        <span
+          className={`lead-reward-particle lead-reward-particle--${particle.tone}`}
+          key={`${particle.tone}-${index}`}
+          style={{
+            "--particle-x": `${particle.x}px`,
+            "--particle-y": `${particle.y}px`,
+            "--particle-delay": particle.delay,
+            "--particle-size": `${particle.size}px`,
+          }}
+        />
+      ))}
+    </div>
+  );
+}
+
+function LeadRewardWheel({ wheelRef, isSpinning, showCelebration }) {
   return (
     <div className="lead-roulette" aria-hidden="true">
       <div className="lead-roulette-pointer" />
@@ -1363,6 +1406,7 @@ function LeadRewardWheel({ wheelRef, isSpinning }) {
         </svg>
       </div>
       <div className={`lead-roulette-glow${isSpinning ? " is-active" : ""}`} />
+      <LeadRewardCelebration isVisible={showCelebration} />
     </div>
   );
 }
