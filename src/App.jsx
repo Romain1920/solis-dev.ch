@@ -1,10 +1,10 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { flushSync } from "react-dom";
 import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import ReactLenis from "lenis/react";
+import ReactLenis, { useLenis } from "lenis/react";
 import aymericPortrait from "../assets/team/aymeric-sarrasin.jpg";
 import iphoneFrameImage from "../assets/iphone-17-black-portrait.png";
 import lyndonPortrait from "../assets/team/lyndon-vouilloz.jpg";
@@ -607,12 +607,13 @@ const isRoutePath = (pathname) => {
 
 const getCurrentLocationState = () => {
   if (typeof window === "undefined") {
-    return { path: "/", hash: "" };
+    return { path: "/", hash: "", navigationKey: 0 };
   }
 
   return {
     path: normalizeRoutePath(window.location.pathname),
     hash: window.location.hash,
+    navigationKey: 0,
   };
 };
 
@@ -640,7 +641,10 @@ function usePageLocation() {
 
   useEffect(() => {
     const handleLocationChange = () => {
-      setLocationState(getCurrentLocationState());
+      setLocationState((currentLocationState) => ({
+        ...getCurrentLocationState(),
+        navigationKey: currentLocationState.navigationKey + 1,
+      }));
     };
 
     window.addEventListener("popstate", handleLocationChange);
@@ -655,8 +659,31 @@ function usePageLocation() {
   return locationState;
 }
 
-function useRouteScroll(path, hash) {
+function useManualScrollRestoration() {
   useEffect(() => {
+    if (typeof window === "undefined") {
+      return undefined;
+    }
+
+    const supportsScrollRestoration = "scrollRestoration" in window.history;
+
+    if (!supportsScrollRestoration) {
+      return undefined;
+    }
+
+    const previousScrollRestoration = window.history.scrollRestoration;
+    window.history.scrollRestoration = "manual";
+
+    return () => {
+      window.history.scrollRestoration = previousScrollRestoration;
+    };
+  }, []);
+}
+
+function useRouteScroll(path, hash, navigationKey) {
+  const lenis = useLenis();
+
+  useLayoutEffect(() => {
     if (typeof window === "undefined") {
       return undefined;
     }
@@ -664,13 +691,27 @@ function useRouteScroll(path, hash) {
     const frame = window.requestAnimationFrame(() => {
       const targetId = hash ? decodeURIComponent(hash.replace(/^#/, "")) : "";
       const target = targetId ? document.getElementById(targetId) : null;
+      const prefersReducedMotion = getPrefersReducedMotion();
+
+      lenis?.resize();
 
       if (target) {
-        target.scrollIntoView({
-          block: "start",
-          behavior: getPrefersReducedMotion() ? "auto" : "smooth",
-        });
+        if (lenis) {
+          lenis.scrollTo(target, {
+            immediate: prefersReducedMotion,
+            force: true,
+          });
+        } else {
+          target.scrollIntoView({
+            block: "start",
+            behavior: prefersReducedMotion ? "auto" : "smooth",
+          });
+        }
       } else {
+        lenis?.scrollTo(0, {
+          immediate: true,
+          force: true,
+        });
         window.scrollTo({ top: 0, behavior: "auto" });
       }
 
@@ -678,13 +719,14 @@ function useRouteScroll(path, hash) {
     });
 
     return () => window.cancelAnimationFrame(frame);
-  }, [hash, path]);
+  }, [hash, lenis, navigationKey, path]);
 }
 
 function App() {
-  const { path, hash } = usePageLocation();
+  const { path, hash, navigationKey } = usePageLocation();
 
-  useRouteScroll(path, hash);
+  useManualScrollRestoration();
+  useRouteScroll(path, hash, navigationKey);
 
   return (
     <ReactLenis root options={lenisOptions}>
