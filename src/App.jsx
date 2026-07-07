@@ -22,20 +22,50 @@ const linkedInHref = "https://www.linkedin.com/company/solis-d%C3%A9veloppement-
 
 const homeMenuItems = [
   {
-    href: "#equipe",
-    label: "L’équipe",
+    href: "/#accueil",
+    label: "Introduction",
   },
   {
-    href: "#projets",
-    label: "Le Portfolio",
+    href: "/#kpis",
+    label: "Chiffres clés",
+  },
+  {
+    href: "/#contact",
+    label: "Contact",
   },
 ];
 
 const serviceNavItems = [
-  { href: "#projets", label: "Sites internet sur mesure" },
-  { href: "#projets", label: "Applications mobile" },
-  { href: "#projets", label: "Logiciels métier" },
+  { href: "/services#site-internet-sur-mesure", label: "Site internet sur mesure" },
+  { href: "/services#application-mobile", label: "Application mobile" },
+  { href: "/services#logiciels-metiers", label: "Logiciels métiers" },
 ];
+
+const serviceItems = [
+  {
+    id: "site-internet-sur-mesure",
+    eyebrow: "Service 01",
+    title: "Site internet sur mesure",
+    description:
+      "Sites vitrines, e-commerce et plateformes web conçus autour de votre marque, de vos contenus et de vos objectifs commerciaux.",
+  },
+  {
+    id: "application-mobile",
+    eyebrow: "Service 02",
+    title: "Application mobile",
+    description:
+      "Applications iOS et Android pensées pour créer une expérience claire, utile et durable entre votre entreprise et vos utilisateurs.",
+  },
+  {
+    id: "logiciels-metiers",
+    eyebrow: "Service 03",
+    title: "Logiciels métiers",
+    description:
+      "Outils internes, tableaux de bord et plateformes métier développés pour simplifier vos processus et fiabiliser vos opérations.",
+  },
+];
+
+const routePaths = new Set(["/", "/services", "/portfolio", "/equipe"]);
 
 const screenshotIntervalMs = 1500;
 const ENABLE_NEW_HERO_FORM = true;
@@ -560,22 +590,109 @@ const techLogos = [
   },
 ];
 
+const normalizeRoutePath = (pathname) => {
+  const normalizedPath = pathname.replace(/\/+$/, "") || "/";
+
+  return routePaths.has(normalizedPath) ? normalizedPath : "/";
+};
+
+const isRoutePath = (pathname) => {
+  const normalizedPath = pathname.replace(/\/+$/, "") || "/";
+
+  return routePaths.has(normalizedPath);
+};
+
+const getCurrentLocationState = () => {
+  if (typeof window === "undefined") {
+    return { path: "/", hash: "" };
+  }
+
+  return {
+    path: normalizeRoutePath(window.location.pathname),
+    hash: window.location.hash,
+  };
+};
+
+const getInternalHref = (href) => {
+  if (typeof window === "undefined") {
+    return href;
+  }
+
+  const url = new URL(href, window.location.origin);
+  const normalizedPath = normalizeRoutePath(url.pathname);
+
+  return `${normalizedPath}${url.hash}`;
+};
+
+const shouldHandleNavigationClick = (event) =>
+  event.button === 0 &&
+  !event.defaultPrevented &&
+  !event.metaKey &&
+  !event.altKey &&
+  !event.ctrlKey &&
+  !event.shiftKey;
+
+function usePageLocation() {
+  const [locationState, setLocationState] = useState(getCurrentLocationState);
+
+  useEffect(() => {
+    const handleLocationChange = () => {
+      setLocationState(getCurrentLocationState());
+    };
+
+    window.addEventListener("popstate", handleLocationChange);
+    window.addEventListener("solis:navigation", handleLocationChange);
+
+    return () => {
+      window.removeEventListener("popstate", handleLocationChange);
+      window.removeEventListener("solis:navigation", handleLocationChange);
+    };
+  }, []);
+
+  return locationState;
+}
+
+function useRouteScroll(path, hash) {
+  useEffect(() => {
+    if (typeof window === "undefined") {
+      return undefined;
+    }
+
+    const frame = window.requestAnimationFrame(() => {
+      const targetId = hash ? decodeURIComponent(hash.replace(/^#/, "")) : "";
+      const target = targetId ? document.getElementById(targetId) : null;
+
+      if (target) {
+        target.scrollIntoView({
+          block: "start",
+          behavior: getPrefersReducedMotion() ? "auto" : "smooth",
+        });
+      } else {
+        window.scrollTo({ top: 0, behavior: "auto" });
+      }
+
+      ScrollTrigger.refresh();
+    });
+
+    return () => window.cancelAnimationFrame(frame);
+  }, [hash, path]);
+}
+
 function App() {
+  const { path, hash } = usePageLocation();
+
+  useRouteScroll(path, hash);
+
   return (
     <ReactLenis root options={lenisOptions}>
       <a className="skip-link" href="#contenu">
         Aller au contenu
       </a>
 
-      <Header />
+      <Header currentPath={path} />
 
-      <main id="contenu">
-        <Hero />
-        <div className="content-section-wrapper">
-          <MetricsSection />
-          <TeamSection />
-          <PortfolioSection />
-        </div>
+      <main id="contenu" data-route={path}>
+        <PageContent path={path} />
       </main>
 
       <Footer />
@@ -583,44 +700,154 @@ function App() {
   );
 }
 
-function Header() {
+function PageContent({ path }) {
+  if (path === "/services") {
+    return <ServicesPage />;
+  }
+
+  if (path === "/portfolio") {
+    return <PortfolioPage />;
+  }
+
+  if (path === "/equipe") {
+    return <TeamPage />;
+  }
+
+  return <HomePage />;
+}
+
+function HomePage() {
+  return (
+    <>
+      <Hero />
+      <div className="content-section-wrapper">
+        <MetricsSection />
+      </div>
+    </>
+  );
+}
+
+function ServicesPage() {
+  return <ServicesSection />;
+}
+
+function PortfolioPage() {
+  return <PortfolioSection />;
+}
+
+function TeamPage() {
+  return <TeamSection />;
+}
+
+function Header({ currentPath }) {
+  const navigate = (event) => {
+    if (!shouldHandleNavigationClick(event)) {
+      return;
+    }
+
+    const anchor = event.currentTarget;
+    const url = new URL(anchor.href, window.location.origin);
+
+    if (url.origin !== window.location.origin || !isRoutePath(url.pathname)) {
+      return;
+    }
+
+    event.preventDefault();
+
+    const nextHref = getInternalHref(anchor.getAttribute("href"));
+    const currentHref = `${normalizeRoutePath(window.location.pathname)}${window.location.hash}`;
+
+    if (nextHref !== currentHref) {
+      window.history.pushState({}, "", nextHref);
+    }
+
+    window.dispatchEvent(new Event("solis:navigation"));
+  };
+
   return (
     <header className="site-header">
       <nav className="nav-shell" aria-label="Navigation principale">
-        <a className="brand-mark" href="#accueil" aria-label="SOLIS Développement">
+        <a
+          className="brand-mark"
+          href="/"
+          aria-label="SOLIS Développement"
+          onClick={navigate}
+        >
           <img src={solisLogoNav} alt="" aria-hidden="true" decoding="async" />
         </a>
 
         <div className="nav-links" aria-label="Sections">
           <div className="nav-menu">
-            <button
-              className="nav-menu-trigger nav-link-active"
-              type="button"
+            <a
+              className={`nav-menu-trigger${currentPath === "/" ? " nav-link-active" : ""}`}
+              href="/"
               aria-haspopup="true"
+              onClick={navigate}
             >
               Accueil
-            </button>
+            </a>
             <div className="nav-dropdown" aria-label="Menu Accueil">
               <div className="nav-dropdown-inner">
                 {homeMenuItems.map((item) => (
-                  <a key={item.href} href={item.href} className="nav-dropdown-link">
+                  <a
+                    key={item.href}
+                    href={item.href}
+                    className="nav-dropdown-link"
+                    onClick={navigate}
+                  >
                     {item.label}
                   </a>
                 ))}
               </div>
             </div>
           </div>
-          {serviceNavItems.map((item) => (
-            <a key={item.label} href={item.href}>
-              {item.label}
+
+          <div className="nav-menu">
+            <a
+              className={`nav-menu-trigger${currentPath === "/services" ? " nav-link-active" : ""}`}
+              href="/services"
+              aria-haspopup="true"
+              onClick={navigate}
+            >
+              Services
             </a>
-          ))}
+            <div className="nav-dropdown" aria-label="Menu Services">
+              <div className="nav-dropdown-inner">
+                {serviceNavItems.map((item) => (
+                  <a
+                    key={item.href}
+                    href={item.href}
+                    className="nav-dropdown-link"
+                    onClick={navigate}
+                  >
+                    {item.label}
+                  </a>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          <a
+            className={currentPath === "/portfolio" ? "nav-link-active" : undefined}
+            href="/portfolio"
+            onClick={navigate}
+          >
+            Portfolio
+          </a>
+          <a
+            className={currentPath === "/equipe" ? "nav-link-active" : undefined}
+            href="/equipe"
+            onClick={navigate}
+          >
+            Équipe
+          </a>
         </div>
 
         <a
           className="nav-cta"
-          href={`${contactHref}&body=Source%3A%20navigation`}
+          href="/#contact"
           data-track="navigation-contact"
+          onClick={navigate}
         >
           Contact
         </a>
@@ -866,7 +1093,7 @@ function HeroSplitContent() {
           </p>
         </div>
 
-        <div className="hero-form-column">
+        <div className="hero-form-column" id="contact">
           <HeroLeadForm />
         </div>
       </div>
@@ -1984,6 +2211,35 @@ function ClientLogoMarquee({ variant = "section" } = {}) {
   );
 }
 
+function ServicesSection() {
+  return (
+    <section
+      className="services-section"
+      id="services"
+      aria-labelledby="services-title"
+    >
+      <div className="services-shell">
+        <div className="services-heading">
+          <p>Services</p>
+          <h1 id="services-title">Des solutions digitales sur mesure</h1>
+        </div>
+
+        <div className="services-list">
+          {serviceItems.map((service) => (
+            <article className="service-card" id={service.id} key={service.id}>
+              <span>{service.eyebrow}</span>
+              <div className="service-card-copy">
+                <h2>{service.title}</h2>
+                <p>{service.description}</p>
+              </div>
+            </article>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
 function TeamSection() {
   const teamRef = useRef(null);
 
@@ -2992,7 +3248,7 @@ function Footer() {
     <footer className="site-footer" id="footer" aria-labelledby="footer-title">
       <div className="footer-shell">
         <div className="footer-brand">
-          <a className="footer-logo" href="#accueil" aria-label="SOLIS">
+          <a className="footer-logo" href="/" aria-label="SOLIS">
             <img
               src={solisLogoNav}
               alt=""

@@ -556,6 +556,7 @@ a {
 
 .hero-form-column {
   min-width: 0;
+  scroll-margin-top: 130px;
 }
 
 .hero-form-card {
@@ -1489,6 +1490,99 @@ a {
 .client-logo--jul-terrassement {
   filter: grayscale(1) brightness(0.28) contrast(1.12);
   opacity: 0.92;
+}
+
+.services-section {
+  position: relative;
+  overflow: hidden;
+  min-height: 100svh;
+  scroll-margin-top: 120px;
+  background: #ffffff;
+  padding: clamp(146px, 15svh, 184px) 0 clamp(84px, 9vw, 138px);
+}
+
+.services-shell {
+  width: min(1180px, calc(100vw - 56px));
+  margin: 0 auto;
+  display: grid;
+  gap: clamp(42px, 5vw, 70px);
+}
+
+.services-heading {
+  max-width: 780px;
+  display: grid;
+  gap: 14px;
+}
+
+.services-heading p {
+  margin: 0;
+  color: rgba(9, 10, 10, 0.52);
+  font-size: clamp(0.92rem, 0.98vw, 1.04rem);
+  font-weight: 620;
+  line-height: 1;
+  letter-spacing: 0;
+}
+
+.services-heading h1 {
+  margin: 0;
+  color: #090a0a;
+  font-size: clamp(3rem, 5.35vw, 5.6rem);
+  font-weight: 560;
+  line-height: 0.98;
+  letter-spacing: 0;
+}
+
+.services-list {
+  display: grid;
+  gap: clamp(14px, 1.7vw, 20px);
+}
+
+.service-card {
+  min-width: 0;
+  scroll-margin-top: 128px;
+  display: grid;
+  grid-template-columns: minmax(116px, 0.18fr) minmax(0, 1fr);
+  gap: clamp(24px, 4vw, 70px);
+  align-items: start;
+  border: 1px solid rgba(9, 10, 10, 0.08);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.96);
+  padding: clamp(26px, 3vw, 42px);
+  box-shadow:
+    0 18px 44px rgba(16, 17, 18, 0.05),
+    inset 0 1px 0 rgba(255, 255, 255, 0.84);
+}
+
+.service-card > span {
+  color: rgba(17, 17, 17, 0.48);
+  font-size: clamp(0.82rem, 0.86vw, 0.92rem);
+  font-weight: 650;
+  line-height: 1.1;
+  letter-spacing: 0;
+}
+
+.service-card-copy {
+  max-width: 720px;
+  display: grid;
+  gap: 12px;
+}
+
+.service-card-copy h2 {
+  margin: 0;
+  color: #111111;
+  font-size: clamp(1.55rem, 2.45vw, 2.8rem);
+  font-weight: 620;
+  line-height: 1.02;
+  letter-spacing: 0;
+}
+
+.service-card-copy p {
+  margin: 0;
+  color: rgba(17, 17, 17, 0.62);
+  font-size: clamp(1rem, 1.08vw, 1.16rem);
+  font-weight: 450;
+  line-height: 1.46;
+  letter-spacing: 0;
 }
 
 @keyframes clientMarquee {
@@ -2845,6 +2939,25 @@ a {
     width: min(100%, 380px);
   }
 
+  .services-section {
+    padding: 132px 0 104px;
+  }
+
+  .services-shell {
+    width: min(760px, calc(100vw - 40px));
+    gap: 38px;
+  }
+
+  .services-heading h1 {
+    font-size: clamp(3rem, 7.8vw, 4.7rem);
+  }
+
+  .service-card {
+    grid-template-columns: minmax(104px, 0.22fr) minmax(0, 1fr);
+    gap: 28px;
+    padding: 28px;
+  }
+
   .team-section {
     padding: 74px 0 104px;
   }
@@ -3455,6 +3568,44 @@ a {
   .commerce-dashboard {
     width: min(100%, 290px);
     border-radius: 14px;
+  }
+
+  .services-section {
+    padding: 108px 0 82px;
+  }
+
+  .services-shell {
+    width: calc(100vw - 30px);
+    gap: 28px;
+  }
+
+  .services-heading {
+    gap: 10px;
+  }
+
+  .services-heading h1 {
+    font-size: clamp(2.45rem, 11.8vw, 3.78rem);
+    line-height: 1.02;
+  }
+
+  .service-card {
+    scroll-margin-top: 92px;
+    grid-template-columns: 1fr;
+    gap: 14px;
+    padding: 22px;
+  }
+
+  .service-card-copy {
+    gap: 10px;
+  }
+
+  .service-card-copy h2 {
+    font-size: clamp(1.42rem, 7vw, 2.1rem);
+  }
+
+  .service-card-copy p {
+    font-size: 0.98rem;
+    line-height: 1.42;
   }
 
   .team-section {
