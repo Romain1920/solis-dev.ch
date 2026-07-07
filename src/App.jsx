@@ -281,22 +281,26 @@ const leadRewardWheelCenter = 50;
 const leadRewardWheelRadius = 48;
 const leadRewardWheelLabelRadius = 30.5;
 const leadRewardParticles = [
-  { x: -64, y: -34, delay: "0ms", size: 7, tone: "blue" },
-  { x: -48, y: -60, delay: "70ms", size: 5, tone: "cyan" },
-  { x: -24, y: -48, delay: "110ms", size: 6, tone: "orange" },
-  { x: 4, y: -70, delay: "30ms", size: 7, tone: "peach" },
-  { x: 30, y: -52, delay: "90ms", size: 5, tone: "blue" },
-  { x: 58, y: -28, delay: "140ms", size: 6, tone: "cyan" },
-  { x: -72, y: 2, delay: "120ms", size: 5, tone: "peach" },
-  { x: -48, y: 34, delay: "40ms", size: 6, tone: "orange" },
-  { x: -18, y: 54, delay: "150ms", size: 5, tone: "blue" },
-  { x: 18, y: 48, delay: "80ms", size: 6, tone: "peach" },
-  { x: 50, y: 26, delay: "20ms", size: 5, tone: "orange" },
-  { x: 72, y: 0, delay: "130ms", size: 7, tone: "cyan" },
-  { x: -56, y: 62, delay: "170ms", size: 4, tone: "cyan" },
-  { x: 60, y: 58, delay: "155ms", size: 4, tone: "blue" },
-  { x: -74, y: -58, delay: "190ms", size: 4, tone: "orange" },
-  { x: 76, y: -50, delay: "185ms", size: 4, tone: "peach" },
+  { x: -64, y: -34, delay: "0ms", size: 8, tone: "blue" },
+  { x: -48, y: -60, delay: "70ms", size: 6, tone: "cyan" },
+  { x: -24, y: -48, delay: "110ms", size: 7, tone: "orange" },
+  { x: 4, y: -70, delay: "30ms", size: 8, tone: "peach" },
+  { x: 30, y: -52, delay: "90ms", size: 6, tone: "blue" },
+  { x: 58, y: -28, delay: "140ms", size: 7, tone: "cyan" },
+  { x: -72, y: 2, delay: "120ms", size: 6, tone: "peach" },
+  { x: -48, y: 34, delay: "40ms", size: 7, tone: "orange" },
+  { x: -18, y: 54, delay: "150ms", size: 6, tone: "blue" },
+  { x: 18, y: 48, delay: "80ms", size: 7, tone: "peach" },
+  { x: 50, y: 26, delay: "20ms", size: 6, tone: "orange" },
+  { x: 72, y: 0, delay: "130ms", size: 8, tone: "cyan" },
+  { x: -56, y: 62, delay: "170ms", size: 5, tone: "cyan" },
+  { x: 60, y: 58, delay: "155ms", size: 5, tone: "blue" },
+  { x: -74, y: -58, delay: "190ms", size: 5, tone: "orange" },
+  { x: 76, y: -50, delay: "185ms", size: 5, tone: "peach" },
+  { x: -88, y: -14, delay: "210ms", size: 5, tone: "blue" },
+  { x: -34, y: 82, delay: "225ms", size: 5, tone: "peach" },
+  { x: 38, y: 82, delay: "205ms", size: 5, tone: "orange" },
+  { x: 88, y: 18, delay: "215ms", size: 5, tone: "cyan" },
 ];
 const leadChoiceAutoAdvanceDelayMs = 140;
 
@@ -1120,7 +1124,7 @@ function HeroLeadForm() {
           }`}
         >
           <div className="lead-step-heading lead-step-heading--reward">
-            <h3>Avant de remplir votre demande, tentez de gagner un cadeau pour votre projet (oui on aime bien les surprises 🙂)</h3>
+            <h3>Avant d&apos;envoyer votre demande, on vous offre une chance de recevoir un bonus pour votre projet 🙂</h3>
           </div>
 
           <div
