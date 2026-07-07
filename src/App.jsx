@@ -205,57 +205,75 @@ const clientLogoReferences = [
     id: "ville-de-martigny",
     name: "Ville de Martigny",
     logo: getClientLogo("ville-de-martigny"),
+    width: 3477,
+    height: 2083,
   },
   {
     id: "synergy",
     name: "Synergy",
     logo: getClientLogo("synergy"),
+    width: 1615,
+    height: 597,
   },
   {
     id: "ozam",
     name: "OZAM",
     logo: getClientLogo("ozam"),
+    width: 513,
+    height: 573,
   },
   {
     id: "la-gouttiere",
     name: "La Gouttière",
     logo: getClientLogo("la-gouttiere"),
+    width: 2370,
+    height: 2636,
   },
   {
     id: "philippe-darioli",
     name: "Philippe Darioli",
     logo: getClientLogo("philippe-darioli"),
+    width: 668,
+    height: 170,
   },
   {
     id: "brasserie-la-lyonne",
     name: "Brasserie La Lyonne",
     logo: getClientLogo("brasserie-la-lyonne"),
+    width: 658,
+    height: 279,
   },
   {
     id: "jul-terrassement",
     name: "Jul Terrassement",
     logo: getClientLogo("jul-terrassement"),
+    width: 735,
+    height: 280,
   },
   {
     id: "popup-challenge",
     name: "Pop-up Challenge",
     logo: getClientLogo("popup-challenge"),
+    width: 262,
+    height: 220,
   },
 ];
 
 const activeClientLogos = clientLogoReferences.filter((client) => client.logo);
 
 const leadRewardOptions = [
-  { label: "Nom de domaine offert", weight: 50 },
-  { label: "Pas de chance", weight: 35 },
-  { label: "1 heure de support offerte", weight: 5 },
-  { label: "1 mois d’hébergement offert", weight: 5 },
-  { label: "Surprise", weight: 5 },
+  { label: "Nom de domaine offert", wheelLabel: "Domaine", weight: 50, tone: "blue" },
+  { label: "Pas de chance", wheelLabel: "Rien", weight: 35, tone: "neutral" },
+  { label: "1 heure de support offerte", wheelLabel: "Support", weight: 5, tone: "orange" },
+  { label: "1 mois d’hébergement offert", wheelLabel: "Héberg.", weight: 5, tone: "soft" },
+  { label: "Surprise", wheelLabel: "Surprise", weight: 5, tone: "warm" },
 ];
-const leadRewardSlotItemWidth = 236;
-const leadRewardSpinCycles = 5;
-const leadRewardSpinDurationMs = 1560;
-const leadRewardSpinEase = [0.16, 1, 0.3, 1];
+const leadRewardWheelTurns = 5;
+const leadRewardSpinDuration = 2.6;
+const leadRewardSegmentAngle = 360 / leadRewardOptions.length;
+const leadRewardWheelCenter = 50;
+const leadRewardWheelRadius = 48;
+const leadRewardWheelLabelRadius = 29;
 const leadChoiceAutoAdvanceDelayMs = 140;
 
 const leadProjectTypeOptions = [
@@ -589,12 +607,47 @@ const pickWeightedReward = () => {
   );
 };
 
-const getRewardSpinItems = (selectedReward) => [
-  ...Array.from({ length: leadRewardSpinCycles }).flatMap(() =>
-    leadRewardOptions.map((option) => option.label)
-  ),
-  selectedReward,
-];
+const getRewardIndexByLabel = (label) =>
+  Math.max(
+    leadRewardOptions.findIndex((option) => option.label === label),
+    0
+  );
+
+const getRewardSegmentCenterAngle = (index) =>
+  index * leadRewardSegmentAngle + leadRewardSegmentAngle / 2;
+
+const getRewardTargetRotation = (label) => {
+  const segmentCenterAngle = getRewardSegmentCenterAngle(getRewardIndexByLabel(label));
+
+  return leadRewardWheelTurns * 360 + (360 - segmentCenterAngle);
+};
+
+const getRewardWheelPoint = (angle, radius = leadRewardWheelRadius) => {
+  const angleInRadians = ((angle - 90) * Math.PI) / 180;
+
+  return {
+    x: leadRewardWheelCenter + radius * Math.cos(angleInRadians),
+    y: leadRewardWheelCenter + radius * Math.sin(angleInRadians),
+  };
+};
+
+const getRewardWheelSegmentPath = (index) => {
+  const startAngle = index * leadRewardSegmentAngle;
+  const endAngle = startAngle + leadRewardSegmentAngle;
+  const start = getRewardWheelPoint(startAngle);
+  const end = getRewardWheelPoint(endAngle);
+  const largeArcFlag = leadRewardSegmentAngle > 180 ? 1 : 0;
+
+  return [
+    `M ${leadRewardWheelCenter} ${leadRewardWheelCenter}`,
+    `L ${start.x.toFixed(3)} ${start.y.toFixed(3)}`,
+    `A ${leadRewardWheelRadius} ${leadRewardWheelRadius} 0 ${largeArcFlag} 1 ${end.x.toFixed(3)} ${end.y.toFixed(3)}`,
+    "Z",
+  ].join(" ");
+};
+
+const getRewardWheelLabelPoint = (index) =>
+  getRewardWheelPoint(getRewardSegmentCenterAngle(index), leadRewardWheelLabelRadius);
 
 const isValidLeadEmail = (email) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim());
 
@@ -823,7 +876,9 @@ function HeroOldRequestCta() {
 
 function HeroLeadForm() {
   const reducedMotion = usePrefersReducedMotion();
-  const spinTimeoutRef = useRef(null);
+  const formRef = useRef(null);
+  const rewardWheelRef = useRef(null);
+  const rewardSpinTweenRef = useRef(null);
   const [step, setStep] = useState("reward");
   const [leadData, setLeadData] = useState({
     email: "",
@@ -839,12 +894,11 @@ function HeroLeadForm() {
   const [isSpinning, setIsSpinning] = useState(false);
   const [emailError, setEmailError] = useState("");
   const [submittedPayload, setSubmittedPayload] = useState(null);
+  const { contextSafe } = useGSAP({ scope: formRef });
 
   useEffect(() => {
     return () => {
-      if (spinTimeoutRef.current) {
-        window.clearTimeout(spinTimeoutRef.current);
-      }
+      rewardSpinTweenRef.current?.kill();
     };
   }, []);
 
@@ -864,13 +918,6 @@ function HeroLeadForm() {
     submitted: 100,
   };
   const progress = progressByStep[step] ?? 8;
-  const rewardSpinItems = pendingReward ? getRewardSpinItems(pendingReward) : [];
-  const rewardSpinFinalIndex = Math.max(rewardSpinItems.length - 1, 0);
-  const rewardSpinStartX = -(leadRewardSlotItemWidth / 2);
-  const rewardSpinEndX = -(
-    rewardSpinFinalIndex * leadRewardSlotItemWidth +
-    leadRewardSlotItemWidth / 2
-  );
 
   const updateLeadData = (field, value) => {
     setLeadData((current) => ({
@@ -879,34 +926,53 @@ function HeroLeadForm() {
     }));
   };
 
-  const handleRewardSpin = () => {
+  const handleRewardSpin = contextSafe(() => {
     if (hasSpun || isSpinning) {
       return;
     }
 
-    if (spinTimeoutRef.current) {
-      window.clearTimeout(spinTimeoutRef.current);
-    }
-
     const selectedReward = pickWeightedReward();
+    const targetRotation = getRewardTargetRotation(selectedReward);
+
+    rewardSpinTweenRef.current?.kill();
     setHasSpun(true);
     setPendingReward(selectedReward);
     setIsSpinning(true);
+    setReward("");
 
-    if (reducedMotion) {
+    if (reducedMotion || !rewardWheelRef.current) {
+      if (rewardWheelRef.current) {
+        gsap.set(rewardWheelRef.current, {
+          rotation: targetRotation,
+          transformOrigin: "50% 50%",
+        });
+      }
+
       setReward(selectedReward);
       setPendingReward("");
       setIsSpinning(false);
       return;
     }
 
-    spinTimeoutRef.current = window.setTimeout(() => {
-      setReward(selectedReward);
-      setPendingReward("");
-      setIsSpinning(false);
-      spinTimeoutRef.current = null;
-    }, leadRewardSpinDurationMs);
-  };
+    gsap.set(rewardWheelRef.current, {
+      rotation: 0,
+      transformOrigin: "50% 50%",
+    });
+
+    rewardSpinTweenRef.current = gsap.to(rewardWheelRef.current, {
+      rotation: targetRotation,
+      duration: leadRewardSpinDuration,
+      ease: "power4.out",
+      transformOrigin: "50% 50%",
+      overwrite: true,
+      onComplete: () => {
+        setReward(selectedReward);
+        setPendingReward("");
+        setIsSpinning(false);
+        rewardSpinTweenRef.current = null;
+      },
+    });
+  });
 
   const handleRewardContinue = () => {
     if (reward) {
@@ -998,51 +1064,31 @@ function HeroLeadForm() {
       return (
         <div className="lead-step">
           <div className="lead-step-heading">
-            <h3>Tentez de débloquer un bonus pour votre projet.</h3>
-            <p>Votre bonus sera ajouté à votre demande une fois le formulaire complété.</p>
+            <h3>Débloquez un bonus pour votre projet</h3>
+            <p>Votre bonus sera ajouté à votre demande.</p>
           </div>
 
           <div
-            className={`lead-reward-window${reward ? " is-revealed" : ""}${
+            className={`lead-reward-panel${reward ? " is-revealed" : ""}${
               isSpinning ? " is-spinning" : ""
             }`}
             aria-live="polite"
           >
-            <div className="lead-reward-marker" aria-hidden="true" />
-            {isSpinning ? (
-              <motion.div
-                className="lead-reward-track"
-                initial={{ x: rewardSpinStartX }}
-                animate={{ x: rewardSpinEndX }}
-                transition={{
-                  duration: leadRewardSpinDurationMs / 1000,
-                  ease: leadRewardSpinEase,
-                }}
-                aria-hidden="true"
-              >
-                {rewardSpinItems.map((item, index) => (
-                  <span
-                    className={index === rewardSpinFinalIndex ? "is-final" : undefined}
-                    key={`${item}-${index}`}
-                  >
-                    {item}
-                  </span>
-                ))}
-              </motion.div>
-            ) : (
-              <motion.strong
-                key={reward || "lead-reward-placeholder"}
-                initial={reducedMotion ? false : { opacity: 0, y: 4 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={
-                  reducedMotion
-                    ? instantTransition
-                    : { duration: 0.22, ease: [0.4, 0, 0.2, 1] }
-                }
-              >
-                {reward || "Votre bonus"}
-              </motion.strong>
-            )}
+            <LeadRewardWheel wheelRef={rewardWheelRef} isSpinning={isSpinning} />
+            <motion.div
+              className="lead-reward-result"
+              key={reward || pendingReward || "lead-reward-placeholder"}
+              initial={reducedMotion ? false : { opacity: 0, y: 5 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={
+                reducedMotion
+                  ? instantTransition
+                  : { duration: 0.22, ease: [0.4, 0, 0.2, 1] }
+              }
+            >
+              <span>{reward ? "Bonus débloqué" : isSpinning ? "La roue tourne" : "À vous de jouer"}</span>
+              <strong>{reward || (isSpinning ? "Sélection en cours..." : "Votre bonus")}</strong>
+            </motion.div>
           </div>
 
           <div className="lead-actions">
@@ -1116,6 +1162,7 @@ function HeroLeadForm() {
           nextStep={(selectedProjectType) =>
             selectedProjectType === "Application mobile" ? "appPlatform" : "websiteType"
           }
+          optionLayout="two"
           autoAdvanceDelay={reducedMotion ? 0 : leadChoiceAutoAdvanceDelayMs}
         />
       );
@@ -1131,6 +1178,7 @@ function HeroLeadForm() {
           onBack={goBack}
           onAdvance={setStep}
           nextStep="budget"
+          optionLayout="two"
           autoAdvanceDelay={reducedMotion ? 0 : leadChoiceAutoAdvanceDelayMs}
         />
       );
@@ -1146,6 +1194,7 @@ function HeroLeadForm() {
           onBack={goBack}
           onAdvance={setStep}
           nextStep="budget"
+          optionLayout="three"
           autoAdvanceDelay={reducedMotion ? 0 : leadChoiceAutoAdvanceDelayMs}
         />
       );
@@ -1161,6 +1210,7 @@ function HeroLeadForm() {
           onBack={goBack}
           onAdvance={setStep}
           nextStep="timeline"
+          optionLayout="balanced"
           autoAdvanceDelay={reducedMotion ? 0 : leadChoiceAutoAdvanceDelayMs}
         />
       );
@@ -1176,6 +1226,7 @@ function HeroLeadForm() {
           onBack={goBack}
           onAdvance={setStep}
           nextStep="recap"
+          optionLayout="balanced"
           autoAdvanceDelay={reducedMotion ? 0 : leadChoiceAutoAdvanceDelayMs}
         />
       );
@@ -1230,14 +1281,15 @@ function HeroLeadForm() {
   };
 
   return (
-    <div className="hero-form-card">
+    <div className="hero-form-card" ref={formRef}>
       <div className="hero-form-intro">
         <h2>Besoin de vous projeter&nbsp;?</h2>
         <p>
           Recevez une maquette sur mesure, offerte et sans engagement, pour imaginer
-          un site unique, sans template, pensé pour attirer et convertir.
+          un site ou une application mobile sur mesure, sans template, pensé pour attirer
+          et convertir.
         </p>
-        <small>Premier rendez-vous offert. Café compris 😉</small>
+        <small>Premier rendez-vous offert. Café compris&nbsp;☕</small>
       </div>
 
       <div className="lead-progress" aria-hidden="true">
@@ -1263,6 +1315,38 @@ function HeroLeadForm() {
   );
 }
 
+function LeadRewardWheel({ wheelRef, isSpinning }) {
+  return (
+    <div className="lead-roulette" aria-hidden="true">
+      <div className="lead-roulette-pointer" />
+      <div className="lead-roulette-wheel" ref={wheelRef}>
+        <svg viewBox="0 0 100 100" role="presentation" focusable="false">
+          {leadRewardOptions.map((option, index) => {
+            const labelPoint = getRewardWheelLabelPoint(index);
+
+            return (
+              <g className={`lead-roulette-segment lead-roulette-segment--${option.tone}`} key={option.label}>
+                <path d={getRewardWheelSegmentPath(index)} />
+                <text
+                  x={labelPoint.x}
+                  y={labelPoint.y}
+                  textAnchor="middle"
+                  dominantBaseline="middle"
+                >
+                  {option.wheelLabel}
+                </text>
+              </g>
+            );
+          })}
+          <circle className="lead-roulette-center" cx="50" cy="50" r="16" />
+          <circle className="lead-roulette-pin" cx="50" cy="50" r="4.5" />
+        </svg>
+      </div>
+      <div className={`lead-roulette-glow${isSpinning ? " is-active" : ""}`} />
+    </div>
+  );
+}
+
 function LeadChoiceStep({
   title,
   options,
@@ -1271,6 +1355,7 @@ function LeadChoiceStep({
   onBack,
   onAdvance,
   nextStep,
+  optionLayout = "balanced",
   autoAdvanceDelay = leadChoiceAutoAdvanceDelayMs,
 }) {
   const advanceTimeoutRef = useRef(null);
@@ -1312,7 +1397,7 @@ function LeadChoiceStep({
         <h3>{title}</h3>
       </div>
 
-      <div className="lead-option-grid">
+      <div className={`lead-option-grid lead-option-grid--${optionLayout}`}>
         {normalizedOptions.map((option) => (
           <button
             className={`lead-option${value === option.label ? " is-selected" : ""}`}
@@ -1753,8 +1838,25 @@ function ClientLogoMarquee({ variant = "section" } = {}) {
     return null;
   }
 
-  const marqueeLogos = [...activeClientLogos, ...activeClientLogos];
   const isHeroVariant = variant === "hero";
+  const logoLoading = isHeroVariant ? "eager" : "lazy";
+  const renderLogoGroup = (groupId) => (
+    <div className="client-logo-group" aria-hidden={groupId === "duplicate" ? "true" : undefined}>
+      {activeClientLogos.map((client) => (
+        <span className="client-logo-slot" key={`${groupId}-${client.id}`}>
+          <img
+            className={`client-logo client-logo--${client.id}`}
+            src={client.logo}
+            alt=""
+            width={client.width}
+            height={client.height}
+            loading={logoLoading}
+            decoding="async"
+          />
+        </span>
+      ))}
+    </div>
+  );
 
   return (
     <div
@@ -1763,16 +1865,8 @@ function ClientLogoMarquee({ variant = "section" } = {}) {
     >
       <div className={`client-marquee${isHeroVariant ? " hero-client-marquee" : ""}`} aria-hidden="true">
         <div className="client-marquee-track">
-          {marqueeLogos.map((client, index) => (
-            <img
-              className={`client-logo client-logo--${client.id}`}
-              key={`${client.id}-${index}`}
-              src={client.logo}
-              alt=""
-              loading="lazy"
-              decoding="async"
-            />
-          ))}
+          {renderLogoGroup("primary")}
+          {renderLogoGroup("duplicate")}
         </div>
       </div>
     </div>
