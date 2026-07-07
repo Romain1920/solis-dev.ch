@@ -1604,8 +1604,9 @@ function HeroLeadForm() {
         <div className="hero-form-intro">
           <h2>Remplissez le formulaire pour recevoir votre maquette offerte</h2>
           <p>
-            Recevez un premier aperçu sur mesure pour votre site ou votre app mobile,
-            sans engagement.
+            Afin de vous aider à vous projeter et à vous positionner par rapport à
+            notre offre, nous vous fournissons une première maquette de votre projet,
+            sur mesure et sans engagement.
           </p>
         </div>
       ) : null}
