@@ -252,6 +252,11 @@ const leadRewardOptions = [
   { label: "1 mois d’hébergement offert", weight: 5 },
   { label: "Surprise", weight: 5 },
 ];
+const leadRewardSlotItemWidth = 236;
+const leadRewardSpinCycles = 5;
+const leadRewardSpinDurationMs = 1560;
+const leadRewardSpinEase = [0.16, 1, 0.3, 1];
+const leadChoiceAutoAdvanceDelayMs = 140;
 
 const leadProjectTypeOptions = [
   { id: "website", label: "Site internet" },
@@ -584,6 +589,13 @@ const pickWeightedReward = () => {
   );
 };
 
+const getRewardSpinItems = (selectedReward) => [
+  ...Array.from({ length: leadRewardSpinCycles }).flatMap(() =>
+    leadRewardOptions.map((option) => option.label)
+  ),
+  selectedReward,
+];
+
 const isValidLeadEmail = (email) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim());
 
 function Hero() {
@@ -838,7 +850,6 @@ function HeroLeadForm() {
 
   const isMobileProject = leadData.projectType === "Application mobile";
   const branchStep = isMobileProject ? "appPlatform" : "websiteType";
-  const branchLabel = isMobileProject ? "Plateforme" : "Type de site";
   const branchValue = isMobileProject ? leadData.appPlatform : leadData.websiteType;
   const timelineOptions = isMobileProject ? mobileTimelineOptions : websiteTimelineOptions;
   const progressByStep = {
@@ -853,12 +864,13 @@ function HeroLeadForm() {
     submitted: 100,
   };
   const progress = progressByStep[step] ?? 8;
-  const currentRewardLabel = pendingReward || reward || "Votre bonus";
-  const slotItems = [
-    ...leadRewardOptions.map((option) => option.label),
-    ...leadRewardOptions.map((option) => option.label),
-    currentRewardLabel,
-  ];
+  const rewardSpinItems = pendingReward ? getRewardSpinItems(pendingReward) : [];
+  const rewardSpinFinalIndex = Math.max(rewardSpinItems.length - 1, 0);
+  const rewardSpinStartX = -(leadRewardSlotItemWidth / 2);
+  const rewardSpinEndX = -(
+    rewardSpinFinalIndex * leadRewardSlotItemWidth +
+    leadRewardSlotItemWidth / 2
+  );
 
   const updateLeadData = (field, value) => {
     setLeadData((current) => ({
@@ -870,6 +882,10 @@ function HeroLeadForm() {
   const handleRewardSpin = () => {
     if (hasSpun || isSpinning) {
       return;
+    }
+
+    if (spinTimeoutRef.current) {
+      window.clearTimeout(spinTimeoutRef.current);
     }
 
     const selectedReward = pickWeightedReward();
@@ -888,7 +904,8 @@ function HeroLeadForm() {
       setReward(selectedReward);
       setPendingReward("");
       setIsSpinning(false);
-    }, 920);
+      spinTimeoutRef.current = null;
+    }, leadRewardSpinDurationMs);
   };
 
   const handleRewardContinue = () => {
@@ -969,8 +986,8 @@ function HeroLeadForm() {
 
   const summaryItems = [
     ["Email", leadData.email.trim()],
-    ["Type de projet", leadData.projectType],
-    [branchLabel, branchValue],
+    ["Projet", leadData.projectType],
+    [isMobileProject ? "Plateforme" : "Type", branchValue],
     ["Budget", leadData.budget],
     ["Délai", leadData.timeline],
     ["Bonus", reward],
@@ -985,16 +1002,46 @@ function HeroLeadForm() {
             <p>Votre bonus sera ajouté à votre demande une fois le formulaire complété.</p>
           </div>
 
-          <div className={`lead-reward-window${reward ? " is-revealed" : ""}`}>
+          <div
+            className={`lead-reward-window${reward ? " is-revealed" : ""}${
+              isSpinning ? " is-spinning" : ""
+            }`}
+            aria-live="polite"
+          >
             <div className="lead-reward-marker" aria-hidden="true" />
             {isSpinning ? (
-              <div className="lead-reward-track" aria-hidden="true">
-                {slotItems.map((item, index) => (
-                  <span key={`${item}-${index}`}>{item}</span>
+              <motion.div
+                className="lead-reward-track"
+                initial={{ x: rewardSpinStartX }}
+                animate={{ x: rewardSpinEndX }}
+                transition={{
+                  duration: leadRewardSpinDurationMs / 1000,
+                  ease: leadRewardSpinEase,
+                }}
+                aria-hidden="true"
+              >
+                {rewardSpinItems.map((item, index) => (
+                  <span
+                    className={index === rewardSpinFinalIndex ? "is-final" : undefined}
+                    key={`${item}-${index}`}
+                  >
+                    {item}
+                  </span>
                 ))}
-              </div>
+              </motion.div>
             ) : (
-              <strong>{reward || "Votre bonus"}</strong>
+              <motion.strong
+                key={reward || "lead-reward-placeholder"}
+                initial={reducedMotion ? false : { opacity: 0, y: 4 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={
+                  reducedMotion
+                    ? instantTransition
+                    : { duration: 0.22, ease: [0.4, 0, 0.2, 1] }
+                }
+              >
+                {reward || "Votre bonus"}
+              </motion.strong>
             )}
           </div>
 
@@ -1003,16 +1050,11 @@ function HeroLeadForm() {
               <button className="lead-primary-button" type="button" onClick={handleRewardSpin}>
                 Tenter ma chance
               </button>
-            ) : (
-              <button
-                className="lead-primary-button"
-                type="button"
-                onClick={handleRewardContinue}
-                disabled={!reward || isSpinning}
-              >
+            ) : reward ? (
+              <button className="lead-primary-button" type="button" onClick={handleRewardContinue}>
                 Continuer ma demande
               </button>
-            )}
+            ) : null}
           </div>
         </div>
       );
@@ -1070,7 +1112,11 @@ function HeroLeadForm() {
           value={leadData.projectType}
           onSelect={handleProjectTypeChange}
           onBack={goBack}
-          onNext={() => setStep(leadData.projectType === "Application mobile" ? "appPlatform" : "websiteType")}
+          onAdvance={setStep}
+          nextStep={(selectedProjectType) =>
+            selectedProjectType === "Application mobile" ? "appPlatform" : "websiteType"
+          }
+          autoAdvanceDelay={reducedMotion ? 0 : leadChoiceAutoAdvanceDelayMs}
         />
       );
     }
@@ -1083,7 +1129,9 @@ function HeroLeadForm() {
           value={leadData.websiteType}
           onSelect={(value) => updateLeadData("websiteType", value)}
           onBack={goBack}
-          onNext={() => setStep("budget")}
+          onAdvance={setStep}
+          nextStep="budget"
+          autoAdvanceDelay={reducedMotion ? 0 : leadChoiceAutoAdvanceDelayMs}
         />
       );
     }
@@ -1096,7 +1144,9 @@ function HeroLeadForm() {
           value={leadData.appPlatform}
           onSelect={(value) => updateLeadData("appPlatform", value)}
           onBack={goBack}
-          onNext={() => setStep("budget")}
+          onAdvance={setStep}
+          nextStep="budget"
+          autoAdvanceDelay={reducedMotion ? 0 : leadChoiceAutoAdvanceDelayMs}
         />
       );
     }
@@ -1109,7 +1159,9 @@ function HeroLeadForm() {
           value={leadData.budget}
           onSelect={(value) => updateLeadData("budget", value)}
           onBack={goBack}
-          onNext={() => setStep("timeline")}
+          onAdvance={setStep}
+          nextStep="timeline"
+          autoAdvanceDelay={reducedMotion ? 0 : leadChoiceAutoAdvanceDelayMs}
         />
       );
     }
@@ -1122,7 +1174,9 @@ function HeroLeadForm() {
           value={leadData.timeline}
           onSelect={(value) => updateLeadData("timeline", value)}
           onBack={goBack}
-          onNext={() => setStep("recap")}
+          onAdvance={setStep}
+          nextStep="recap"
+          autoAdvanceDelay={reducedMotion ? 0 : leadChoiceAutoAdvanceDelayMs}
         />
       );
     }
@@ -1145,10 +1199,13 @@ function HeroLeadForm() {
     }
 
     return (
-      <div className="lead-step">
+      <div className="lead-step lead-step--recap">
         <div className="lead-step-heading">
           <h3>Votre demande est prête.</h3>
-          <p>Vérifiez les éléments avant l’envoi.</p>
+          <p>
+            Nous vous recontacterons dans les 24 heures pour échanger sur votre projet
+            et préparer votre maquette offerte.
+          </p>
         </div>
 
         <dl className="lead-recap-list">
@@ -1206,10 +1263,48 @@ function HeroLeadForm() {
   );
 }
 
-function LeadChoiceStep({ title, options, value, onSelect, onBack, onNext }) {
+function LeadChoiceStep({
+  title,
+  options,
+  value,
+  onSelect,
+  onBack,
+  onAdvance,
+  nextStep,
+  autoAdvanceDelay = leadChoiceAutoAdvanceDelayMs,
+}) {
+  const advanceTimeoutRef = useRef(null);
   const normalizedOptions = options.map((option) =>
     typeof option === "string" ? { id: option, label: option } : option
   );
+
+  useEffect(() => {
+    return () => {
+      if (advanceTimeoutRef.current) {
+        window.clearTimeout(advanceTimeoutRef.current);
+      }
+    };
+  }, []);
+
+  const handleOptionSelect = (selectedValue) => {
+    if (advanceTimeoutRef.current) {
+      window.clearTimeout(advanceTimeoutRef.current);
+    }
+
+    onSelect(selectedValue);
+
+    const resolvedNextStep =
+      typeof nextStep === "function" ? nextStep(selectedValue) : nextStep;
+
+    if (!resolvedNextStep) {
+      return;
+    }
+
+    advanceTimeoutRef.current = window.setTimeout(() => {
+      advanceTimeoutRef.current = null;
+      onAdvance(resolvedNextStep);
+    }, autoAdvanceDelay);
+  };
 
   return (
     <div className="lead-step">
@@ -1223,7 +1318,7 @@ function LeadChoiceStep({ title, options, value, onSelect, onBack, onNext }) {
             className={`lead-option${value === option.label ? " is-selected" : ""}`}
             key={option.id}
             type="button"
-            onClick={() => onSelect(option.label)}
+            onClick={() => handleOptionSelect(option.label)}
             aria-pressed={value === option.label}
           >
             {option.label}
@@ -1231,12 +1326,9 @@ function LeadChoiceStep({ title, options, value, onSelect, onBack, onNext }) {
         ))}
       </div>
 
-      <div className="lead-actions">
+      <div className="lead-actions lead-actions--choice">
         <button className="lead-secondary-button" type="button" onClick={onBack}>
           Retour
-        </button>
-        <button className="lead-primary-button" type="button" onClick={onNext} disabled={!value}>
-          Continuer
         </button>
       </div>
     </div>
@@ -1246,9 +1338,8 @@ function LeadChoiceStep({ title, options, value, onSelect, onBack, onNext }) {
 function HeroTrustRow() {
   return (
     <div className="hero-trust-row">
-      <span className="hero-trust-spacer" aria-hidden="true" />
-      <ClientLogoMarquee variant="hero" />
       <HeroTrustBand />
+      <ClientLogoMarquee variant="hero" />
     </div>
   );
 }
