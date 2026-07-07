@@ -1183,7 +1183,7 @@ function HeroLeadForm() {
         <form className="lead-step" onSubmit={handleEmailSubmit} noValidate>
           <div className="lead-step-heading">
             <h3>Votre email</h3>
-            <p>On vous recontacte pour préparer votre maquette offerte.</p>
+            <p>Pour qu&apos;on puisse vous contacter et préparer votre maquette offerte.</p>
           </div>
 
           <label className="lead-field">
@@ -1363,8 +1363,7 @@ function HeroLeadForm() {
         <div className="hero-form-intro">
           <h2>Besoin de vous projeter&nbsp;?</h2>
           <p>
-            Recevez une maquette sur mesure, offerte et sans engagement, pour imaginer
-            un site ou une app mobile pensée pour attirer et convertir.
+            Recevez une maquette sur mesure, offerte et sans engagement.
           </p>
           <small>Premier rendez-vous également offert. Café compris&nbsp;☕</small>
         </div>
