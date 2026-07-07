@@ -1,10 +1,10 @@
-import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { flushSync } from "react-dom";
 import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import ReactLenis, { useLenis } from "lenis/react";
+import ReactLenis from "lenis/react";
 import aymericPortrait from "../assets/team/aymeric-sarrasin.jpg";
 import iphoneFrameImage from "../assets/iphone-17-black-portrait.png";
 import lyndonPortrait from "../assets/team/lyndon-vouilloz.jpg";
@@ -607,13 +607,12 @@ const isRoutePath = (pathname) => {
 
 const getCurrentLocationState = () => {
   if (typeof window === "undefined") {
-    return { path: "/", hash: "", navigationKey: 0 };
+    return { path: "/", hash: "" };
   }
 
   return {
     path: normalizeRoutePath(window.location.pathname),
     hash: window.location.hash,
-    navigationKey: 0,
   };
 };
 
@@ -636,15 +635,24 @@ const shouldHandleNavigationClick = (event) =>
   !event.ctrlKey &&
   !event.shiftKey;
 
+const scrollWindowToTop = () => {
+  window.scrollTo({ top: 0, left: 0, behavior: "auto" });
+};
+
+const scrollWindowToTopAfterNavigation = () => {
+  scrollWindowToTop();
+  window.requestAnimationFrame(() => {
+    scrollWindowToTop();
+    window.requestAnimationFrame(scrollWindowToTop);
+  });
+};
+
 function usePageLocation() {
   const [locationState, setLocationState] = useState(getCurrentLocationState);
 
   useEffect(() => {
     const handleLocationChange = () => {
-      setLocationState((currentLocationState) => ({
-        ...getCurrentLocationState(),
-        navigationKey: currentLocationState.navigationKey + 1,
-      }));
+      setLocationState(getCurrentLocationState());
     };
 
     window.addEventListener("popstate", handleLocationChange);
@@ -659,31 +667,8 @@ function usePageLocation() {
   return locationState;
 }
 
-function useManualScrollRestoration() {
+function useRouteScroll(path, hash) {
   useEffect(() => {
-    if (typeof window === "undefined") {
-      return undefined;
-    }
-
-    const supportsScrollRestoration = "scrollRestoration" in window.history;
-
-    if (!supportsScrollRestoration) {
-      return undefined;
-    }
-
-    const previousScrollRestoration = window.history.scrollRestoration;
-    window.history.scrollRestoration = "manual";
-
-    return () => {
-      window.history.scrollRestoration = previousScrollRestoration;
-    };
-  }, []);
-}
-
-function useRouteScroll(path, hash, navigationKey) {
-  const lenis = useLenis();
-
-  useLayoutEffect(() => {
     if (typeof window === "undefined") {
       return undefined;
     }
@@ -691,27 +676,13 @@ function useRouteScroll(path, hash, navigationKey) {
     const frame = window.requestAnimationFrame(() => {
       const targetId = hash ? decodeURIComponent(hash.replace(/^#/, "")) : "";
       const target = targetId ? document.getElementById(targetId) : null;
-      const prefersReducedMotion = getPrefersReducedMotion();
-
-      lenis?.resize();
 
       if (target) {
-        if (lenis) {
-          lenis.scrollTo(target, {
-            immediate: prefersReducedMotion,
-            force: true,
-          });
-        } else {
-          target.scrollIntoView({
-            block: "start",
-            behavior: prefersReducedMotion ? "auto" : "smooth",
-          });
-        }
-      } else {
-        lenis?.scrollTo(0, {
-          immediate: true,
-          force: true,
+        target.scrollIntoView({
+          block: "start",
+          behavior: getPrefersReducedMotion() ? "auto" : "smooth",
         });
+      } else {
         window.scrollTo({ top: 0, behavior: "auto" });
       }
 
@@ -719,14 +690,13 @@ function useRouteScroll(path, hash, navigationKey) {
     });
 
     return () => window.cancelAnimationFrame(frame);
-  }, [hash, lenis, navigationKey, path]);
+  }, [hash, path]);
 }
 
 function App() {
-  const { path, hash, navigationKey } = usePageLocation();
+  const { path, hash } = usePageLocation();
 
-  useManualScrollRestoration();
-  useRouteScroll(path, hash, navigationKey);
+  useRouteScroll(path, hash);
 
   return (
     <ReactLenis root options={lenisOptions}>
@@ -801,12 +771,21 @@ function Header({ currentPath }) {
 
     const nextHref = getInternalHref(anchor.getAttribute("href"));
     const currentHref = `${normalizeRoutePath(window.location.pathname)}${window.location.hash}`;
+    const shouldResetScroll = !url.hash;
+
+    if (shouldResetScroll) {
+      scrollWindowToTopAfterNavigation();
+    }
 
     if (nextHref !== currentHref) {
       window.history.pushState({}, "", nextHref);
     }
 
     window.dispatchEvent(new Event("solis:navigation"));
+
+    if (shouldResetScroll) {
+      scrollWindowToTopAfterNavigation();
+    }
   };
 
   return (
