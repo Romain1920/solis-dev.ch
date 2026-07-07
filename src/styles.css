@@ -623,7 +623,7 @@ a {
 }
 
 .lead-step--reward {
-  min-height: 306px;
+  min-height: 382px;
 }
 
 .lead-step-heading {
@@ -643,44 +643,37 @@ a {
 
 .lead-reward-stage {
   position: relative;
-  min-height: 212px;
+  min-height: 290px;
   display: grid;
-  grid-template-columns: 150px minmax(0, 1fr);
+  grid-template-columns: 160px minmax(0, 1fr);
   align-items: center;
-  gap: 18px;
+  align-content: center;
+  gap: 20px;
   overflow: hidden;
-  padding: 0 4px;
+  padding: 0;
   isolation: isolate;
 }
 
 .lead-reward-stage::before {
-  content: "";
-  position: absolute;
-  inset: 6px 0 4px;
-  z-index: -1;
-  border-radius: 28px;
-  background:
-    radial-gradient(circle at 28% 46%, rgba(69, 157, 240, 0.13), transparent 38%),
-    radial-gradient(circle at 78% 60%, rgba(238, 124, 66, 0.1), transparent 42%);
-  opacity: 0.74;
-  pointer-events: none;
+  display: none;
 }
 
 .lead-reward-stage.is-expanded,
 .lead-reward-stage.is-revealed {
-  grid-template-columns: minmax(198px, 206px) minmax(0, 1fr);
-  gap: 16px;
+  grid-template-columns: minmax(0, 1fr);
+  justify-items: center;
+  gap: 15px;
 }
 
 .lead-reward-stage.is-spinning::before,
 .lead-reward-stage.is-revealed::before {
-  opacity: 1;
+  display: none;
 }
 
 .lead-roulette {
   position: relative;
   isolation: isolate;
-  width: 150px;
+  width: 160px;
   aspect-ratio: 1;
   display: grid;
   place-items: center;
@@ -688,9 +681,12 @@ a {
   transition: width 420ms cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-.lead-reward-stage.is-expanded .lead-roulette,
+.lead-reward-stage.is-expanded .lead-roulette {
+  width: 232px;
+}
+
 .lead-reward-stage.is-revealed .lead-roulette {
-  width: 206px;
+  width: 214px;
 }
 
 .lead-roulette-wheel {
@@ -723,7 +719,7 @@ a {
 
 .lead-roulette-label text {
   fill: rgba(16, 17, 18, 0.74);
-  font-size: 5.1px;
+  font-size: 6.2px;
   font-weight: 850;
   letter-spacing: 0;
   pointer-events: none;
@@ -784,7 +780,8 @@ a {
   inset: 18%;
   z-index: 1;
   border-radius: 999px;
-  background: radial-gradient(circle, rgba(69, 157, 240, 0.16), rgba(238, 124, 66, 0));
+  display: none;
+  background: transparent;
   opacity: 0.58;
   pointer-events: none;
 }
@@ -840,9 +837,17 @@ a {
   display: grid;
   gap: 5px;
   align-content: center;
+  justify-items: start;
   transition:
     transform 360ms cubic-bezier(0.4, 0, 0.2, 1),
     opacity 220ms ease;
+}
+
+.lead-reward-stage.is-expanded .lead-reward-result,
+.lead-reward-stage.is-revealed .lead-reward-result {
+  justify-items: center;
+  max-width: 300px;
+  text-align: center;
 }
 
 .lead-reward-result span {
@@ -2987,7 +2992,7 @@ a {
   }
 
   .lead-step--reward {
-    min-height: 352px;
+    min-height: 354px;
   }
 
   .lead-step-heading--reward {
@@ -2999,26 +3004,29 @@ a {
   }
 
   .lead-reward-stage {
-    min-height: 258px;
+    min-height: 262px;
     grid-template-columns: minmax(0, 1fr);
     justify-items: center;
-    gap: 8px;
+    gap: 10px;
     padding: 0;
   }
 
   .lead-reward-stage.is-expanded,
   .lead-reward-stage.is-revealed {
     grid-template-columns: minmax(0, 1fr);
-    gap: 8px;
+    gap: 12px;
   }
 
   .lead-roulette {
-    width: 150px;
+    width: 154px;
   }
 
-  .lead-reward-stage.is-expanded .lead-roulette,
+  .lead-reward-stage.is-expanded .lead-roulette {
+    width: min(206px, 68vw);
+  }
+
   .lead-reward-stage.is-revealed .lead-roulette {
-    width: min(200px, 68vw);
+    width: min(190px, 64vw);
   }
 
   .lead-reward-result {

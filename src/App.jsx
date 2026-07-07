@@ -262,11 +262,8 @@ const clientLogoReferences = [
 const activeClientLogos = clientLogoReferences.filter((client) => client.logo);
 
 const leadRewardOptions = [
-  { label: "Nom de domaine offert", wheelLabel: "Domaine", weight: 50, tone: "blue" },
-  { label: "Pas de chance", wheelLabel: "Rien", weight: 35, tone: "neutral" },
-  { label: "1 heure de support offerte", wheelLabel: "Support", weight: 5, tone: "orange" },
-  { label: "1 mois d’hébergement offert", wheelLabel: "Hébergement", weight: 5, tone: "soft" },
-  { label: "Surprise", wheelLabel: "Surprise", weight: 5, tone: "warm" },
+  { label: "Nom de domaine offert", wheelLabel: "Domaine", weight: 80, tone: "blue" },
+  { label: "1 heure de formation offerte", wheelLabel: "Formation", weight: 20, tone: "orange" },
 ];
 const leadRewardWheelTurns = 5;
 const leadRewardSpinDuration = 2.9;
@@ -1092,7 +1089,7 @@ function HeroLeadForm() {
     if (step === "reward") {
       const isRewardActionHidden = hasSpun && !reward;
       const rewardActionLabel =
-        reward || isRewardActionHidden ? "Continuer ma demande" : "Tenter ma chance";
+        reward || isRewardActionHidden ? "Continuer avec mon bonus" : "Tenter ma chance";
 
       return (
         <div
