@@ -2398,6 +2398,7 @@ function PortfolioSection() {
   const [displayId, setDisplayId] = useState(null);
   const [transfer, setTransfer] = useState(null);
   const [instantRevealId, setInstantRevealId] = useState(null);
+  const portfolioRootRef = useRef(null);
   const sectionRef = useRef(null);
   const selectorRef = useRef(null);
   const monitorScreenRef = useRef(null);
@@ -2430,6 +2431,119 @@ function PortfolioSection() {
       transferTimelineRef.current?.kill();
     },
     []
+  );
+
+  useGSAP(
+    () => {
+      const root = portfolioRootRef.current;
+
+      if (!root) {
+        return undefined;
+      }
+
+      const mm = gsap.matchMedia();
+
+      mm.add(
+        {
+          reduceMotion: "(prefers-reduced-motion: reduce)",
+          desktopPortfolio: "(min-width: 681px)",
+        },
+        (context) => {
+          const { reduceMotion, desktopPortfolio } = context.conditions;
+          const categoryButtons = gsap.utils.toArray(".portfolio-category-button", root);
+          const listColumn = root.querySelector(".portfolio-list-column");
+          const displayColumn = root.querySelector(".portfolio-display-column");
+          const revealTargets = [
+            ...categoryButtons,
+            listColumn,
+            displayColumn,
+          ].filter(Boolean);
+
+          if (reduceMotion || !desktopPortfolio) {
+            gsap.set(revealTargets, {
+              autoAlpha: 1,
+              x: 0,
+              y: 0,
+              scale: 1,
+              filter: "blur(0px)",
+              clearProps: "transform,filter",
+            });
+            return undefined;
+          }
+
+          const timeline = gsap.timeline({
+            defaults: { ease: "power3.out" },
+            onComplete: () => {
+              gsap.set(revealTargets, { clearProps: "transform,filter" });
+            },
+          });
+
+          if (categoryButtons.length > 0) {
+            timeline.fromTo(
+              categoryButtons,
+              {
+                autoAlpha: 0,
+                y: 12,
+                filter: "blur(6px)",
+              },
+              {
+                autoAlpha: 1,
+                y: 0,
+                filter: "blur(0px)",
+                duration: 0.58,
+                stagger: 0.055,
+              },
+              0
+            );
+          }
+
+          if (listColumn) {
+            timeline.fromTo(
+              listColumn,
+              {
+                autoAlpha: 0,
+                x: -18,
+                filter: "blur(7px)",
+              },
+              {
+                autoAlpha: 1,
+                x: 0,
+                filter: "blur(0px)",
+                duration: 0.68,
+              },
+              0.18
+            );
+          }
+
+          if (displayColumn) {
+            timeline.fromTo(
+              displayColumn,
+              {
+                autoAlpha: 0,
+                y: 24,
+                scale: 0.985,
+                filter: "blur(9px)",
+              },
+              {
+                autoAlpha: 1,
+                y: 0,
+                scale: 1,
+                filter: "blur(0px)",
+                duration: 0.78,
+              },
+              0.24
+            );
+          }
+
+          return () => {
+            timeline.kill();
+          };
+        }
+      );
+
+      return () => mm.revert();
+    },
+    { scope: portfolioRootRef }
   );
 
   useEffect(() => {
@@ -2791,6 +2905,7 @@ function PortfolioSection() {
     <section
       className="portfolio-section"
       id="projets"
+      ref={portfolioRootRef}
       aria-labelledby="portfolio-title"
     >
       <h2 id="portfolio-title" className="visually-hidden">
