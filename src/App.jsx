@@ -1300,7 +1300,7 @@ function HeroLeadForm({ variant = "desktop-card" }) {
   const [hasSpun, setHasSpun] = useState(false);
   const [isSpinning, setIsSpinning] = useState(false);
   const [emailError, setEmailError] = useState("");
-  const [submittedPayload, setSubmittedPayload] = useState(null);
+  const [, setSubmittedPayload] = useState(null);
   const { contextSafe } = useGSAP({ scope: formRef });
   const isIphoneVariant = variant === "iphone";
   const compactCopy = isIphoneVariant
@@ -1689,14 +1689,19 @@ function HeroLeadForm({ variant = "desktop-card" }) {
 
     if (step === "submitted") {
       return (
-        <div className="lead-step lead-step--submitted">
-          <div className="lead-step-heading">
-            <h3>Merci, votre demande est prête.</h3>
+        <div className="lead-step lead-step--submitted" aria-live="polite">
+          <div className="lead-submit-confirmation">
+            <div className="lead-submit-mark" aria-hidden="true">
+              <span className="lead-submit-spinner" />
+              <svg className="lead-submit-check" viewBox="0 0 28 28" focusable="false">
+                <path d="M7.5 14.7l4.1 4.1 8.9-9.6" />
+              </svg>
+            </div>
+          </div>
+          <div className="lead-step-heading lead-step-heading--submitted">
+            <h3>Merci beaucoup, votre demande a été envoyée.</h3>
             <p>{compactCopy.final}</p>
           </div>
-          {submittedPayload ? (
-            <span className="lead-local-note">Demande enregistrée localement.</span>
-          ) : null}
         </div>
       );
     }
