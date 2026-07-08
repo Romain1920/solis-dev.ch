@@ -18,6 +18,7 @@ gsap.registerPlugin(useGSAP, ScrollTrigger);
 
 const contactHref =
   "mailto:info@solis.li?subject=Maquette%20interactive%20offerte";
+const whatsappHref = "https://wa.me/41798401663";
 const linkedInHref = "https://www.linkedin.com/company/solis-d%C3%A9veloppement-informatique/";
 
 const homeMenuItems = [
@@ -1144,6 +1145,19 @@ function HeroSplitContent() {
             d’applications mobiles pensées pour les PME, startups et boutiques en
             ligne en Suisse romande.
           </p>
+          <div className="hero-whatsapp-cta hero-reveal" aria-label="Contact WhatsApp">
+            <p>Une question avant de commencer ?</p>
+            <a
+              className="hero-whatsapp-link"
+              href={whatsappHref}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <WhatsAppIcon />
+              <span>Écrire sur WhatsApp</span>
+            </a>
+            <small>Promis, on est sympa.</small>
+          </div>
         </div>
 
         <div className="hero-form-column" id="contact">
@@ -1153,6 +1167,19 @@ function HeroSplitContent() {
 
       <HeroTrustRow />
     </>
+  );
+}
+
+function WhatsAppIcon() {
+  return (
+    <svg
+      className="whatsapp-icon"
+      viewBox="0 0 24 24"
+      aria-hidden="true"
+      focusable="false"
+    >
+      <path d="M12.04 2C6.58 2 2.13 6.38 2.13 11.76c0 1.72.46 3.4 1.34 4.88L2 22l5.52-1.43a10.08 10.08 0 0 0 4.52 1.07c5.46 0 9.91-4.38 9.91-9.76S17.5 2 12.04 2Zm0 17.98c-1.45 0-2.87-.38-4.1-1.11l-.3-.18-3.28.85.88-3.13-.2-.32a8.05 8.05 0 0 1-1.25-4.33c0-4.46 3.7-8.09 8.25-8.09s8.25 3.63 8.25 8.09-3.7 8.22-8.25 8.22Zm4.52-6.16c-.25-.12-1.47-.72-1.7-.8-.23-.08-.4-.12-.56.12-.17.25-.65.8-.8.97-.15.16-.3.18-.55.06-.25-.12-1.06-.38-2.02-1.23-.75-.65-1.25-1.45-1.4-1.7-.15-.24-.02-.38.11-.5.12-.12.25-.3.38-.44.13-.15.17-.25.25-.42.08-.16.04-.31-.02-.43-.06-.12-.56-1.33-.77-1.82-.2-.48-.41-.42-.56-.42h-.48c-.17 0-.43.06-.66.31-.23.25-.87.84-.87 2.05s.9 2.38 1.02 2.55c.13.16 1.77 2.65 4.28 3.71.6.26 1.07.41 1.43.53.6.19 1.15.16 1.58.1.48-.07 1.47-.59 1.68-1.17.21-.58.21-1.07.15-1.17-.06-.1-.23-.16-.48-.29Z" />
+    </svg>
   );
 }
 

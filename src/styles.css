@@ -364,7 +364,7 @@ a {
 .hero-layout {
   display: grid;
   grid-template-columns: minmax(0, 1fr) minmax(390px, 470px);
-  align-items: center;
+  align-items: start;
   gap: clamp(42px, 6vw, 86px);
 }
 
@@ -430,6 +430,76 @@ a {
   font-weight: 500;
   line-height: 1.35;
   letter-spacing: 0;
+}
+
+.hero-whatsapp-cta {
+  display: grid;
+  justify-items: start;
+  gap: 9px;
+  margin-top: clamp(18px, 2vw, 28px);
+}
+
+.hero-whatsapp-cta p {
+  margin: 0;
+  color: rgba(9, 10, 10, 0.58);
+  font-size: clamp(0.94rem, 0.92vw, 1rem);
+  font-weight: 650;
+  line-height: 1.28;
+  letter-spacing: 0;
+}
+
+.hero-whatsapp-cta small {
+  margin: -2px 0 0;
+  color: rgba(9, 10, 10, 0.5);
+  font-size: 0.9rem;
+  font-weight: 600;
+  line-height: 1.25;
+}
+
+.hero-whatsapp-link {
+  width: fit-content;
+  max-width: 100%;
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  border: 1px solid rgba(37, 211, 102, 0.3);
+  border-radius: 999px;
+  background: rgba(37, 211, 102, 0.11);
+  color: #0d5b2d;
+  padding: 9px 13px 9px 10px;
+  font-size: 0.94rem;
+  font-weight: 750;
+  line-height: 1.1;
+  text-decoration: none;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.78);
+  transition:
+    background 160ms ease,
+    border-color 160ms ease,
+    color 160ms ease,
+    transform 160ms ease;
+}
+
+.hero-whatsapp-link span {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.hero-whatsapp-link:hover,
+.hero-whatsapp-link:focus-visible {
+  transform: translate3d(0, -1px, 0);
+  border-color: rgba(37, 211, 102, 0.52);
+  background: rgba(37, 211, 102, 0.16);
+  color: #084a23;
+  outline: none;
+}
+
+.whatsapp-icon {
+  flex: 0 0 auto;
+  width: 20px;
+  height: 20px;
+  display: block;
+  color: #25d366;
+  fill: currentColor;
 }
 
 .mobile-only {
@@ -3186,6 +3256,17 @@ a {
     margin-top: 18px;
     font-size: 1rem;
     line-height: 1.38;
+  }
+
+  .hero-whatsapp-cta {
+    max-width: 330px;
+    margin-top: 18px;
+  }
+
+  .hero-whatsapp-link {
+    padding: 9px 12px 9px 10px;
+    font-size: 0.88rem;
+    line-height: 1.14;
   }
 
   .hero-form-card {
