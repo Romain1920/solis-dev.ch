@@ -3965,9 +3965,13 @@ a {
   border: 0;
   border-radius: 0;
   background: #ffffff;
-  padding: 46px 18px 18px;
+  padding: 62px 18px 18px;
   box-shadow: none;
   backdrop-filter: none;
+}
+
+.hero-form-card--iphone.is-post-reward-flow {
+  padding-top: 66px;
 }
 
 .hero-form-card--iphone .hero-form-intro {
@@ -4067,19 +4071,19 @@ a {
 
 .hero-form-card--iphone .lead-reward-stage.is-expanded,
 .hero-form-card--iphone .lead-reward-stage.is-revealed {
-  gap: 12px;
+  gap: 14px;
 }
 
 .hero-form-card--iphone .lead-roulette {
-  width: 110px;
+  width: 136px;
 }
 
 .hero-form-card--iphone .lead-reward-stage.is-expanded .lead-roulette {
-  width: min(188px, 90%);
+  width: min(230px, 94%);
 }
 
 .hero-form-card--iphone .lead-reward-stage.is-revealed .lead-roulette {
-  width: min(176px, 86%);
+  width: min(214px, 90%);
 }
 
 .hero-form-card--iphone .lead-reward-result {
@@ -4148,7 +4152,7 @@ a {
 
 .hero-form-card--iphone .lead-actions--reward {
   min-height: 0;
-  padding-top: 12px;
+  padding-top: 14px;
 }
 
 .hero-form-card--iphone .lead-primary-button,
@@ -4160,9 +4164,57 @@ a {
   flex: 0 0 auto;
   border-radius: 12px;
   padding: 0 12px;
-  font-size: 0.8rem;
+  font-size: 0.78rem;
   line-height: 1.12;
   white-space: normal;
+}
+
+.hero-form-card--iphone .lead-reward-celebration {
+  transform: scale(1.16);
+}
+
+.hero-form-card--iphone .lead-reward-particle {
+  width: calc(var(--particle-size) * 1.08);
+  height: calc(var(--particle-size) * 1.08);
+}
+
+.hero-form-card--iphone .lead-reward-celebration.is-visible::before,
+.hero-form-card--iphone .lead-reward-celebration.is-visible::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 4px;
+  height: 4px;
+  border-radius: 999px;
+  opacity: 0;
+  pointer-events: none;
+  animation: reward-particle-pop 860ms cubic-bezier(0.2, 0, 0.2, 1) both;
+}
+
+.hero-form-card--iphone .lead-reward-celebration.is-visible::before {
+  --particle-x: -112px;
+  --particle-y: -14px;
+  background: rgba(69, 157, 240, 0.74);
+  box-shadow:
+    42px -78px 0 rgba(152, 219, 235, 0.72),
+    96px -52px 0 rgba(238, 124, 66, 0.68),
+    118px 16px 0 rgba(255, 195, 162, 0.74),
+    72px 88px 0 rgba(69, 157, 240, 0.62),
+    -28px 96px 0 rgba(238, 124, 66, 0.6);
+}
+
+.hero-form-card--iphone .lead-reward-celebration.is-visible::after {
+  --particle-x: 108px;
+  --particle-y: 12px;
+  animation-delay: 85ms;
+  background: rgba(255, 195, 162, 0.74);
+  box-shadow:
+    -36px -90px 0 rgba(69, 157, 240, 0.66),
+    -102px -48px 0 rgba(238, 124, 66, 0.58),
+    -124px 18px 0 rgba(152, 219, 235, 0.7),
+    -74px 86px 0 rgba(255, 195, 162, 0.62),
+    24px 96px 0 rgba(69, 157, 240, 0.58);
 }
 
 .hero-form-card--iphone .lead-recap-list div {

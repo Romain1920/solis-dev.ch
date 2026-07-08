@@ -1494,7 +1494,11 @@ function HeroLeadForm({ variant = "desktop-card" }) {
     if (step === "reward") {
       const isRewardActionHidden = hasSpun && !reward;
       const rewardActionLabel =
-        reward || isRewardActionHidden ? "Continuer ma demande" : "Tenter ma chance";
+        reward || isRewardActionHidden
+          ? "Continuer ma demande"
+          : isIphoneVariant
+            ? "Je demande ma maquette offerte"
+            : "Tenter ma chance";
 
       return (
         <div
