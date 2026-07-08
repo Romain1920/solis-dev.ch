@@ -1146,9 +1146,9 @@ function HeroSplitContent() {
             ligne en Suisse romande.
           </p>
           <div className="hero-whatsapp-cta hero-reveal" aria-label="Contact WhatsApp">
-            <p>Une question avant de commencer ?</p>
+            <p>Une question avant de commencer ? On est sympa, promis.</p>
             <a
-              className="hero-whatsapp-link"
+              className="hero-whatsapp-button"
               href={whatsappHref}
               target="_blank"
               rel="noopener noreferrer"
@@ -1156,7 +1156,6 @@ function HeroSplitContent() {
               <WhatsAppIcon />
               <span>Écrire sur WhatsApp</span>
             </a>
-            <small>Promis, on est sympa.</small>
           </div>
         </div>
 
