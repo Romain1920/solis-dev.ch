@@ -1135,7 +1135,11 @@ function Hero() {
 function HeroSplitContent() {
   return (
     <>
-      <div className="hero-layout">
+      <div
+        className={`hero-layout${
+          ENABLE_HERO_FORM_IPHONE_TEST ? " hero-layout--iphone-form" : ""
+        }`}
+      >
         <div className="hero-copy">
           <h1 id="hero-title" className="hero-title hero-title--split">
             <span className="hero-line hero-reveal">Création de sites web</span>
@@ -1298,6 +1302,26 @@ function HeroLeadForm({ variant = "desktop-card" }) {
   const [emailError, setEmailError] = useState("");
   const [submittedPayload, setSubmittedPayload] = useState(null);
   const { contextSafe } = useGSAP({ scope: formRef });
+  const isIphoneVariant = variant === "iphone";
+  const compactCopy = isIphoneVariant
+    ? {
+        intro:
+          "Un premier aperçu sur mesure, sans engagement, accompagné d’un devis gratuit.",
+        reward: "Tentez de gagner un bonus pour votre projet 🙂",
+        email: "Pour préparer votre maquette et vous recontacter.",
+        final:
+          "Nous vous recontacterons dans les 24 heures pour préparer votre maquette offerte.",
+      }
+    : {
+        intro:
+          "Afin de vous aider à vous projeter et à vous positionner, nous vous fournissons une première maquette de votre projet, sur mesure, sans engagement et accompagnée d'un devis gratuit.",
+        reward:
+          "Et parce qu'on aime bien les petits plus, tentez de gagner un bonus pour votre projet 🙂 !",
+        email:
+          "Pour qu'on puisse vous contacter et préparer votre maquette offerte.",
+        final:
+          "Nous vous recontacterons dans les 24 heures pour échanger sur votre projet et préparer votre maquette offerte.",
+      };
 
   useEffect(() => {
     return () => {
@@ -1479,9 +1503,7 @@ function HeroLeadForm({ variant = "desktop-card" }) {
           }`}
         >
           <div className="lead-step-heading lead-step-heading--reward">
-            <h3>
-              Et parce qu&apos;on aime bien les petits plus, tentez de gagner un bonus pour votre projet 🙂 !
-            </h3>
+            <h3>{compactCopy.reward}</h3>
           </div>
 
           <div
@@ -1540,7 +1562,7 @@ function HeroLeadForm({ variant = "desktop-card" }) {
         <form className="lead-step" onSubmit={handleEmailSubmit} noValidate>
           <div className="lead-step-heading">
             <h3>Votre email</h3>
-            <p>Pour qu&apos;on puisse vous contacter et préparer votre maquette offerte.</p>
+            <p>{compactCopy.email}</p>
           </div>
 
           <label className="lead-field">
@@ -1666,10 +1688,7 @@ function HeroLeadForm({ variant = "desktop-card" }) {
         <div className="lead-step lead-step--submitted">
           <div className="lead-step-heading">
             <h3>Merci, votre demande est prête.</h3>
-            <p>
-              Nous vous recontacterons dans les 24 heures pour échanger sur votre projet
-              et préparer votre maquette offerte.
-            </p>
+            <p>{compactCopy.final}</p>
           </div>
           {submittedPayload ? (
             <span className="lead-local-note">Demande enregistrée localement.</span>
@@ -1682,10 +1701,7 @@ function HeroLeadForm({ variant = "desktop-card" }) {
       <div className="lead-step lead-step--recap">
         <div className="lead-step-heading">
           <h3>Votre demande est prête.</h3>
-          <p>
-            Nous vous recontacterons dans les 24 heures pour échanger sur votre projet
-            et préparer votre maquette offerte.
-          </p>
+          <p>{compactCopy.final}</p>
         </div>
 
         <dl className="lead-recap-list">
@@ -1721,11 +1737,7 @@ function HeroLeadForm({ variant = "desktop-card" }) {
       {shouldShowFormIntro ? (
         <div className="hero-form-intro">
           <h2>Remplissez le formulaire pour recevoir votre maquette offerte</h2>
-          <p>
-            Afin de vous aider à vous projeter et à vous positionner, nous vous
-            fournissons une première maquette de votre projet, sur mesure, sans
-            engagement et accompagnée d&apos;un devis gratuit.
-          </p>
+          <p>{compactCopy.intro}</p>
         </div>
       ) : null}
 
