@@ -70,8 +70,8 @@ const routePaths = new Set(["/", "/services", "/portfolio", "/equipe"]);
 
 const screenshotIntervalMs = 1500;
 const ENABLE_NEW_HERO_FORM = true;
-const ENABLE_HERO_FORM_CARD = true;
-const ENABLE_HERO_FORM_IPHONE_TEST = false;
+const ENABLE_HERO_FORM_CARD = false;
+const ENABLE_HERO_FORM_IPHONE_TEST = true;
 const ENABLE_OLD_HERO_CTA = false;
 const ENABLE_HERO_PICTURE_TRAIL = false;
 const ENABLE_HERO_MOUSE_TRAIL = ENABLE_HERO_PICTURE_TRAIL;
