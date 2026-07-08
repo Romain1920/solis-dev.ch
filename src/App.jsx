@@ -1145,7 +1145,7 @@ function HeroSplitContent() {
             <span className="hero-line hero-reveal">Création de sites web</span>
             <span className="hero-line hero-reveal">
               et développement <br className="mobile-only" />
-              d’app mobile
+              d’applications mobiles
             </span>
             <span className="hero-line hero-reveal">pensés pour générer</span>
             <span className="hero-line hero-reveal">
