@@ -3894,7 +3894,7 @@ a {
 }
 
 .hero-form-iphone {
-  width: clamp(238px, 18.8vw, 258px);
+  width: clamp(286px, 22.6vw, 310px);
   max-width: 100%;
   margin-top: -6px;
 }
@@ -4178,7 +4178,7 @@ a {
   }
 
   .hero-form-iphone {
-    width: clamp(238px, 38vw, 258px);
+    width: clamp(286px, 45.6vw, 310px);
     margin-top: 0;
   }
 }
@@ -4190,6 +4190,6 @@ a {
   }
 
   .hero-form-iphone {
-    width: min(100%, 252px);
+    width: min(100%, 302px);
   }
 }
