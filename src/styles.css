@@ -3886,3 +3886,310 @@ a {
   }
 
 }
+
+.hero-form-column--iphone {
+  display: grid;
+  justify-items: center;
+  align-self: start;
+}
+
+.hero-form-iphone {
+  width: clamp(238px, 18.8vw, 258px);
+  max-width: 100%;
+  margin-top: -6px;
+}
+
+.hero-form-iphone-device {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 1350 / 2760;
+  overflow: visible;
+  filter: drop-shadow(0 32px 64px rgba(15, 16, 18, 0.2))
+    drop-shadow(0 12px 24px rgba(15, 16, 18, 0.14));
+}
+
+.hero-form-iphone-screen {
+  position: absolute;
+  left: 5.3333%;
+  top: 2.9%;
+  z-index: 1;
+  width: 89.3333%;
+  height: 94.35%;
+  overflow-x: hidden;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  border-radius: 9.4% / 4.6%;
+  background: #ffffff;
+  color: #101111;
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+}
+
+.hero-form-iphone-screen::-webkit-scrollbar {
+  display: none;
+}
+
+.hero-form-iphone-frame {
+  position: absolute;
+  z-index: 2;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  pointer-events: none;
+  user-select: none;
+}
+
+.hero-form-card--iphone,
+.hero-form-card--iphone.is-reward-draw-mode,
+.hero-form-card--iphone.is-post-reward-flow {
+  width: 100%;
+  max-width: none;
+  height: auto;
+  min-height: 100%;
+  overflow: visible;
+  border: 0;
+  border-radius: 0;
+  background: #ffffff;
+  padding: 30px 14px 18px;
+  box-shadow: none;
+  backdrop-filter: none;
+}
+
+.hero-form-card--iphone .hero-form-intro {
+  gap: 9px;
+}
+
+.hero-form-card--iphone .hero-form-intro h2,
+.hero-form-card--iphone .lead-step-heading h3 {
+  font-size: 1rem;
+  line-height: 1.1;
+}
+
+.hero-form-card--iphone .hero-form-intro p,
+.hero-form-card--iphone .lead-step-heading p {
+  font-size: 0.78rem;
+  line-height: 1.34;
+  overflow-wrap: break-word;
+}
+
+.hero-form-card--iphone .lead-progress {
+  margin: 13px 0 15px;
+}
+
+.hero-form-card--iphone .lead-progress--solo {
+  margin: 0 0 15px;
+}
+
+.hero-form-card--iphone .lead-step-frame {
+  min-width: 0;
+}
+
+.hero-form-card--iphone.is-reward-draw-mode .lead-step-frame,
+.hero-form-card--iphone.is-post-reward-flow .lead-step-frame {
+  flex: 1;
+  display: flex;
+  min-height: 0;
+}
+
+.hero-form-card--iphone .lead-step,
+.hero-form-card--iphone .lead-step--reward,
+.hero-form-card--iphone.is-post-reward-flow .lead-step {
+  min-height: 0;
+}
+
+.hero-form-card--iphone.is-reward-draw-mode .lead-step--reward {
+  min-height: 100%;
+}
+
+.hero-form-card--iphone .lead-step-heading,
+.hero-form-card--iphone.is-post-reward-flow .lead-step-heading {
+  justify-items: start;
+  margin-bottom: 15px;
+  text-align: left;
+}
+
+.hero-form-card--iphone .lead-step-heading--reward,
+.hero-form-card--iphone.is-post-reward-flow .lead-step-heading--reward {
+  justify-items: center;
+  margin-bottom: 12px;
+  text-align: center;
+}
+
+.hero-form-card--iphone .lead-step-heading--reward h3 {
+  max-width: 25ch;
+  font-size: 0.76rem;
+  line-height: 1.28;
+}
+
+.hero-form-card--iphone.is-post-reward-flow .lead-step-heading p {
+  max-width: none;
+}
+
+.hero-form-card--iphone.is-post-reward-flow .lead-field {
+  max-width: none;
+}
+
+.hero-form-card--iphone .lead-reward-stage {
+  min-height: 108px;
+  justify-items: center;
+  gap: 0;
+}
+
+.hero-form-card--iphone.is-reward-draw-mode .lead-reward-stage {
+  flex: 1;
+  min-height: 0;
+}
+
+.hero-form-card--iphone .lead-reward-stage.is-expanded,
+.hero-form-card--iphone .lead-reward-stage.is-revealed {
+  gap: 12px;
+}
+
+.hero-form-card--iphone .lead-roulette {
+  width: 98px;
+}
+
+.hero-form-card--iphone .lead-reward-stage.is-expanded .lead-roulette {
+  width: min(176px, 90%);
+}
+
+.hero-form-card--iphone .lead-reward-stage.is-revealed .lead-roulette {
+  width: min(164px, 86%);
+}
+
+.hero-form-card--iphone .lead-reward-result {
+  min-height: 52px;
+}
+
+.hero-form-card--iphone .lead-reward-result span {
+  font-size: 0.7rem;
+}
+
+.hero-form-card--iphone .lead-reward-result strong {
+  font-size: 0.94rem;
+  line-height: 1.12;
+}
+
+.hero-form-card--iphone .lead-field {
+  gap: 7px;
+}
+
+.hero-form-card--iphone .lead-field span {
+  font-size: 0.76rem;
+}
+
+.hero-form-card--iphone .lead-field input {
+  height: 46px;
+  border-radius: 13px;
+  padding: 0 13px;
+  font-size: 0.88rem;
+}
+
+.hero-form-card--iphone .lead-error {
+  margin-top: 8px;
+  font-size: 0.78rem;
+}
+
+.hero-form-card--iphone .lead-option-grid,
+.hero-form-card--iphone .lead-option-grid--two,
+.hero-form-card--iphone .lead-option-grid--three,
+.hero-form-card--iphone .lead-option-grid--balanced {
+  grid-template-columns: minmax(0, 1fr);
+  gap: 8px;
+}
+
+.hero-form-card--iphone .lead-option {
+  min-height: 52px;
+  border-radius: 14px;
+  padding: 13px 14px;
+  font-size: 0.84rem;
+  line-height: 1.16;
+}
+
+.hero-form-card--iphone .lead-option-grid--three .lead-option {
+  min-height: 52px;
+  padding: 13px 14px;
+  font-size: 0.84rem;
+}
+
+.hero-form-card--iphone .lead-actions,
+.hero-form-card--iphone .lead-actions--choice {
+  flex-direction: column;
+  align-items: stretch;
+  justify-content: flex-end;
+  gap: 8px;
+  padding-top: 16px;
+}
+
+.hero-form-card--iphone .lead-actions--reward {
+  min-height: 0;
+  padding-top: 9px;
+}
+
+.hero-form-card--iphone .lead-primary-button,
+.hero-form-card--iphone .lead-secondary-button,
+.hero-form-card--iphone .lead-actions--reward .lead-primary-button {
+  width: 100%;
+  min-width: 0;
+  min-height: 38px;
+  flex: 0 0 auto;
+  border-radius: 12px;
+  padding: 0 12px;
+  font-size: 0.8rem;
+  line-height: 1.12;
+  white-space: normal;
+}
+
+.hero-form-card--iphone .lead-recap-list div {
+  grid-template-columns: minmax(0, 1fr);
+  gap: 3px;
+  padding: 7px 0;
+}
+
+.hero-form-card--iphone .lead-recap-list dt {
+  font-size: 0.68rem;
+}
+
+.hero-form-card--iphone .lead-recap-list dd {
+  font-size: 0.8rem;
+}
+
+.hero-form-card--iphone .lead-step--recap .lead-step-heading {
+  margin-bottom: 13px;
+}
+
+.hero-form-card--iphone .lead-step--recap .lead-actions {
+  padding-top: 15px;
+}
+
+.hero-form-card--iphone .lead-step--submitted {
+  justify-content: center;
+}
+
+.hero-form-card--iphone .lead-local-note {
+  font-size: 0.76rem;
+}
+
+@media (max-width: 960px) {
+  .hero-form-column--iphone {
+    width: 100%;
+    max-width: 560px;
+  }
+
+  .hero-form-iphone {
+    width: clamp(238px, 38vw, 258px);
+    margin-top: 0;
+  }
+}
+
+@media (max-width: 680px) {
+  .hero-form-column--iphone {
+    width: min(100%, 330px);
+    max-width: 330px;
+  }
+
+  .hero-form-iphone {
+    width: min(100%, 252px);
+  }
+}

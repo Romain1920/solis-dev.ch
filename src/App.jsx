@@ -70,6 +70,8 @@ const routePaths = new Set(["/", "/services", "/portfolio", "/equipe"]);
 
 const screenshotIntervalMs = 1500;
 const ENABLE_NEW_HERO_FORM = true;
+const ENABLE_HERO_FORM_CARD = true;
+const ENABLE_HERO_FORM_IPHONE_TEST = false;
 const ENABLE_OLD_HERO_CTA = false;
 const ENABLE_HERO_PICTURE_TRAIL = false;
 const ENABLE_HERO_MOUSE_TRAIL = ENABLE_HERO_PICTURE_TRAIL;
@@ -1003,7 +1005,11 @@ function Hero() {
           const { reduceMotion, desktopHero } = context.conditions;
           const revealItems = gsap.utils.toArray(".hero-reveal");
           const arrowPath = heroRef.current?.querySelector(".arrow-path");
-          const formCard = heroRef.current?.querySelector(".hero-form-card");
+          const formPresentations = gsap.utils.toArray(
+            heroRef.current?.querySelectorAll(
+              ".hero-form-column > .hero-form-card, .hero-form-iphone"
+            ) ?? []
+          );
           const heroRequest = heroRef.current?.querySelector(".hero-request");
           const projectReel = heroRef.current?.querySelector(".project-reel");
 
@@ -1017,12 +1023,15 @@ function Hero() {
           }
 
           if (reduceMotion || !desktopHero) {
-            gsap.set([revealItems, formCard, heroRequest, projectReel].filter(Boolean), {
-              autoAlpha: 1,
-              y: 0,
-              scale: 1,
-              filter: "blur(0px)",
-            });
+            gsap.set(
+              [...revealItems, ...formPresentations, heroRequest, projectReel].filter(Boolean),
+              {
+                autoAlpha: 1,
+                y: 0,
+                scale: 1,
+                filter: "blur(0px)",
+              }
+            );
             return undefined;
           }
 
@@ -1061,9 +1070,9 @@ function Hero() {
             );
           }
 
-          if (formCard) {
+          if (formPresentations.length > 0) {
             timeline.from(
-              formCard,
+              formPresentations,
               {
                 autoAlpha: 0,
                 y: 22,
@@ -1159,8 +1168,19 @@ function HeroSplitContent() {
           </div>
         </div>
 
-        <div className="hero-form-column" id="contact">
-          <HeroLeadForm />
+        <div
+          className={`hero-form-column${
+            ENABLE_HERO_FORM_IPHONE_TEST ? " hero-form-column--iphone" : ""
+          }`}
+          id="contact"
+        >
+          {ENABLE_HERO_FORM_IPHONE_TEST ? (
+            <HeroFormIphoneMockup>
+              <HeroLeadForm variant="iphone" />
+            </HeroFormIphoneMockup>
+          ) : ENABLE_HERO_FORM_CARD ? (
+            <HeroLeadForm variant="desktop-card" />
+          ) : null}
         </div>
       </div>
 
@@ -1237,7 +1257,27 @@ function HeroOldRequestCta() {
   );
 }
 
-function HeroLeadForm() {
+function HeroFormIphoneMockup({ children }) {
+  return (
+    <div className="hero-form-iphone" aria-label="Formulaire de demande en aperçu iPhone">
+      <div className="hero-form-iphone-device">
+        <div className="hero-form-iphone-screen iphone-hero-form-screen">
+          {children}
+        </div>
+        <img
+          className="hero-form-iphone-frame"
+          src={iphoneFrameImage}
+          alt=""
+          aria-hidden="true"
+          loading="eager"
+          decoding="async"
+        />
+      </div>
+    </div>
+  );
+}
+
+function HeroLeadForm({ variant = "desktop-card" }) {
   const reducedMotion = usePrefersReducedMotion();
   const formRef = useRef(null);
   const rewardWheelRef = useRef(null);
@@ -1671,7 +1711,9 @@ function HeroLeadForm() {
 
   return (
     <div
-      className={`hero-form-card${isRewardDrawMode ? " is-reward-draw-mode" : ""}${
+      className={`hero-form-card hero-form-card--${variant}${
+        isRewardDrawMode ? " is-reward-draw-mode" : ""
+      }${
         isPostRewardFlow ? " is-post-reward-flow" : ""
       }`}
       ref={formRef}
