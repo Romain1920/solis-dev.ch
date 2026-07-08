@@ -1677,19 +1677,19 @@ a {
   isolation: isolate;
   background:
     linear-gradient(165deg, rgba(255, 255, 255, 0.2) 0%, transparent 34%),
-    linear-gradient(145deg, #91deff 0%, #459df0 48%, #42c2ea 100%);
+    linear-gradient(145deg, #ddf5ff 0%, #8ed6f6 50%, #5daedc 100%);
 }
 
 .metric-item:nth-child(2) {
   background:
     linear-gradient(155deg, rgba(255, 255, 255, 0.24) 0%, transparent 34%),
-    linear-gradient(145deg, #ffd09a 0%, #ff9a38 54%, #e87524 100%);
+    linear-gradient(145deg, #ffe7cf 0%, #f5b878 54%, #d98a48 100%);
 }
 
 .metric-item:nth-child(3) {
   background:
     linear-gradient(165deg, rgba(255, 255, 255, 0.2) 0%, transparent 34%),
-    linear-gradient(145deg, #91deff 0%, #459df0 48%, #42c2ea 100%);
+    linear-gradient(145deg, #ddf5ff 0%, #8ed6f6 50%, #5daedc 100%);
 }
 
 .metric-item::before,
