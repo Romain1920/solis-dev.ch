@@ -66,6 +66,35 @@ const serviceItems = [
   },
 ];
 
+const homepageServiceLinks = [
+  {
+    href: "/services#site-internet-sur-mesure",
+    label: "Site internet sur mesure",
+    position: "top",
+    tone: "blue",
+    startX: 0,
+    startY: 78,
+  },
+  {
+    href: "/services#application-mobile",
+    label: "Application mobile",
+    position: "left",
+    tone: "orange",
+    startX: 116,
+    startY: 0,
+  },
+  {
+    href: "/services#logiciels-metiers",
+    label: "Logiciel métier",
+    position: "right",
+    tone: "blue",
+    startX: -116,
+    startY: 0,
+  },
+];
+
+const homeValuePrinciples = ["Sur mesure", "Performance", "Conversion"];
+
 const routePaths = new Set(["/", "/services", "/portfolio", "/equipe"]);
 
 const screenshotIntervalMs = 1500;
@@ -710,6 +739,39 @@ const shouldHandleNavigationClick = (event) =>
   !event.ctrlKey &&
   !event.shiftKey;
 
+const handleRouteLinkClick = (event) => {
+  if (typeof window === "undefined" || !shouldHandleNavigationClick(event)) {
+    return;
+  }
+
+  const anchor = event.currentTarget;
+  const url = new URL(anchor.href, window.location.origin);
+
+  if (url.origin !== window.location.origin || !isRoutePath(url.pathname)) {
+    return;
+  }
+
+  event.preventDefault();
+
+  const nextHref = getInternalHref(anchor.getAttribute("href"));
+  const currentHref = `${normalizeRoutePath(window.location.pathname)}${window.location.hash}`;
+  const shouldResetScroll = !url.hash;
+
+  if (shouldResetScroll) {
+    scrollWindowToTopAfterNavigation();
+  }
+
+  if (nextHref !== currentHref) {
+    window.history.pushState({}, "", nextHref);
+  }
+
+  window.dispatchEvent(new Event("solis:navigation"));
+
+  if (shouldResetScroll) {
+    scrollWindowToTopAfterNavigation();
+  }
+};
+
 const scrollWindowToTop = () => {
   window.scrollTo({ top: 0, left: 0, behavior: "auto" });
 };
@@ -748,23 +810,74 @@ function useRouteScroll(path, hash) {
       return undefined;
     }
 
-    const frame = window.requestAnimationFrame(() => {
+    let settleTimeout;
+    let retryFrame;
+    let attempts = 0;
+
+    const scrollToTarget = () => {
       const targetId = hash ? decodeURIComponent(hash.replace(/^#/, "")) : "";
       const target = targetId ? document.getElementById(targetId) : null;
+      attempts += 1;
 
       if (target) {
-        target.scrollIntoView({
-          block: "start",
+        const getTargetTop = () => {
+          const scrollMarginTop =
+            Number.parseFloat(window.getComputedStyle(target).scrollMarginTop) || 0;
+
+          return Math.max(
+            0,
+            target.getBoundingClientRect().top + window.scrollY - scrollMarginTop
+          );
+        };
+
+        window.scrollTo({
+          top: getTargetTop(),
+          left: 0,
           behavior: getPrefersReducedMotion() ? "auto" : "smooth",
         });
+
+        settleTimeout = window.setTimeout(
+          () => {
+            const remainingDistance = Math.abs(
+              target.getBoundingClientRect().top -
+                (Number.parseFloat(window.getComputedStyle(target).scrollMarginTop) || 0)
+            );
+
+            if (remainingDistance > 8) {
+              window.scrollTo({
+                top: getTargetTop(),
+                left: 0,
+                behavior: "auto",
+              });
+            }
+          },
+          getPrefersReducedMotion() ? 0 : 720
+        );
       } else {
+        if (targetId && attempts < 6) {
+          retryFrame = window.requestAnimationFrame(scrollToTarget);
+          return;
+        }
+
         window.scrollTo({ top: 0, behavior: "auto" });
       }
 
       ScrollTrigger.refresh();
-    });
+    };
 
-    return () => window.cancelAnimationFrame(frame);
+    const frame = window.requestAnimationFrame(scrollToTarget);
+
+    return () => {
+      window.cancelAnimationFrame(frame);
+
+      if (retryFrame) {
+        window.cancelAnimationFrame(retryFrame);
+      }
+
+      if (settleTimeout) {
+        window.clearTimeout(settleTimeout);
+      }
+    };
   }, [hash, path]);
 }
 
@@ -812,6 +925,9 @@ function HomePage() {
       <Hero />
       <div className="content-section-wrapper">
         <HomeStatsSection />
+        <HomepageServicesPreview />
+        <HomeValueProposition />
+        <HomeContactSection />
       </div>
     </>
   );
@@ -835,39 +951,6 @@ function TeamPage() {
 }
 
 function Header({ currentPath }) {
-  const navigate = (event) => {
-    if (!shouldHandleNavigationClick(event)) {
-      return;
-    }
-
-    const anchor = event.currentTarget;
-    const url = new URL(anchor.href, window.location.origin);
-
-    if (url.origin !== window.location.origin || !isRoutePath(url.pathname)) {
-      return;
-    }
-
-    event.preventDefault();
-
-    const nextHref = getInternalHref(anchor.getAttribute("href"));
-    const currentHref = `${normalizeRoutePath(window.location.pathname)}${window.location.hash}`;
-    const shouldResetScroll = !url.hash;
-
-    if (shouldResetScroll) {
-      scrollWindowToTopAfterNavigation();
-    }
-
-    if (nextHref !== currentHref) {
-      window.history.pushState({}, "", nextHref);
-    }
-
-    window.dispatchEvent(new Event("solis:navigation"));
-
-    if (shouldResetScroll) {
-      scrollWindowToTopAfterNavigation();
-    }
-  };
-
   return (
     <header className="site-header">
       <nav className="nav-shell" aria-label="Navigation principale">
@@ -875,7 +958,7 @@ function Header({ currentPath }) {
           className="brand-mark"
           href="/"
           aria-label="SOLIS Développement"
-          onClick={navigate}
+          onClick={handleRouteLinkClick}
         >
           <img src={solisLogoNav} alt="" aria-hidden="true" decoding="async" />
         </a>
@@ -886,7 +969,7 @@ function Header({ currentPath }) {
               className={`nav-menu-trigger${currentPath === "/" ? " nav-link-active" : ""}`}
               href="/"
               aria-haspopup="true"
-              onClick={navigate}
+              onClick={handleRouteLinkClick}
             >
               Accueil
             </a>
@@ -897,7 +980,7 @@ function Header({ currentPath }) {
                     key={item.href}
                     href={item.href}
                     className="nav-dropdown-link"
-                    onClick={navigate}
+                    onClick={handleRouteLinkClick}
                   >
                     {item.label}
                   </a>
@@ -911,7 +994,7 @@ function Header({ currentPath }) {
               className={`nav-menu-trigger${currentPath === "/services" ? " nav-link-active" : ""}`}
               href="/services"
               aria-haspopup="true"
-              onClick={navigate}
+              onClick={handleRouteLinkClick}
             >
               Services
             </a>
@@ -922,7 +1005,7 @@ function Header({ currentPath }) {
                     key={item.href}
                     href={item.href}
                     className="nav-dropdown-link"
-                    onClick={navigate}
+                    onClick={handleRouteLinkClick}
                   >
                     {item.label}
                   </a>
@@ -934,14 +1017,14 @@ function Header({ currentPath }) {
           <a
             className={currentPath === "/portfolio" ? "nav-link-active" : undefined}
             href="/portfolio"
-            onClick={navigate}
+            onClick={handleRouteLinkClick}
           >
             Portfolio
           </a>
           <a
             className={currentPath === "/equipe" ? "nav-link-active" : undefined}
             href="/equipe"
-            onClick={navigate}
+            onClick={handleRouteLinkClick}
           >
             Équipe
           </a>
@@ -951,7 +1034,7 @@ function Header({ currentPath }) {
           className="nav-cta"
           href="/#contact"
           data-track="navigation-contact"
-          onClick={navigate}
+          onClick={handleRouteLinkClick}
         >
           Contact
         </a>
@@ -1224,7 +1307,6 @@ function HeroSplitContent() {
           className={`hero-form-column${
             ENABLE_HERO_FORM_IPHONE_TEST ? " hero-form-column--iphone" : ""
           }`}
-          id="contact"
         >
           {ENABLE_HERO_FORM_IPHONE_TEST ? (
             <HeroFormIphoneMockup>
@@ -2474,6 +2556,406 @@ function HomeStatsSection() {
             </article>
           ))}
         </div>
+      </div>
+    </section>
+  );
+}
+
+function HomepageServicesPreview() {
+  const servicesRef = useRef(null);
+
+  useGSAP(
+    () => {
+      const mm = gsap.matchMedia();
+
+      mm.add(
+        {
+          reduceMotion: "(prefers-reduced-motion: reduce)",
+          desktopServices: "(min-width: 761px)",
+          all: "(min-width: 0px)",
+        },
+        (context) => {
+          const { reduceMotion, desktopServices } = context.conditions;
+          const heading = servicesRef.current?.querySelector(".home-services-heading");
+          const logo = servicesRef.current?.querySelector(".home-services-logo");
+          const serviceLinks = servicesRef.current
+            ? Array.from(servicesRef.current.querySelectorAll(".home-service-link"))
+            : [];
+          const serviceLines = servicesRef.current
+            ? Array.from(servicesRef.current.querySelectorAll(".home-services-line"))
+            : [];
+          const animatedElements = [heading, logo, ...serviceLinks, ...serviceLines].filter(
+            Boolean
+          );
+
+          if (reduceMotion) {
+            gsap.set(animatedElements, {
+              autoAlpha: 1,
+              x: 0,
+              y: 0,
+              scale: 1,
+              scaleX: 1,
+              scaleY: 1,
+              filter: "blur(0px)",
+            });
+            return undefined;
+          }
+
+          const timeline = gsap.timeline({
+            scrollTrigger: {
+              trigger: servicesRef.current,
+              start: "top 76%",
+              once: true,
+            },
+          });
+
+          timeline.fromTo(
+            heading,
+            {
+              autoAlpha: 0,
+              y: 18,
+              filter: "blur(7px)",
+            },
+            {
+              autoAlpha: 1,
+              y: 0,
+              filter: "blur(0px)",
+              duration: 0.62,
+              ease: "power3.out",
+            }
+          );
+
+          timeline.fromTo(
+            logo,
+            {
+              autoAlpha: 0,
+              y: 14,
+              scale: 0.96,
+              filter: "blur(4px)",
+            },
+            {
+              autoAlpha: 1,
+              y: 0,
+              scale: 1,
+              filter: "blur(0px)",
+              duration: 0.66,
+              ease: "power3.out",
+            },
+            0.14
+          );
+
+          timeline.fromTo(
+            serviceLines,
+            {
+              autoAlpha: 0,
+              scaleX: 0.6,
+              scaleY: 0.6,
+            },
+            {
+              autoAlpha: 1,
+              scaleX: 1,
+              scaleY: 1,
+              duration: 0.5,
+              ease: "power2.out",
+              stagger: 0.035,
+            },
+            0.28
+          );
+
+          timeline.fromTo(
+            serviceLinks,
+            {
+              autoAlpha: 0,
+              x: (_index, element) =>
+                desktopServices ? Number(element.dataset.startX ?? 0) : 0,
+              y: (_index, element) =>
+                desktopServices ? Number(element.dataset.startY ?? 0) : 14,
+              scale: 0.96,
+              filter: "blur(3px)",
+            },
+            {
+              autoAlpha: 1,
+              x: 0,
+              y: 0,
+              scale: 1,
+              filter: "blur(0px)",
+              duration: 0.72,
+              ease: "power3.out",
+              stagger: 0.075,
+            },
+            0.3
+          );
+
+          return undefined;
+        }
+      );
+
+      return () => mm.revert();
+    },
+    { scope: servicesRef }
+  );
+
+  return (
+    <section
+      className="home-services-preview"
+      id="home-services"
+      ref={servicesRef}
+      aria-labelledby="home-services-title"
+    >
+      <div className="home-services-shell">
+        <h2 className="home-services-heading" id="home-services-title">
+          Ce qu’on propose
+        </h2>
+
+        <div className="home-services-map" aria-label="Aperçu des services SOLIS">
+          <span className="home-services-orbit" aria-hidden="true" />
+          <span
+            className="home-services-line home-services-line--top"
+            aria-hidden="true"
+          />
+          <span
+            className="home-services-line home-services-line--left"
+            aria-hidden="true"
+          />
+          <span
+            className="home-services-line home-services-line--right"
+            aria-hidden="true"
+          />
+
+          <div className="home-services-logo">
+            <img src={solisLogoNav} alt="SOLIS" loading="lazy" decoding="async" />
+          </div>
+
+          {homepageServiceLinks.map((service) => (
+            <a
+              className={`home-service-link home-service-link--${service.position} home-service-link--${service.tone}`}
+              href={service.href}
+              key={service.href}
+              data-start-x={service.startX}
+              data-start-y={service.startY}
+              onClick={handleRouteLinkClick}
+            >
+              <span>{service.label}</span>
+            </a>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function HomeValueProposition() {
+  return (
+    <section
+      className="home-value-section"
+      aria-labelledby="home-value-title"
+    >
+      <div className="home-value-shell">
+        <h2 id="home-value-title">
+          On ne part pas d’un template. On part de votre projet.
+        </h2>
+        <p>
+          Chaque site, boutique e-commerce ou application mobile est conçu autour
+          de vos objectifs, de votre identité et de vos utilisateurs. L’objectif
+          n’est pas seulement de créer quelque chose de joli : c’est de construire
+          un outil clair, performant et pensé pour convertir.
+        </p>
+        <div className="home-value-principles" aria-label="Principes SOLIS">
+          {homeValuePrinciples.map((principle) => (
+            <span key={principle}>{principle}</span>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function HomeContactSection() {
+  const [contactData, setContactData] = useState({
+    name: "",
+    email: "",
+    message: "",
+  });
+  const [contactErrors, setContactErrors] = useState({});
+  const [contactStatus, setContactStatus] = useState("");
+
+  const updateContactData = (field, value) => {
+    setContactData((current) => ({
+      ...current,
+      [field]: value,
+    }));
+
+    if (contactErrors[field]) {
+      setContactErrors((current) => {
+        const nextErrors = { ...current };
+        delete nextErrors[field];
+        return nextErrors;
+      });
+    }
+
+    if (contactStatus) {
+      setContactStatus("");
+    }
+  };
+
+  const handleContactSubmit = (event) => {
+    event.preventDefault();
+
+    const nextErrors = {};
+    const trimmedData = {
+      name: contactData.name.trim(),
+      email: contactData.email.trim(),
+      message: contactData.message.trim(),
+    };
+
+    if (!trimmedData.name) {
+      nextErrors.name = "Indiquez votre nom.";
+    }
+
+    if (!isValidLeadEmail(trimmedData.email)) {
+      nextErrors.email = "Indiquez un email valide.";
+    }
+
+    if (!trimmedData.message) {
+      nextErrors.message = "Décrivez brièvement votre projet.";
+    }
+
+    setContactErrors(nextErrors);
+
+    if (Object.keys(nextErrors).length > 0) {
+      setContactStatus("");
+      return;
+    }
+
+    const body = [
+      "Bonjour SOLIS,",
+      "",
+      trimmedData.message,
+      "",
+      `Nom : ${trimmedData.name}`,
+      `Email : ${trimmedData.email}`,
+    ].join("\n");
+    const mailtoHref = `mailto:info@solis.li?subject=${encodeURIComponent(
+      "Nouveau message depuis solis-dev.ch"
+    )}&body=${encodeURIComponent(body)}`;
+
+    setContactStatus("Votre client email va s’ouvrir pour envoyer le message.");
+    window.location.href = mailtoHref;
+  };
+
+  return (
+    <section
+      className="home-contact-section"
+      id="contact"
+      aria-labelledby="home-contact-title"
+    >
+      <div className="home-contact-shell">
+        <div className="home-contact-main">
+          <h2 id="home-contact-title">Parlons de votre projet</h2>
+
+          <form className="home-contact-form" onSubmit={handleContactSubmit} noValidate>
+            <label className="home-contact-field">
+              <span>Nom</span>
+              <input
+                type="text"
+                autoComplete="name"
+                value={contactData.name}
+                onChange={(event) => updateContactData("name", event.target.value)}
+                aria-invalid={Boolean(contactErrors.name)}
+                aria-describedby={contactErrors.name ? "home-contact-name-error" : undefined}
+              />
+              {contactErrors.name ? (
+                <small
+                  className="home-contact-error"
+                  id="home-contact-name-error"
+                  role="alert"
+                >
+                  {contactErrors.name}
+                </small>
+              ) : null}
+            </label>
+
+            <label className="home-contact-field">
+              <span>Email</span>
+              <input
+                type="email"
+                inputMode="email"
+                autoComplete="email"
+                value={contactData.email}
+                onChange={(event) => updateContactData("email", event.target.value)}
+                aria-invalid={Boolean(contactErrors.email)}
+                aria-describedby={contactErrors.email ? "home-contact-email-error" : undefined}
+              />
+              {contactErrors.email ? (
+                <small
+                  className="home-contact-error"
+                  id="home-contact-email-error"
+                  role="alert"
+                >
+                  {contactErrors.email}
+                </small>
+              ) : null}
+            </label>
+
+            <label className="home-contact-field home-contact-field--message">
+              <span>Message</span>
+              <textarea
+                rows="5"
+                value={contactData.message}
+                onChange={(event) => updateContactData("message", event.target.value)}
+                aria-invalid={Boolean(contactErrors.message)}
+                aria-describedby={
+                  contactErrors.message ? "home-contact-message-error" : undefined
+                }
+              />
+              {contactErrors.message ? (
+                <small
+                  className="home-contact-error"
+                  id="home-contact-message-error"
+                  role="alert"
+                >
+                  {contactErrors.message}
+                </small>
+              ) : null}
+            </label>
+
+            <button className="home-contact-submit" type="submit">
+              Envoyer
+            </button>
+
+            <p className="home-contact-privacy">
+              En envoyant ce formulaire, vous acceptez que nous utilisions vos
+              informations pour vous recontacter.
+            </p>
+
+            <p className="home-contact-status" aria-live="polite">
+              {contactStatus}
+            </p>
+          </form>
+        </div>
+
+        <address className="home-contact-details">
+          <div className="home-contact-detail">
+            <span>Écrivez-nous</span>
+            <a href="mailto:info@solis.li">info@solis.li</a>
+          </div>
+          <div className="home-contact-detail">
+            <span>Appelez-nous</span>
+            <a href="tel:+41798401663">+41 79 840 16 63</a>
+          </div>
+          <div className="home-contact-detail">
+            <span>Adresse</span>
+            <p>Rue du Simplon 86, 1920 Martigny, Suisse</p>
+          </div>
+          <a
+            className="home-contact-whatsapp"
+            href={whatsappHref}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Écrire sur WhatsApp
+          </a>
+        </address>
       </div>
     </section>
   );
