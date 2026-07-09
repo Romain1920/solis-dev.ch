@@ -2037,38 +2037,38 @@ a {
 
 .home-service-note-pin {
   position: absolute;
-  left: 18px;
-  top: -7px;
+  left: 50%;
+  top: -9px;
   z-index: 2;
-  width: 15px;
-  height: 15px;
+  width: 17px;
+  height: 17px;
   border-radius: 999px;
-  background: var(--pin-color, rgba(69, 157, 240, 0.88));
+  background:
+    radial-gradient(circle at 34% 28%, rgba(255, 255, 255, 0.82) 0 16%, transparent 30%),
+    linear-gradient(150deg, #ff6d5f 0%, #e7473e 48%, #c92e29 100%);
   box-shadow:
     inset 0 1px 2px rgba(255, 255, 255, 0.78),
-    inset 0 -2px 3px rgba(9, 10, 10, 0.08),
-    0 3px 6px rgba(16, 17, 18, 0.22),
-    0 0 0 5px rgba(69, 157, 240, 0.08);
+    inset 0 -2px 4px rgba(88, 12, 10, 0.22),
+    0 4px 9px rgba(16, 17, 18, 0.24),
+    0 0 0 5px rgba(226, 62, 55, 0.08);
+  transform: translateX(-50%);
+}
+
+.home-service-note-pin::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  bottom: -4px;
+  width: 2px;
+  height: 6px;
+  border-radius: 999px;
+  background: rgba(97, 18, 16, 0.22);
+  transform: translateX(-50%);
 }
 
 .home-service-note > span:last-child {
   position: relative;
   z-index: 1;
-}
-
-.home-service-note--blue {
-  --pin-color: rgba(69, 157, 240, 0.9);
-}
-
-.home-service-note--orange {
-  --pin-color: rgba(238, 124, 66, 0.92);
-}
-
-.home-service-note--orange .home-service-note-pin {
-  box-shadow:
-    inset 0 1px 1px rgba(255, 255, 255, 0.72),
-    0 2px 5px rgba(16, 17, 18, 0.2),
-    0 0 0 5px rgba(238, 124, 66, 0.09);
 }
 
 .home-service-note--left-top {
