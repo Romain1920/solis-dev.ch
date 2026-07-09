@@ -12,7 +12,6 @@ import macBookFrameImage from "../assets/macbook-pro-m5.png";
 import romainPortrait from "../assets/team/romain-darioli.jpg";
 import solisLogoNav from "../assets/solis-logo-nav.png";
 import studioDisplayImage from "../assets/studio-display-light.png";
-import LiquidGlassButton from "./components/ui/LiquidGlassButton";
 import { portfolioProjects, projects } from "./data/projects";
 
 gsap.registerPlugin(useGSAP, ScrollTrigger);
@@ -68,14 +67,15 @@ const serviceItems = [
 ];
 
 const homepageServicesSentence =
-  "On aide les PME et startups à créer des sites, apps et outils sur mesure qui leur ressemblent, attirent les bons clients et génèrent des résultats.";
+  "On accompagne les PME et startups avec du développement sur mesure pour créer des sites, apps et outils qui leur ressemblent, attirent les bons clients et génèrent des résultats.";
 
 const homepageServicesWords = homepageServicesSentence.split(" ");
 
 const homepageServiceNotes = [
   {
-    href: "/services#site-internet-sur-mesure",
+    href: "/site-internet-sur-mesure",
     label: "Site internet sur mesure",
+    price: "Dès 5’000 CHF",
     position: "left-top",
     tone: "blue",
     rotate: -4,
@@ -83,7 +83,9 @@ const homepageServiceNotes = [
     startY: 18,
   },
   {
+    href: "/site-internet-sur-mesure",
     label: "E-commerce",
+    price: "Dès 7’500 CHF",
     position: "left-middle",
     tone: "orange",
     rotate: 3,
@@ -91,8 +93,9 @@ const homepageServiceNotes = [
     startY: 16,
   },
   {
-    href: "/services#application-mobile",
+    href: "/application-mobile",
     label: "Application mobile",
+    price: "Dès 10’000 CHF",
     position: "right-top",
     tone: "orange",
     rotate: 3,
@@ -100,8 +103,9 @@ const homepageServiceNotes = [
     startY: 18,
   },
   {
-    href: "/services#logiciels-metiers",
+    href: "/logiciel-metier",
     label: "Logiciel métier",
+    price: "Dès 10’000 CHF",
     position: "right-middle",
     tone: "blue",
     rotate: -3,
@@ -109,7 +113,9 @@ const homepageServiceNotes = [
     startY: 14,
   },
   {
+    href: "/#contact",
     label: "Accompagnement startup",
+    price: "À définir ensemble",
     position: "left-bottom",
     tone: "blue",
     rotate: 3,
@@ -117,7 +123,9 @@ const homepageServiceNotes = [
     startY: 16,
   },
   {
+    href: "/equipe",
     label: "SEO / Google Ads",
+    price: "À définir avec notre partenaire",
     position: "right-bottom",
     tone: "blue",
     rotate: -3,
@@ -137,7 +145,6 @@ const ENABLE_HERO_FORM_IPHONE_TEST = true;
 const ENABLE_OLD_HERO_CTA = false;
 const ENABLE_HERO_PICTURE_TRAIL = false;
 const ENABLE_HERO_MOUSE_TRAIL = ENABLE_HERO_PICTURE_TRAIL;
-const ENABLE_WEBGL_LIQUID_GLASS_BUTTON = true;
 const SHOW_HERO_INLINE_REFERENCE_SCREEN = false;
 const heroMouseTrailImageWidth = 140;
 const heroMouseTrailImageHeight = 200;
@@ -1086,26 +1093,14 @@ function Header({ currentPath }) {
           </a>
         </div>
 
-        {ENABLE_WEBGL_LIQUID_GLASS_BUTTON ? (
-          <LiquidGlassButton
-            className="nav-cta"
-            href="/#contact"
-            data-track="navigation-contact"
-            onClick={handleRouteLinkClick}
-            preset="navContact"
-          >
-            Contact
-          </LiquidGlassButton>
-        ) : (
-          <a
-            className="nav-cta"
-            href="/#contact"
-            data-track="navigation-contact"
-            onClick={handleRouteLinkClick}
-          >
-            Contact
-          </a>
-        )}
+        <a
+          className="nav-cta"
+          href="/#contact"
+          data-track="navigation-contact"
+          onClick={handleRouteLinkClick}
+        >
+          Contact
+        </a>
       </nav>
     </header>
   );
@@ -1359,28 +1354,15 @@ function HeroSplitContent() {
           </p>
           <div className="hero-whatsapp-cta hero-reveal" aria-label="Contact WhatsApp">
             <p>Une question avant de commencer ? On est sympa, promis.</p>
-            {ENABLE_WEBGL_LIQUID_GLASS_BUTTON ? (
-              <LiquidGlassButton
-                className="hero-whatsapp-button"
-                href={whatsappHref}
-                target="_blank"
-                rel="noopener noreferrer"
-                preset="whatsapp"
-              >
-                <WhatsAppIcon />
-                <span>Nous écrire sur WhatsApp</span>
-              </LiquidGlassButton>
-            ) : (
-              <a
-                className="hero-whatsapp-button"
-                href={whatsappHref}
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                <WhatsAppIcon />
-                <span>Nous écrire sur WhatsApp</span>
-              </a>
-            )}
+            <a
+              className="hero-whatsapp-button"
+              href={whatsappHref}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <WhatsAppIcon />
+              <span>Nous écrire sur WhatsApp</span>
+            </a>
           </div>
         </div>
 
@@ -2778,43 +2760,34 @@ function HomepageServicesPreview() {
               "home-service-note",
               `home-service-note--${service.position}`,
               `home-service-note--${service.tone}`,
-              service.href ? "home-service-note--link" : "home-service-note--label",
+              "home-service-note--link",
             ].join(" ");
             const noteContent = (
               <>
                 <span className="home-service-note-pin" aria-hidden="true" />
-                <span>{service.label}</span>
+                <span className="home-service-note-content">
+                  <span className="home-service-note-title">{service.label}</span>
+                  <span className="home-service-note-price">{service.price}</span>
+                </span>
+                <span className="home-service-note-arrow" aria-hidden="true">
+                  →
+                </span>
               </>
             );
 
-            if (service.href) {
-              return (
-                <a
-                  className={noteClassName}
-                  href={service.href}
-                  key={service.href}
-                  data-rotate={service.rotate}
-                  data-start-x={service.startX}
-                  data-start-y={service.startY}
-                  onClick={handleRouteLinkClick}
-                  style={{ "--note-rotate": `${service.rotate}deg` }}
-                >
-                  {noteContent}
-                </a>
-              );
-            }
-
             return (
-              <span
+              <a
                 className={noteClassName}
+                href={service.href}
                 key={service.label}
                 data-rotate={service.rotate}
                 data-start-x={service.startX}
                 data-start-y={service.startY}
+                onClick={handleRouteLinkClick}
                 style={{ "--note-rotate": `${service.rotate}deg` }}
               >
                 {noteContent}
-              </span>
+              </a>
             );
           })}
         </div>
