@@ -1818,12 +1818,12 @@ a {
 .home-services-heading {
   position: relative;
   z-index: 3;
-  max-width: min(820px, 58vw);
+  max-width: min(900px, 62vw);
   margin: 0 auto;
   color: #090a0a;
-  font-size: clamp(2.65rem, 3.55vw, 4.45rem);
+  font-size: clamp(2.3rem, 2.9vw, 3.45rem);
   font-weight: 560;
-  line-height: 1.13;
+  line-height: 1.1;
   letter-spacing: 0;
   text-align: center;
   text-wrap: balance;
@@ -1840,8 +1840,8 @@ a {
 .home-services-logo {
   position: relative;
   z-index: 4;
-  width: clamp(630px, 42vw, 810px);
-  margin: 0 auto clamp(36px, 3.8vw, 58px);
+  width: clamp(260px, 20vw, 360px);
+  margin: 0 auto clamp(28px, 3vw, 44px);
   display: grid;
   place-items: center;
 }
@@ -1998,12 +1998,12 @@ a {
 }
 
 .home-service-note--left-top {
-  left: 1.5%;
+  left: -2.5%;
   top: 22%;
 }
 
 .home-service-note--left-middle {
-  left: 4%;
+  left: -1%;
   top: 43%;
 }
 
@@ -2013,12 +2013,12 @@ a {
 }
 
 .home-service-note--right-top {
-  right: 1.5%;
+  right: -0.5%;
   top: 25%;
 }
 
 .home-service-note--right-middle {
-  right: 4%;
+  right: 2.5%;
   top: 44%;
 }
 
@@ -4001,13 +4001,13 @@ a {
   }
 
   .home-services-logo {
-    width: clamp(420px, 62vw, 620px);
-    margin-bottom: 34px;
+    width: clamp(220px, 34vw, 320px);
+    margin-bottom: 30px;
   }
 
   .home-services-heading {
     max-width: 100%;
-    font-size: clamp(2.8rem, 8vw, 4.65rem);
+    font-size: clamp(2.25rem, 6.1vw, 3.35rem);
     line-height: 1.1;
   }
 
@@ -4725,8 +4725,8 @@ a {
   }
 
   .home-services-logo {
-    width: min(360px, 88vw);
-    margin-bottom: 28px;
+    width: min(230px, 64vw);
+    margin-bottom: 24px;
   }
 
   .home-services-logo::before,
@@ -4743,7 +4743,7 @@ a {
   }
 
   .home-services-heading {
-    font-size: clamp(2.18rem, 10.5vw, 3.46rem);
+    font-size: clamp(1.95rem, 8.8vw, 2.85rem);
     line-height: 1.08;
   }
 
