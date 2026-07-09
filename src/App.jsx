@@ -152,6 +152,20 @@ const getHeroTrailImage = (project, type) => ({
   src: getCarouselProjectImageSrc(project),
 });
 
+const formatSwissNumber = (value) =>
+  Math.round(value)
+    .toString()
+    .replace(/\B(?=(\d{3})+(?!\d))/g, "’");
+
+const formatHomeStatValue = (value, stat) => {
+  const number =
+    stat.format === "swiss"
+      ? formatSwissNumber(value)
+      : Math.round(value).toString();
+
+  return `${stat.prefix ?? ""}${number}`;
+};
+
 const heroTrailDesktopImages = heroTrailDesktopProjectIds
   .map(getProjectById)
   .filter(Boolean)
@@ -224,6 +238,37 @@ const metrics = [
     variant: "commerce",
   },
 ];
+
+const homeStats = [
+  {
+    id: "active",
+    target: 8,
+    label: "projets en cours",
+    status: "Activité en cours",
+    isLive: true,
+  },
+  {
+    id: "websites",
+    target: 100,
+    prefix: "+",
+    label: "sites web et applications réalisés",
+  },
+  {
+    id: "experience",
+    target: 10,
+    prefix: "+",
+    label: "années d'expérience",
+  },
+  {
+    id: "commerce",
+    target: 500000,
+    format: "swiss",
+    label: "CHF générés sur les sites e-commerce réalisés en 2025",
+  },
+].map((stat) => ({
+  ...stat,
+  displayValue: formatHomeStatValue(stat.target, stat),
+}));
 
 const clientLogoAssets = import.meta.glob("../assets/client-logos/*.webp", {
   eager: true,
@@ -768,14 +813,19 @@ function HomePage() {
     <>
       <Hero />
       <div className="content-section-wrapper">
-        <MetricsSection />
+        <HomeStatsSection />
       </div>
     </>
   );
 }
 
 function ServicesPage() {
-  return <ServicesSection />;
+  return (
+    <>
+      <ServicesSection />
+      <MetricsSection />
+    </>
+  );
 }
 
 function PortfolioPage() {
@@ -2221,6 +2271,145 @@ function ProjectReel() {
         />
       </span>
     </span>
+  );
+}
+
+function setHomeStatElementValue(element, value) {
+  const stat = {
+    format: element.dataset.format,
+    prefix: element.dataset.prefix,
+  };
+
+  element.textContent = formatHomeStatValue(value, stat);
+}
+
+function HomeStatsSection() {
+  const statsRef = useRef(null);
+
+  useGSAP(
+    () => {
+      const mm = gsap.matchMedia();
+
+      mm.add(
+        {
+          reduceMotion: "(prefers-reduced-motion: reduce)",
+          all: "(min-width: 0px)",
+        },
+        (context) => {
+          const { reduceMotion } = context.conditions;
+          const statItems = statsRef.current
+            ? Array.from(statsRef.current.querySelectorAll(".home-stat-item"))
+            : [];
+          const statNumbers = statsRef.current
+            ? Array.from(statsRef.current.querySelectorAll(".home-stat-number"))
+            : [];
+          const setFinalValues = () => {
+            statNumbers.forEach((element) => {
+              element.textContent = element.dataset.final ?? "";
+            });
+          };
+
+          if (reduceMotion) {
+            setFinalValues();
+            gsap.set(statItems, {
+              autoAlpha: 1,
+              y: 0,
+              filter: "blur(0px)",
+            });
+            return undefined;
+          }
+
+          statNumbers.forEach((element) => setHomeStatElementValue(element, 0));
+
+          const timeline = gsap.timeline({
+            scrollTrigger: {
+              trigger: statsRef.current,
+              start: "top 82%",
+              once: true,
+            },
+          });
+
+          timeline.fromTo(
+            statItems,
+            {
+              autoAlpha: 0,
+              y: 24,
+              filter: "blur(8px)",
+            },
+            {
+              autoAlpha: 1,
+              y: 0,
+              filter: "blur(0px)",
+              duration: 0.58,
+              ease: "power3.out",
+              stagger: 0.055,
+            },
+            0
+          );
+
+          statNumbers.forEach((element, index) => {
+            const counter = { value: 0 };
+            const target = Number(element.dataset.target ?? 0);
+
+            timeline.to(
+              counter,
+              {
+                value: target,
+                duration: 1.45,
+                ease: "power3.out",
+                onUpdate: () => setHomeStatElementValue(element, counter.value),
+                onComplete: () => {
+                  element.textContent = element.dataset.final ?? "";
+                },
+              },
+              0.08 + index * 0.045
+            );
+          });
+
+          return undefined;
+        }
+      );
+
+      return () => mm.revert();
+    },
+    { scope: statsRef }
+  );
+
+  return (
+    <section
+      className="home-stats-section"
+      id="kpis"
+      ref={statsRef}
+      aria-label="Chiffres clés SOLIS"
+    >
+      <div className="home-stats-shell">
+        <div className="home-stats-grid">
+          {homeStats.map((stat) => (
+            <article
+              className={`home-stat-item${stat.isLive ? " home-stat-item--live" : ""}`}
+              key={stat.id}
+            >
+              {stat.isLive ? (
+                <span className="home-stat-status">
+                  <span className="home-stat-dot" aria-hidden="true" />
+                  {stat.status}
+                </span>
+              ) : null}
+              <strong
+                className="home-stat-number"
+                data-final={stat.displayValue}
+                data-format={stat.format ?? "plain"}
+                data-prefix={stat.prefix ?? ""}
+                data-target={stat.target}
+              >
+                {stat.displayValue}
+              </strong>
+              <span className="home-stat-label">{stat.label}</span>
+            </article>
+          ))}
+        </div>
+      </div>
+    </section>
   );
 }
 
