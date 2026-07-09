@@ -15,6 +15,38 @@
 }
 
 @font-face {
+  font-family: "Inter Display";
+  src: url("../assets/fonts/InterDisplay-Regular.woff2") format("woff2");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Inter Display";
+  src: url("../assets/fonts/InterDisplay-Medium.woff2") format("woff2");
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Inter Display";
+  src: url("../assets/fonts/InterDisplay-SemiBold.woff2") format("woff2");
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Inter Display";
+  src: url("../assets/fonts/InterDisplay-Bold.woff2") format("woff2");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
   font-family: "FK Grotesk";
   src: url("../assets/fonts/FKGrotesk-Regular.otf") format("opentype");
   font-weight: 400;
@@ -47,6 +79,7 @@
   --orange: #ee7c42;
   --line: rgba(10, 12, 12, 0.08);
   --font-main: "Inter Variable", "Inter", "SF Pro Display", "SF Pro Text", -apple-system, BlinkMacSystemFont, "Segoe UI", "FK Grotesk", system-ui, sans-serif;
+  --font-display: "Inter Display", "Inter Variable", "Inter", "SF Pro Display", "SF Pro Text", -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
 }
 
 * {
@@ -3662,6 +3695,21 @@ a {
   font-size: clamp(0.92rem, 0.98vw, 1.02rem);
   font-weight: 500;
   letter-spacing: 0;
+}
+
+.nav-links,
+.nav-cta,
+.hero-title,
+.home-stat-number,
+.home-services-heading,
+.home-value-shell h2,
+.home-contact-main h2,
+.services-heading h1,
+.service-card-copy h2,
+.metric-number,
+.team-heading h2,
+.footer-address strong {
+  font-family: var(--font-display);
 }
 
 @keyframes metric-scroll-left {
