@@ -244,7 +244,6 @@ const homeStats = [
     id: "active",
     target: 6,
     label: "projets en cours",
-    badge: "En cours maintenant",
   },
   {
     id: "websites",
@@ -2451,12 +2450,6 @@ function HomeStatsSection() {
               }`}
               key={stat.id}
             >
-              {stat.badge ? (
-                <span className="home-stat-badge">
-                  <span aria-hidden="true" />
-                  {stat.badge}
-                </span>
-              ) : null}
               <strong
                 className={`home-stat-number${
                   stat.isLive ? " home-stat-number--live" : ""

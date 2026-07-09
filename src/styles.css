@@ -1600,23 +1600,22 @@ a {
   min-width: 0;
   min-height: clamp(216px, 17vw, 244px);
   justify-self: center;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  gap: clamp(16px, 1.5vw, 22px);
+  display: grid;
+  grid-template-rows: minmax(94px, 1fr) auto;
+  align-content: stretch;
+  gap: clamp(14px, 1.25vw, 18px);
   border: 1px solid var(--note-edge);
   border-radius: 2px 3px 2px 4px;
   background-color: var(--note-paper);
   background-image:
-    linear-gradient(180deg, var(--note-top-glow) 0%, rgba(255, 255, 255, 0.14) 24%, rgba(255, 255, 255, 0) 25%),
-    linear-gradient(91deg, rgba(255, 255, 255, 0.18), transparent 12% 88%, rgba(10, 12, 12, 0.04)),
-    linear-gradient(178deg, rgba(255, 255, 255, 0.13), rgba(10, 12, 12, 0.025));
+    linear-gradient(180deg, rgba(255, 255, 255, 0.24), rgba(255, 255, 255, 0.04) 42%, rgba(10, 12, 12, 0.024)),
+    linear-gradient(92deg, rgba(255, 255, 255, 0.13), transparent 58%, rgba(10, 12, 12, 0.018));
   box-shadow:
     0 28px 34px rgba(26, 27, 27, 0.12),
     0 8px 10px rgba(26, 27, 27, 0.075),
     0 1px 0 rgba(255, 255, 255, 0.72) inset,
     0 -1px 0 rgba(10, 12, 12, 0.045) inset;
-  padding: clamp(25px, 2.45vw, 32px) clamp(24px, 2.4vw, 31px) clamp(22px, 2.15vw, 28px);
+  padding: clamp(28px, 2.5vw, 34px) clamp(25px, 2.35vw, 31px) clamp(25px, 2.25vw, 30px);
   transform: translate3d(0, var(--note-y), 0) rotate(var(--note-rotation));
   transform-origin: 50% 14%;
   will-change: transform;
@@ -1626,6 +1625,7 @@ a {
 .home-stat-item::after {
   content: "";
   position: absolute;
+  display: none;
   pointer-events: none;
 }
 
@@ -1699,39 +1699,6 @@ a {
   --note-y: -4px;
 }
 
-.home-stat-badge {
-  position: relative;
-  z-index: 2;
-  width: fit-content;
-  max-width: 100%;
-  display: inline-flex;
-  align-items: center;
-  gap: 7px;
-  border: 1px solid rgba(28, 105, 57, 0.16);
-  border-radius: 999px;
-  background: rgba(255, 255, 255, 0.32);
-  color: rgba(25, 87, 49, 0.84);
-  padding: 6px 9px;
-  font-size: clamp(0.66rem, 0.72vw, 0.76rem);
-  font-weight: 700;
-  line-height: 1;
-  letter-spacing: 0;
-  white-space: nowrap;
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.3);
-}
-
-.home-stat-badge span {
-  width: 7px;
-  height: 7px;
-  flex: 0 0 auto;
-  border-radius: 999px;
-  background: #35b66a;
-  box-shadow:
-    0 0 0 3px rgba(53, 182, 106, 0.14),
-    0 0 12px rgba(53, 182, 106, 0.34);
-  animation: home-stat-live-pulse 1.7s ease-in-out infinite;
-}
-
 .home-stat-number {
   position: relative;
   z-index: 2;
@@ -1740,15 +1707,40 @@ a {
   min-height: 0.9em;
   display: inline-flex;
   align-items: baseline;
+  align-self: end;
   color: var(--note-ink);
   font-family: "FK Grotesk", var(--font-main);
-  font-size: clamp(3.08rem, 4vw, 4.35rem);
+  font-size: clamp(3.25rem, 4.25vw, 4.65rem);
   font-weight: 700;
   line-height: 0.9;
   letter-spacing: 0;
   white-space: nowrap;
   font-variant-numeric: tabular-nums;
   text-shadow: 0.025em 0.018em 0 rgba(255, 255, 255, 0.36);
+}
+
+.home-stat-item--active .home-stat-number {
+  font-size: clamp(4rem, 5.35vw, 5.55rem);
+}
+
+.home-stat-item--active .home-stat-number::before {
+  content: "";
+  position: absolute;
+  right: -0.24em;
+  top: 0.12em;
+  width: 0.12em;
+  height: 0.12em;
+  border-radius: 999px;
+  background: #35b66a;
+  box-shadow:
+    0 0 0 0.055em rgba(53, 182, 106, 0.14),
+    0 0 0.18em rgba(53, 182, 106, 0.32);
+  animation: home-stat-live-pulse 1.7s ease-in-out infinite;
+}
+
+.home-stat-item--websites .home-stat-number,
+.home-stat-item--experience .home-stat-number {
+  font-size: clamp(3.28rem, 4.15vw, 4.55rem);
 }
 
 .home-stat-number::after {
@@ -1766,7 +1758,7 @@ a {
 }
 
 .home-stat-item--commerce .home-stat-number {
-  font-size: clamp(2.55rem, 3.15vw, 3.35rem);
+  font-size: clamp(2.42rem, 3vw, 3.18rem);
 }
 
 .home-stat-value {
@@ -1779,6 +1771,7 @@ a {
   z-index: 2;
   display: block;
   max-width: 20ch;
+  align-self: start;
   color: var(--note-muted);
   font-family: var(--font-main);
   font-size: clamp(1.02rem, 1.04vw, 1.14rem);
