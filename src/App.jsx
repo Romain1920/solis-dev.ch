@@ -987,8 +987,8 @@ function HomePage() {
     <>
       <Hero />
       <div className="content-section-wrapper">
-        <HomeStatsSection />
         <HomepageServicesPreview />
+        <HomeStatsSection />
         <HomeValueProposition />
         <HomeContactSection />
       </div>
