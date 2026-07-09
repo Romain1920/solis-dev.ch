@@ -369,7 +369,7 @@ a {
 }
 
 .hero-layout--iphone-form {
-  grid-template-columns: minmax(0, 1fr) minmax(390px, 500px);
+  grid-template-columns: minmax(0, 1fr) minmax(340px, 410px);
 }
 
 .hero-copy {
@@ -4108,7 +4108,7 @@ a {
 
 .hero-form-column--iphone {
   display: grid;
-  justify-items: center;
+  justify-items: end;
   align-self: start;
 }
 
@@ -4157,6 +4157,16 @@ a {
   object-fit: contain;
   pointer-events: none;
   user-select: none;
+}
+
+@media (min-width: 961px) {
+  .hero-shell--split {
+    width: min(1150px, calc(100vw - 64px));
+  }
+
+  .hero-layout--iphone-form {
+    grid-template-columns: minmax(0, 1fr) minmax(340px, 410px);
+  }
 }
 
 .hero-form-card--iphone,
@@ -4518,6 +4528,7 @@ a {
   .hero-form-column--iphone {
     width: 100%;
     max-width: 560px;
+    justify-items: center;
   }
 
   .hero-form-iphone {
