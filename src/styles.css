@@ -1818,10 +1818,10 @@ a {
 .home-services-heading {
   position: relative;
   z-index: 3;
-  max-width: min(820px, 58vw);
+  max-width: min(760px, 54vw);
   margin: 0 auto;
   color: #090a0a;
-  font-size: clamp(2.65rem, 3.55vw, 4.45rem);
+  font-size: clamp(2.15rem, 2.65vw, 3.25rem);
   font-weight: 560;
   line-height: 1.13;
   letter-spacing: 0;
@@ -3969,7 +3969,7 @@ a {
 
   .home-services-heading {
     max-width: 100%;
-    font-size: clamp(2.25rem, 6.1vw, 3.35rem);
+    font-size: clamp(2rem, 5.3vw, 2.9rem);
     line-height: 1.1;
   }
 
@@ -4705,7 +4705,7 @@ a {
   }
 
   .home-services-heading {
-    font-size: clamp(1.95rem, 8.8vw, 2.85rem);
+    font-size: clamp(1.75rem, 7.8vw, 2.45rem);
     line-height: 1.08;
   }
 
