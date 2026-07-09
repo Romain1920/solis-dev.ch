@@ -11,8 +11,8 @@ import lyndonPortrait from "../assets/team/lyndon-vouilloz.jpg";
 import macBookFrameImage from "../assets/macbook-pro-m5.png";
 import romainPortrait from "../assets/team/romain-darioli.jpg";
 import solisLogoNav from "../assets/solis-logo-nav.png";
-import solisLiquidLogoVideo from "../assets/videos/solis-liquid-logo.mp4";
 import studioDisplayImage from "../assets/studio-display-light.png";
+import LiquidGlassButton from "./components/ui/LiquidGlassButton";
 import { portfolioProjects, projects } from "./data/projects";
 
 gsap.registerPlugin(useGSAP, ScrollTrigger);
@@ -105,6 +105,7 @@ const ENABLE_HERO_FORM_IPHONE_TEST = true;
 const ENABLE_OLD_HERO_CTA = false;
 const ENABLE_HERO_PICTURE_TRAIL = false;
 const ENABLE_HERO_MOUSE_TRAIL = ENABLE_HERO_PICTURE_TRAIL;
+const ENABLE_WEBGL_LIQUID_GLASS_BUTTON = true;
 const SHOW_HERO_INLINE_REFERENCE_SCREEN = false;
 const heroMouseTrailImageWidth = 140;
 const heroMouseTrailImageHeight = 200;
@@ -1031,14 +1032,26 @@ function Header({ currentPath }) {
           </a>
         </div>
 
-        <a
-          className="nav-cta"
-          href="/#contact"
-          data-track="navigation-contact"
-          onClick={handleRouteLinkClick}
-        >
-          Contact
-        </a>
+        {ENABLE_WEBGL_LIQUID_GLASS_BUTTON ? (
+          <LiquidGlassButton
+            className="nav-cta"
+            href="/#contact"
+            data-track="navigation-contact"
+            onClick={handleRouteLinkClick}
+            preset="navContact"
+          >
+            Contact
+          </LiquidGlassButton>
+        ) : (
+          <a
+            className="nav-cta"
+            href="/#contact"
+            data-track="navigation-contact"
+            onClick={handleRouteLinkClick}
+          >
+            Contact
+          </a>
+        )}
       </nav>
     </header>
   );
@@ -1292,15 +1305,28 @@ function HeroSplitContent() {
           </p>
           <div className="hero-whatsapp-cta hero-reveal" aria-label="Contact WhatsApp">
             <p>Une question avant de commencer ? On est sympa, promis.</p>
-            <a
-              className="hero-whatsapp-button"
-              href={whatsappHref}
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              <WhatsAppIcon />
-              <span>Écrire sur WhatsApp</span>
-            </a>
+            {ENABLE_WEBGL_LIQUID_GLASS_BUTTON ? (
+              <LiquidGlassButton
+                className="hero-whatsapp-button"
+                href={whatsappHref}
+                target="_blank"
+                rel="noopener noreferrer"
+                preset="whatsapp"
+              >
+                <WhatsAppIcon />
+                <span>Nous écrire sur WhatsApp</span>
+              </LiquidGlassButton>
+            ) : (
+              <a
+                className="hero-whatsapp-button"
+                href={whatsappHref}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <WhatsAppIcon />
+                <span>Nous écrire sur WhatsApp</span>
+              </a>
+            )}
           </div>
         </div>
 
@@ -2724,16 +2750,7 @@ function HomepageServicesPreview() {
           />
 
           <div className="home-services-logo">
-            <video
-              className="home-services-logo-video"
-              src={solisLiquidLogoVideo}
-              aria-label="Logo SOLIS animé"
-              autoPlay
-              loop
-              muted
-              playsInline
-              preload="metadata"
-            />
+            <img src={solisLogoNav} alt="SOLIS" loading="lazy" decoding="async" />
           </div>
 
           {homepageServiceLinks.map((service) => (
