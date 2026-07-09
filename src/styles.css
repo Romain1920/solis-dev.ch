@@ -2986,14 +2986,14 @@ a {
 @keyframes lead-iphone-cta-shine {
   0% {
     opacity: 0;
-    transform: translateX(0) skewX(-20deg);
+    transform: translateX(-20%) skewX(-20deg);
   }
 
-  5% {
-    opacity: 0.78;
+  10% {
+    opacity: 0.56;
   }
 
-  18% {
+  64% {
     opacity: 0;
     transform: translateX(640%) skewX(-20deg);
   }
@@ -3001,6 +3001,29 @@ a {
   100% {
     opacity: 0;
     transform: translateX(640%) skewX(-20deg);
+  }
+}
+
+@keyframes lead-iphone-cta-boing {
+  0%,
+  100% {
+    scale: 1;
+  }
+
+  16% {
+    scale: 1;
+  }
+
+  38% {
+    scale: 1.027;
+  }
+
+  52% {
+    scale: 0.996;
+  }
+
+  68% {
+    scale: 1;
   }
 }
 
@@ -4341,6 +4364,9 @@ a {
   position: relative;
   overflow: hidden;
   isolation: isolate;
+  transform-origin: center;
+  animation: lead-iphone-cta-boing 5s cubic-bezier(0.4, 0, 0.2, 1) 1.15s infinite;
+  will-change: scale;
 }
 
 .hero-form-card--iphone
@@ -4367,7 +4393,7 @@ a {
   opacity: 0;
   pointer-events: none;
   transform: translateX(0) skewX(-20deg);
-  animation: lead-iphone-cta-shine 5s cubic-bezier(0.2, 0, 0, 1) 1.15s infinite;
+  animation: lead-iphone-cta-shine 5s cubic-bezier(0.4, 0, 0.2, 1) 1.15s infinite;
 }
 
 .hero-form-card--iphone .lead-reward-celebration {
