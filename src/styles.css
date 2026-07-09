@@ -1572,17 +1572,25 @@ a {
 .home-stats-grid {
   min-width: 0;
   display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
+  grid-template-columns:
+    minmax(132px, 0.68fr)
+    minmax(210px, 1fr)
+    minmax(168px, 0.82fr)
+    minmax(310px, 1.44fr);
   align-items: start;
-  gap: clamp(34px, 5.1vw, 88px);
+  gap: clamp(38px, 5.8vw, 92px);
 }
 
 .home-stat-item {
   min-width: 0;
   display: grid;
-  grid-template-rows: minmax(clamp(58px, 5.35vw, 72px), auto) auto;
+  grid-template-rows: minmax(clamp(62px, 5.9vw, 84px), auto) auto;
   align-items: start;
-  gap: clamp(12px, 1.2vw, 17px);
+  gap: clamp(13px, 1.3vw, 18px);
+}
+
+.home-stat-item--commerce {
+  min-width: min(100%, 310px);
 }
 
 .home-stat-number {
@@ -1593,7 +1601,7 @@ a {
   display: inline-flex;
   align-items: baseline;
   color: #0e1111;
-  font-size: clamp(3rem, 5vw, 4.85rem);
+  font-size: clamp(3.35rem, 5.45vw, 5.35rem);
   font-weight: 560;
   line-height: 0.88;
   letter-spacing: 0;
@@ -1605,60 +1613,48 @@ a {
   color: #214c64;
 }
 
-.digit-reveal {
-  display: inline-flex;
-  align-items: flex-end;
-  white-space: nowrap;
+.home-stat-item--commerce .home-stat-number {
+  font-size: clamp(3.1rem, 4.82vw, 5.02rem);
 }
 
-.digit-char-shell {
+.home-stat-value {
   display: inline-block;
-  overflow: hidden;
-  line-height: 0.92;
-  padding-bottom: 0.04em;
+  min-width: 1ch;
 }
 
-.digit-char-shell--mark {
-  margin-inline: 0.015em;
-}
-
-.digit-char {
-  display: inline-block;
-  will-change: transform, opacity;
-}
-
-.home-stat-activity {
+.home-stat-live-trace {
   position: absolute;
-  top: 0.06em;
-  left: 0.46em;
-  width: 0.46em;
-  height: 0.46em;
+  left: calc(100% + 0.12em);
+  top: 0.24em;
+  width: 0.58em;
+  height: 0.19em;
   pointer-events: none;
-  transform-origin: center;
 }
 
-.home-stat-activity-orbit {
+.home-stat-live-trace::before {
+  content: "";
   position: absolute;
-  inset: 0;
-  border: 1px solid rgba(94, 145, 175, 0.24);
-  border-left-color: transparent;
-  border-bottom-color: rgba(94, 145, 175, 0.12);
-  border-radius: 999px;
-  animation: home-stat-orbit 4.8s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+  left: 0;
+  right: 0;
+  top: 50%;
+  height: 1px;
+  background: linear-gradient(90deg, rgba(116, 168, 200, 0.08), rgba(116, 168, 200, 0.42), rgba(238, 124, 66, 0.2));
+  transform: translate3d(0, -50%, 0);
 }
 
-.home-stat-activity-dot {
+.home-stat-live-trace span {
   position: absolute;
-  top: -0.045em;
-  left: 50%;
-  width: 0.09em;
-  height: 0.09em;
+  left: 0;
+  top: 50%;
+  width: 0.095em;
+  height: 0.095em;
   border-radius: 999px;
   background: #74a8c8;
   box-shadow:
-    0 0 0 0.05em rgba(116, 168, 200, 0.12),
-    0 0 0.26em rgba(116, 168, 200, 0.2);
-  transform: translate3d(-50%, 0, 0);
+    0 0 0 0.04em rgba(116, 168, 200, 0.12),
+    0 0 0.22em rgba(116, 168, 200, 0.18);
+  transform: translate3d(0, -50%, 0);
+  animation: home-stat-trace 2.8s cubic-bezier(0.4, 0, 0.2, 1) infinite;
 }
 
 .home-stat-label {
@@ -1671,19 +1667,20 @@ a {
   letter-spacing: 0;
 }
 
-@keyframes home-stat-orbit {
+@keyframes home-stat-trace {
   0% {
-    opacity: 0.56;
-    transform: rotate(0deg);
+    opacity: 0.28;
+    transform: translate3d(0, -50%, 0) scale(0.92);
   }
 
-  45% {
-    opacity: 0.86;
+  42% {
+    opacity: 0.92;
+    transform: translate3d(0.46em, -50%, 0) scale(1);
   }
 
   100% {
-    opacity: 0.56;
-    transform: rotate(360deg);
+    opacity: 0.28;
+    transform: translate3d(0, -50%, 0) scale(0.92);
   }
 }
 
@@ -3948,6 +3945,10 @@ a {
     font-size: clamp(2.28rem, 10vw, 2.95rem);
   }
 
+  .home-stat-item--commerce .home-stat-number {
+    font-size: clamp(2.18rem, 8.9vw, 2.55rem);
+  }
+
   .home-stat-label {
     max-width: 17ch;
     font-size: clamp(0.92rem, 3.85vw, 1rem);
@@ -4271,10 +4272,10 @@ a {
     transform: translate3d(0, 0, 0) !important;
   }
 
-  .home-stat-activity-orbit {
+  .home-stat-live-trace span {
     animation: none !important;
-    opacity: 0.4 !important;
-    transform: rotate(28deg) !important;
+    opacity: 0.72 !important;
+    transform: translate3d(0.28em, -50%, 0) !important;
   }
 
   .portfolio-transfer-layer,

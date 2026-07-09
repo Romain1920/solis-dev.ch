@@ -241,6 +241,12 @@ const metrics = [
 
 const homeStats = [
   {
+    id: "active",
+    target: 6,
+    label: "projets en cours",
+    isLive: true,
+  },
+  {
     id: "websites",
     target: 100,
     prefix: "+",
@@ -257,12 +263,6 @@ const homeStats = [
     target: 500000,
     format: "swiss",
     label: "CHF générés sur des sites e-commerce",
-  },
-  {
-    id: "active",
-    target: 6,
-    label: "projets en cours",
-    isLive: true,
   },
 ].map((stat) => ({
   ...stat,
@@ -2273,21 +2273,13 @@ function ProjectReel() {
   );
 }
 
-function DigitReveal({ value }) {
-  return (
-    <span className="digit-reveal" aria-hidden="true">
-      {Array.from(value).map((character, index) => (
-        <span
-          className={`digit-char-shell${
-            character === "’" ? " digit-char-shell--mark" : ""
-          }`}
-          key={`${character}-${index}`}
-        >
-          <span className="digit-char">{character}</span>
-        </span>
-      ))}
-    </span>
-  );
+function setHomeStatElementValue(element, value) {
+  const stat = {
+    format: element.dataset.format,
+    prefix: element.dataset.prefix,
+  };
+
+  element.textContent = formatHomeStatValue(value, stat);
 }
 
 function HomeStatsSection() {
@@ -2310,87 +2302,105 @@ function HomeStatsSection() {
           const statLabels = statsRef.current
             ? Array.from(statsRef.current.querySelectorAll(".home-stat-label"))
             : [];
-          const activeMarks = statsRef.current
-            ? Array.from(statsRef.current.querySelectorAll(".home-stat-activity"))
+          const statNumbers = statsRef.current
+            ? Array.from(statsRef.current.querySelectorAll(".home-stat-value"))
             : [];
-          const allCharacters = statsRef.current
-            ? Array.from(statsRef.current.querySelectorAll(".digit-char"))
+          const liveTraces = statsRef.current
+            ? Array.from(statsRef.current.querySelectorAll(".home-stat-live-trace"))
             : [];
+          const setFinalValues = () => {
+            statNumbers.forEach((element) => {
+              element.textContent = element.dataset.final ?? "";
+            });
+          };
 
           if (reduceMotion) {
-            gsap.set([...statItems, ...statLabels, ...activeMarks, ...allCharacters], {
+            setFinalValues();
+            gsap.set([...statItems, ...statLabels, ...liveTraces], {
               autoAlpha: 1,
               y: 0,
-              yPercent: 0,
               scale: 1,
               filter: "blur(0px)",
             });
             return undefined;
           }
 
+          statNumbers.forEach((element) => setHomeStatElementValue(element, 0));
+
           const timeline = gsap.timeline({
             scrollTrigger: {
               trigger: statsRef.current,
-              start: "top 82%",
+              start: "top 84%",
               once: true,
             },
           });
 
           timeline.fromTo(
-            statLabels,
+            statItems,
             {
               autoAlpha: 0,
-              y: 14,
+              y: 18,
+              filter: "blur(8px)",
             },
             {
               autoAlpha: 1,
               y: 0,
-              duration: 0.48,
+              filter: "blur(0px)",
+              duration: 0.62,
+              ease: "power3.out",
+              stagger: 0.055,
+            },
+            0
+          );
+
+          timeline.fromTo(
+            statLabels,
+            {
+              autoAlpha: 0,
+              y: 10,
+            },
+            {
+              autoAlpha: 1,
+              y: 0,
+              duration: 0.42,
               ease: "power2.out",
               stagger: 0.045,
             },
-            0.28
+            0.24
           );
 
-          statItems.forEach((item, index) => {
-            const characters = Array.from(item.querySelectorAll(".digit-char"));
-            const isLive = item.classList.contains("home-stat-item--live");
+          statNumbers.forEach((element, index) => {
+            const counter = { value: 0 };
+            const target = Number(element.dataset.target ?? 0);
 
-            timeline.fromTo(
-              characters,
+            timeline.to(
+              counter,
               {
-                autoAlpha: 0,
-                yPercent: isLive ? 72 : 112,
-                scale: isLive ? 0.94 : 1,
-              },
-              {
-                autoAlpha: 1,
-                yPercent: 0,
-                scale: 1,
-                duration: isLive ? 0.58 : 0.66,
+                value: target,
+                duration: index === 2 ? 1.55 : 1.32,
                 ease: "power3.out",
-                stagger: {
-                  each: 0.035,
-                  from: "start",
+                onUpdate: () => setHomeStatElementValue(element, counter.value),
+                onComplete: () => {
+                  element.textContent = element.dataset.final ?? "";
                 },
               },
-              0.06 + index * 0.035
+              0.12 + index * 0.035
             );
           });
 
           timeline.fromTo(
-            activeMarks,
+            liveTraces,
             {
               autoAlpha: 0,
-              scale: 0.78,
+              x: -8,
             },
             {
               autoAlpha: 1,
-              scale: 1,
-              duration: 0.5,
+              x: 0,
+              duration: 0.42,
               ease: "power3.out",
             },
-            0.42
+            0.48
           );
 
           return undefined;
@@ -2413,21 +2423,28 @@ function HomeStatsSection() {
         <div className="home-stats-grid">
           {homeStats.map((stat) => (
             <article
-              className={`home-stat-item${stat.isLive ? " home-stat-item--live" : ""}`}
+              className={`home-stat-item home-stat-item--${stat.id}${
+                stat.isLive ? " home-stat-item--live" : ""
+              }`}
               key={stat.id}
             >
               <strong
                 className={`home-stat-number${
                   stat.isLive ? " home-stat-number--live" : ""
                 }`}
-                aria-label={stat.displayValue}
               >
-                <DigitReveal value={stat.displayValue} />
+                <span
+                  className="home-stat-value"
+                  data-final={stat.displayValue}
+                  data-format={stat.format ?? "plain"}
+                  data-prefix={stat.prefix ?? ""}
+                  data-target={stat.target}
+                >
+                  {stat.displayValue}
+                </span>
                 {stat.isLive ? (
-                  <span className="home-stat-activity" aria-hidden="true">
-                    <span className="home-stat-activity-orbit">
-                      <span className="home-stat-activity-dot" />
-                    </span>
+                  <span className="home-stat-live-trace" aria-hidden="true">
+                    <span />
                   </span>
                 ) : null}
               </strong>
