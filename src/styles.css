@@ -1666,7 +1666,7 @@ a {
   position: relative;
   overflow: visible;
   scroll-margin-top: 112px;
-  padding: clamp(52px, 5.8vw, 88px) 0 clamp(72px, 7.8vw, 116px);
+  padding: clamp(52px, 5.8vw, 88px) 0 clamp(34px, 3.4vw, 58px);
   background: #ffffff;
 }
 
@@ -1901,7 +1901,7 @@ a {
   position: relative;
   overflow: hidden;
   scroll-margin-top: 118px;
-  padding: clamp(46px, 5.4vw, 86px) 0 clamp(92px, 9vw, 150px);
+  padding: clamp(16px, 2.2vw, 34px) 0 clamp(92px, 9vw, 150px);
   background: #ffffff;
 }
 
@@ -1915,7 +1915,7 @@ a {
   align-items: center;
   justify-content: flex-start;
   isolation: isolate;
-  padding-top: clamp(30px, 3.2vw, 54px);
+  padding-top: clamp(8px, 1.2vw, 20px);
   text-align: center;
 }
 
@@ -1944,7 +1944,7 @@ a {
 .home-services-logo {
   position: relative;
   z-index: 4;
-  width: clamp(132px, 9vw, 168px);
+  width: clamp(210px, 14vw, 270px);
   margin: 0 auto clamp(36px, 3.8vw, 58px);
   display: grid;
   place-items: center;
@@ -4033,7 +4033,7 @@ a {
   }
 
   .home-stats-section {
-    padding: 40px 0 86px;
+    padding: 40px 0 48px;
   }
 
   .home-stats-shell {
@@ -4058,7 +4058,7 @@ a {
   }
 
   .home-services-preview {
-    padding: 64px 0 94px;
+    padding: 28px 0 94px;
   }
 
   .home-services-shell {
@@ -4068,7 +4068,7 @@ a {
   }
 
   .home-services-logo {
-    width: clamp(124px, 18vw, 150px);
+    width: clamp(188px, 27vw, 240px);
     margin-bottom: 34px;
   }
 
@@ -4727,7 +4727,7 @@ a {
   }
 
   .home-stats-section {
-    padding: 28px 0 70px;
+    padding: 28px 0 38px;
   }
 
   .home-stats-shell {
@@ -4784,7 +4784,7 @@ a {
   }
 
   .home-services-preview {
-    padding: 50px 0 76px;
+    padding: 26px 0 76px;
   }
 
   .home-services-shell {
@@ -4792,7 +4792,7 @@ a {
   }
 
   .home-services-logo {
-    width: min(132px, 38vw);
+    width: min(200px, 54vw);
     margin-bottom: 28px;
   }
 
