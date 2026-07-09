@@ -29,6 +29,7 @@ function PortfolioLoop({ activeIndex, loadedCount, slides }) {
 
 export function StudioDisplay({
   activeIndex,
+  decorative = false,
   formContent,
   formInteractive,
   formLayerRef,
@@ -38,7 +39,12 @@ export function StudioDisplay({
   veilRef,
 }) {
   return (
-    <div className="editorial-home__display" data-editorial-display>
+    <div
+      className={`editorial-home__display${
+        decorative ? " editorial-home__display--preview" : ""
+      }`}
+      data-editorial-display
+    >
       <div className="editorial-home__display-stage">
         <div className="editorial-home__display-screen">
           <div
@@ -53,14 +59,16 @@ export function StudioDisplay({
             />
           </div>
 
-          <div
-            className="editorial-home__form-layer"
-            ref={formLayerRef}
-            aria-hidden={formInteractive ? undefined : "true"}
-            inert={!formInteractive}
-          >
-            {formContent}
-          </div>
+          {decorative ? null : (
+            <div
+              className="editorial-home__form-layer"
+              ref={formLayerRef}
+              aria-hidden={formInteractive ? undefined : "true"}
+              inert={!formInteractive}
+            >
+              {formContent}
+            </div>
+          )}
 
           <span
             className="editorial-home__screen-veil"

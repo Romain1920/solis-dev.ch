@@ -21,6 +21,7 @@ gsap.registerPlugin(useGSAP, ScrollTrigger);
 const DESKTOP_MOTION_QUERY =
   "(min-width: 1024px) and (prefers-reduced-motion: no-preference)";
 const PROJECT_ROTATION_DELAY_MS = 3600;
+const SPLIT_PROJECT_ROTATION_DELAY_MS = 5000;
 const DEFAULT_WHATSAPP_HREF = "https://wa.me/41798401663";
 const DEFAULT_PROJECT_IDS = [
   "ecommerce",
@@ -106,6 +107,7 @@ function EmptyFormState() {
  */
 export default function EditorialHomeExperience({
   className = "",
+  experienceVariant = "current",
   formAnchorId = "maquette-offerte",
   onInternalNavigate,
   onMaquetteCtaClick,
@@ -116,6 +118,7 @@ export default function EditorialHomeExperience({
   trustContent,
   whatsappHref = DEFAULT_WHATSAPP_HREF,
 }) {
+  const isSplitExperience = experienceVariant === "split";
   const rootRef = useRef(null);
   const sceneRef = useRef(null);
   const displayRef = useRef(null);
@@ -240,7 +243,9 @@ export default function EditorialHomeExperience({
         if (!document.hidden) {
           setActiveIndex((currentIndex) => (currentIndex + 1) % slides.length);
         }
-      }, PROJECT_ROTATION_DELAY_MS);
+      }, isSplitExperience
+        ? SPLIT_PROJECT_ROTATION_DELAY_MS
+        : PROJECT_ROTATION_DELAY_MS);
     };
 
     syncRotation();
@@ -250,7 +255,7 @@ export default function EditorialHomeExperience({
       stopRotation();
       mediaQuery.removeEventListener("change", syncRotation);
     };
-  }, [slides.length]);
+  }, [isSplitExperience, slides.length]);
 
   useGSAP(
     () => {
@@ -263,14 +268,249 @@ export default function EditorialHomeExperience({
         const portfolioLayer = portfolioLayerRef.current;
         const formLayer = formLayerRef.current;
         const veil = veilRef.current;
-        const introElements = gsap.utils.toArray("[data-editorial-intro]");
-        const sideLinks = gsap.utils.toArray("[data-editorial-side-link]");
+        const introElements = gsap.utils.toArray(
+          "[data-editorial-intro]",
+          root
+        );
+        const sideLinks = gsap.utils.toArray(
+          "[data-editorial-side-link]",
+          root
+        );
+        const introTitle = root?.querySelector("[data-editorial-title]");
+        const introMeta = root?.querySelector("[data-editorial-meta]");
         const trust = root?.querySelector("[data-editorial-trust]");
         const conversion = root?.querySelector("[data-editorial-conversion]");
         const ambient = root?.querySelector("[data-editorial-ambient]");
 
         if (!root || !scene || !display || !portfolioLayer || !formLayer) {
           return undefined;
+        }
+
+        if (isSplitExperience) {
+          const measureTravel = () => {
+            const viewportWidth = window.innerWidth;
+            const viewportHeight = window.innerHeight;
+            const finalScale = gsap.utils.clamp(
+              1.025,
+              1.065,
+              0.98 + viewportWidth / 24000
+            );
+            const displayHeight =
+              display.offsetHeight || display.offsetWidth * (4160 / 5400);
+            const trustTop = trust?.offsetTop || viewportHeight - 86;
+            const desiredDrop = gsap.utils.clamp(
+              52,
+              96,
+              viewportHeight * 0.105
+            );
+            const maximumTop =
+              trustTop - displayHeight * finalScale - 28;
+            const finalTop = Math.max(
+              display.offsetTop,
+              Math.min(display.offsetTop + desiredDrop, maximumTop)
+            );
+            const finalLeft = gsap.utils.clamp(
+              38,
+              86,
+              viewportWidth * 0.042
+            );
+            const scaleOffsetX =
+              ((finalScale - 1) * display.offsetWidth) / 2;
+            const scaleOffsetY =
+              ((finalScale - 1) * displayHeight) / 2;
+
+            return {
+              scale: finalScale,
+              x: finalLeft - display.offsetLeft + scaleOffsetX,
+              y: finalTop - display.offsetTop + scaleOffsetY,
+            };
+          };
+
+          setFormAvailability(false);
+          gsap.set(display, {
+            autoAlpha: 1,
+            x: 0,
+            y: 0,
+            scale: 1,
+            transformOrigin: "50% 50%",
+          });
+          gsap.set(introElements, { autoAlpha: 1, x: 0, y: 0 });
+          gsap.set(portfolioLayer, {
+            autoAlpha: 1,
+            clipPath: "inset(0% 0% 0% 0%)",
+            scale: 1,
+            y: 0,
+          });
+          gsap.set(formLayer, {
+            autoAlpha: 0,
+            clipPath: "inset(9% 7% 9% 7%)",
+            scale: 0.985,
+            y: 20,
+          });
+
+          if (conversion) {
+            gsap.set(conversion, { autoAlpha: 0, y: 26 });
+          }
+
+          if (trust) {
+            gsap.set(trust, { autoAlpha: 1, y: 0 });
+          }
+
+          if (veil) {
+            gsap.set(veil, { opacity: 0.1 });
+          }
+
+          const syncFormAvailability = (progress) => {
+            setFormAvailability(progress >= 0.96);
+          };
+          const timeline = gsap.timeline({
+            defaults: { ease: "none" },
+            scrollTrigger: {
+              id: "solis-editorial-home-split",
+              trigger: root,
+              start: "top top",
+              end: () =>
+                `+=${Math.max(
+                  Math.round(window.innerHeight * 1.75),
+                  1350
+                )}`,
+              pin: scene,
+              pinSpacing: true,
+              scrub: 1.2,
+              anticipatePin: 1,
+              invalidateOnRefresh: true,
+              onRefresh: (self) => syncFormAvailability(self.progress),
+              onUpdate: (self) => syncFormAvailability(self.progress),
+            },
+          });
+
+          timelineRef.current = timeline;
+          timeline.addLabel("travel", 0);
+
+          timeline.to(
+            display,
+            {
+              x: () => measureTravel().x * 0.18,
+              y: () => measureTravel().y * 0.32,
+              scale: 1.005,
+              duration: 0.7,
+            },
+            "travel"
+          );
+
+          timeline.to(
+            display,
+            {
+              x: () => measureTravel().x * 0.58,
+              y: () => measureTravel().y * 0.72,
+              scale: () => 1 + (measureTravel().scale - 1) * 0.52,
+              duration: 0.9,
+            },
+            "travel+=0.7"
+          );
+
+          timeline.to(
+            display,
+            {
+              x: () => measureTravel().x,
+              y: () => measureTravel().y,
+              scale: () => measureTravel().scale,
+              duration: 0.72,
+            },
+            "travel+=1.6"
+          );
+
+          if (ambient) {
+            timeline.to(
+              ambient,
+              {
+                autoAlpha: 0.62,
+                xPercent: -1.2,
+                scale: 1.025,
+                duration: 1.9,
+              },
+              "travel+=0.1"
+            );
+          }
+
+          if (veil) {
+            timeline.to(
+              veil,
+              { opacity: 0.025, duration: 1.5 },
+              "travel+=0.08"
+            );
+          }
+
+          if (introMeta) {
+            timeline.to(
+              introMeta,
+              {
+                autoAlpha: 0,
+                y: -12,
+                duration: 0.48,
+                ease: "power1.in",
+              },
+              "travel+=1.48"
+            );
+          }
+
+          if (introTitle) {
+            timeline.to(
+              introTitle,
+              {
+                autoAlpha: 0,
+                y: -14,
+                duration: 0.5,
+                ease: "power1.in",
+              },
+              "travel+=1.7"
+            );
+          }
+
+          if (conversion) {
+            timeline.to(
+              conversion,
+              {
+                autoAlpha: 1,
+                y: 0,
+                duration: 0.42,
+                ease: "power1.out",
+              },
+              "travel+=1.84"
+            );
+          }
+
+          timeline.to(
+            portfolioLayer,
+            {
+              autoAlpha: 0,
+              clipPath: "inset(6% 4% 6% 4%)",
+              y: -10,
+              scale: 0.988,
+              duration: 0.3,
+              ease: "power1.in",
+            },
+            "travel+=1.98"
+          );
+
+          timeline.to(
+            formLayer,
+            {
+              autoAlpha: 1,
+              clipPath: "inset(0% 0% 0% 0%)",
+              y: 0,
+              scale: 1,
+              duration: 0.38,
+              ease: "power1.out",
+            },
+            "travel+=2.08"
+          );
+
+          timeline.to({}, { duration: 0.16 }, "travel+=2.46");
+
+          return () => {
+            timelineRef.current = null;
+          };
         }
 
         setFormAvailability(false);
@@ -430,7 +670,11 @@ export default function EditorialHomeExperience({
 
       return () => media.revert();
     },
-    { scope: rootRef }
+    {
+      scope: rootRef,
+      dependencies: [isSplitExperience],
+      revertOnUpdate: true,
+    }
   );
 
   const handleMaquetteClick = useCallback(
@@ -447,16 +691,21 @@ export default function EditorialHomeExperience({
       const target = Math.max(scrollTrigger.start, scrollTrigger.end - 1);
 
       if (lenis) {
+        const distance = Math.abs(target - window.scrollY);
         lenis.scrollTo(target, {
-          duration: 1.1,
-          easing: (progress) => 1 - Math.pow(1 - progress, 4),
+          duration: isSplitExperience
+            ? gsap.utils.clamp(1.9, 2.7, distance / 720)
+            : 1.1,
+          easing: isSplitExperience
+            ? (progress) => 0.5 - Math.cos(Math.PI * progress) / 2
+            : (progress) => 1 - Math.pow(1 - progress, 4),
         });
         return;
       }
 
       window.scrollTo({ top: target, behavior: "smooth" });
     },
-    [formAnchorId, lenis, onMaquetteCtaClick]
+    [formAnchorId, isSplitExperience, lenis, onMaquetteCtaClick]
   );
 
   const handleInternalClick = useCallback(
@@ -478,7 +727,9 @@ export default function EditorialHomeExperience({
 
   return (
     <section
-      className={`editorial-home${className ? ` ${className}` : ""}`}
+      className={`editorial-home editorial-home--${
+        isSplitExperience ? "split" : "current"
+      }${className ? ` ${className}` : ""}`}
       id="accueil"
       ref={rootRef}
       aria-labelledby="editorial-home-title"
@@ -495,6 +746,7 @@ export default function EditorialHomeExperience({
             className="editorial-home__title"
             id="editorial-home-title"
             data-editorial-intro
+            data-editorial-title
           >
             <span>Création de sites web et</span>
             {" "}
@@ -505,7 +757,11 @@ export default function EditorialHomeExperience({
             <span>des résultats.</span>
           </h1>
 
-          <div className="editorial-home__intro-meta" data-editorial-intro>
+          <div
+            className="editorial-home__intro-meta"
+            data-editorial-intro
+            data-editorial-meta
+          >
             <p>{supportCopy}</p>
             <div className="editorial-home__actions">
               <a
@@ -529,24 +785,40 @@ export default function EditorialHomeExperience({
           </div>
         </div>
 
-        <a
-          className="editorial-home__side-link editorial-home__side-link--left"
-          href="/services"
-          data-editorial-side-link
-          onClick={(event) => handleInternalClick(event, "/services")}
-        >
-          <span>Services</span>
-          <small>[ STUDIO ]</small>
-        </a>
-        <a
-          className="editorial-home__side-link editorial-home__side-link--right"
-          href="/portfolio"
-          data-editorial-side-link
-          onClick={(event) => handleInternalClick(event, "/portfolio")}
-        >
-          <span>Portfolio</span>
-          <small>[ WORKS ]</small>
-        </a>
+        {isSplitExperience && formVariant === "inline" ? (
+          <div
+            className="editorial-home__mobile-display-preview"
+            aria-hidden="true"
+          >
+            <StudioDisplay
+              activeIndex={activeIndex}
+              decorative
+              loadedCount={loadedCount}
+              slides={slides}
+            />
+          </div>
+        ) : !isSplitExperience ? (
+          <>
+            <a
+              className="editorial-home__side-link editorial-home__side-link--left"
+              href="/services"
+              data-editorial-side-link
+              onClick={(event) => handleInternalClick(event, "/services")}
+            >
+              <span>Services</span>
+              <small>[ STUDIO ]</small>
+            </a>
+            <a
+              className="editorial-home__side-link editorial-home__side-link--right"
+              href="/portfolio"
+              data-editorial-side-link
+              onClick={(event) => handleInternalClick(event, "/portfolio")}
+            >
+              <span>Portfolio</span>
+              <small>[ WORKS ]</small>
+            </a>
+          </>
+        ) : null}
 
         <div className="editorial-home__trust" data-editorial-trust>
           {trustContent ?? <DefaultTrustContent />}
