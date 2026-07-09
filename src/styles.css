@@ -1881,12 +1881,13 @@ a {
 .home-service-note {
   position: absolute;
   z-index: 2;
-  display: inline-flex;
+  display: inline-grid;
+  grid-template-columns: minmax(0, 1fr) auto;
   align-items: center;
-  justify-content: center;
-  max-width: 292px;
-  min-height: 52px;
-  padding: 18px 19px 13px;
+  gap: 14px;
+  max-width: 286px;
+  min-height: 64px;
+  padding: 20px 18px 15px;
   border: 1px solid rgba(9, 10, 10, 0.075);
   border-radius: 6px;
   background:
@@ -1899,12 +1900,9 @@ a {
     inset 0 1px 0 rgba(255, 255, 255, 0.86),
     inset 0 -12px 18px rgba(130, 112, 84, 0.025);
   color: rgba(9, 10, 10, 0.86);
-  font-size: clamp(0.96rem, 0.98vw, 1.08rem);
-  font-weight: 590;
-  line-height: 1.08;
   letter-spacing: 0;
   text-align: left;
-  white-space: nowrap;
+  white-space: normal;
   pointer-events: auto;
   transform: rotate(var(--note-rotate, 0deg));
   transform-origin: center;
@@ -1965,9 +1963,40 @@ a {
   position: relative;
   z-index: 1;
   display: block;
-  color: inherit;
-  font: inherit;
+  color: rgba(9, 10, 10, 0.88);
+  font-size: clamp(0.94rem, 0.98vw, 1.07rem);
+  font-weight: 680;
+  line-height: 1.05;
   white-space: nowrap;
+}
+
+.home-service-note-content {
+  position: relative;
+  z-index: 1;
+  min-width: 0;
+  display: grid;
+  gap: 5px;
+}
+
+.home-service-note-price {
+  display: block;
+  color: rgba(9, 10, 10, 0.54);
+  font-size: clamp(0.72rem, 0.76vw, 0.82rem);
+  font-weight: 560;
+  line-height: 1.12;
+}
+
+.home-service-note-arrow {
+  position: relative;
+  z-index: 1;
+  color: rgba(9, 10, 10, 0.5);
+  font-size: clamp(1rem, 1.05vw, 1.12rem);
+  font-weight: 650;
+  line-height: 1;
+  transform: translateX(0);
+  transition:
+    color 180ms ease,
+    transform 180ms ease;
 }
 
 .home-service-note--left-top {
@@ -2016,6 +2045,17 @@ a {
 .home-service-note--link:hover .home-service-note-title,
 .home-service-note--link:focus-visible .home-service-note-title {
   color: #090a0a;
+}
+
+.home-service-note--link:hover .home-service-note-price,
+.home-service-note--link:focus-visible .home-service-note-price {
+  color: rgba(9, 10, 10, 0.66);
+}
+
+.home-service-note--link:hover .home-service-note-arrow,
+.home-service-note--link:focus-visible .home-service-note-arrow {
+  color: #090a0a;
+  transform: translateX(3px);
 }
 
 .home-value-section {
@@ -3995,8 +4035,8 @@ a {
     position: relative;
     inset: auto;
     translate: none;
-    max-width: min(100%, 330px);
-    padding: 16px 18px 13px;
+    max-width: min(100%, 340px);
+    padding: 18px 18px 14px;
     transform: none;
   }
 
@@ -4730,8 +4770,8 @@ a {
   .home-service-note--right-bottom {
     width: 100%;
     max-width: 100%;
-    min-height: 52px;
-    padding: 15px 16px 13px;
+    min-height: 68px;
+    padding: 17px 16px 14px;
     transform: none;
   }
 
@@ -4742,6 +4782,10 @@ a {
 
   .home-service-note-title {
     font-size: clamp(0.95rem, 4vw, 1.06rem);
+  }
+
+  .home-service-note-price {
+    font-size: clamp(0.73rem, 3.2vw, 0.8rem);
   }
 
   .home-value-section {

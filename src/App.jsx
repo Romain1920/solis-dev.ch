@@ -75,6 +75,7 @@ const homepageServiceNotes = [
   {
     href: "/site-internet-sur-mesure",
     label: "Site internet sur mesure",
+    price: "Dès 5’000 CHF",
     position: "left-top",
     tone: "blue",
     rotate: -4,
@@ -84,6 +85,7 @@ const homepageServiceNotes = [
   {
     href: "/site-internet-sur-mesure",
     label: "E-commerce",
+    price: "Dès 7’500 CHF",
     position: "left-middle",
     tone: "orange",
     rotate: 3,
@@ -93,6 +95,7 @@ const homepageServiceNotes = [
   {
     href: "/application-mobile",
     label: "Application mobile",
+    price: "Dès 10’000 CHF",
     position: "right-top",
     tone: "orange",
     rotate: 3,
@@ -102,6 +105,7 @@ const homepageServiceNotes = [
   {
     href: "/logiciel-metier",
     label: "Logiciel métier",
+    price: "Dès 10’000 CHF",
     position: "right-middle",
     tone: "blue",
     rotate: -3,
@@ -111,6 +115,7 @@ const homepageServiceNotes = [
   {
     href: "/#contact",
     label: "Accompagnement startup",
+    price: "À définir ensemble",
     position: "left-bottom",
     tone: "blue",
     rotate: 3,
@@ -120,6 +125,7 @@ const homepageServiceNotes = [
   {
     href: "/equipe",
     label: "SEO / Google Ads",
+    price: "À définir avec notre partenaire",
     position: "right-bottom",
     tone: "blue",
     rotate: -3,
@@ -2759,7 +2765,13 @@ function HomepageServicesPreview() {
             const noteContent = (
               <>
                 <span className="home-service-note-pin" aria-hidden="true" />
-                <span className="home-service-note-title">{service.label}</span>
+                <span className="home-service-note-content">
+                  <span className="home-service-note-title">{service.label}</span>
+                  <span className="home-service-note-price">{service.price}</span>
+                </span>
+                <span className="home-service-note-arrow" aria-hidden="true">
+                  →
+                </span>
               </>
             );
 
