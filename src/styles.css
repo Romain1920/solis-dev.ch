@@ -449,7 +449,7 @@ a {
   border-top-left-radius: clamp(48px, 7vw, 118px);
   border-top-right-radius: clamp(48px, 7vw, 118px);
   background: #ffffff;
-  box-shadow: 0 -22px 54px rgba(255, 226, 210, 0.22);
+  box-shadow: none;
 }
 
 .hero-shell {
@@ -1667,8 +1667,7 @@ a {
   overflow: visible;
   scroll-margin-top: 112px;
   padding: clamp(52px, 5.8vw, 88px) 0 clamp(72px, 7.8vw, 116px);
-  background:
-    linear-gradient(180deg, rgba(255, 254, 250, 0.98), rgba(250, 251, 247, 0.94));
+  background: #ffffff;
 }
 
 .home-stats-shell {
@@ -2186,10 +2185,8 @@ a {
   overflow: hidden;
   scroll-margin-top: 118px;
   padding: clamp(82px, 9vw, 136px) 0 clamp(92px, 9.5vw, 148px);
-  background:
-    linear-gradient(180deg, rgba(246, 251, 252, 0.72), rgba(255, 255, 255, 1)),
-    #ffffff;
-  border-top: 1px solid rgba(9, 10, 10, 0.06);
+  background: #ffffff;
+  border-top: 0;
 }
 
 .home-contact-shell {
