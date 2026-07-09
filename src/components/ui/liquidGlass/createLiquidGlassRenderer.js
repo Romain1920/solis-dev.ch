@@ -543,7 +543,8 @@ export function createLiquidGlassRenderer(canvas, preset) {
     const centerY = pixelHeight * 0.5 - pointerY * pointerShift * size.dpr;
     const shapeWidth = size.width + 2;
     const shapeHeight = size.height + 2;
-    const shapeRadius = Math.min(shapeWidth, shapeHeight) * clamp(preset.radius ?? 0.5, 0.1, 0.5);
+    const fallbackRadius = Math.min(shapeWidth, shapeHeight) * clamp(preset.radius ?? 0.5, 0.1, 0.5);
+    const shapeRadius = Math.min(preset.cornerRadius ?? fallbackRadius, Math.min(shapeWidth, shapeHeight) * 0.5);
     const glareAngle =
       ((preset.glareAngle ?? -40) + (reducedMotion ? 0 : pointerX * 10 - pointerY * 6)) *
       (Math.PI / 180);

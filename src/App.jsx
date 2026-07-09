@@ -67,30 +67,86 @@ const serviceItems = [
   },
 ];
 
-const homepageServiceLinks = [
+const homepageServicesSentence =
+  "On aide les PME et startups à créer des sites, apps et outils sur mesure qui leur ressemblent, attirent les bons clients et génèrent des résultats.";
+
+const homepageServicesWords = homepageServicesSentence.split(" ");
+
+const homepageServicePills = [
   {
     href: "/services#site-internet-sur-mesure",
     label: "Site internet sur mesure",
-    position: "top",
+    position: "left-top",
     tone: "blue",
-    startX: 0,
-    startY: 78,
+    rotate: -5,
+    startX: -28,
+    startY: 18,
   },
   {
     href: "/services#application-mobile",
     label: "Application mobile",
-    position: "left",
+    position: "right-top",
     tone: "orange",
-    startX: 116,
-    startY: 0,
+    rotate: 4,
+    startX: 28,
+    startY: 18,
   },
   {
     href: "/services#logiciels-metiers",
     label: "Logiciel métier",
-    position: "right",
+    position: "right-middle",
     tone: "blue",
-    startX: -116,
-    startY: 0,
+    rotate: -4,
+    startX: 24,
+    startY: 14,
+  },
+  {
+    label: "Conseil",
+    position: "left-middle",
+    tone: "orange",
+    rotate: 3,
+    startX: -22,
+    startY: 18,
+  },
+  {
+    label: "Maquettage",
+    position: "left-bottom",
+    tone: "blue",
+    rotate: -4,
+    startX: -24,
+    startY: 16,
+  },
+  {
+    label: "Design",
+    position: "right-bottom",
+    tone: "orange",
+    rotate: 5,
+    startX: 24,
+    startY: 18,
+  },
+  {
+    label: "Accompagnement startup",
+    position: "left-wide",
+    tone: "blue",
+    rotate: 4,
+    startX: -20,
+    startY: 16,
+  },
+  {
+    label: "SEO / Google Ads",
+    position: "right-wide",
+    tone: "blue",
+    rotate: -3,
+    startX: 20,
+    startY: 16,
+  },
+  {
+    label: "E-commerce",
+    position: "bottom",
+    tone: "orange",
+    rotate: -2,
+    startX: 0,
+    startY: 20,
   },
 ];
 
@@ -2603,17 +2659,17 @@ function HomepageServicesPreview() {
         },
         (context) => {
           const { reduceMotion, desktopServices } = context.conditions;
-          const heading = servicesRef.current?.querySelector(".home-services-heading");
+          const section = servicesRef.current;
+          const words = section
+            ? Array.from(section.querySelectorAll(".home-services-word"))
+            : [];
           const logo = servicesRef.current?.querySelector(".home-services-logo");
-          const serviceLinks = servicesRef.current
-            ? Array.from(servicesRef.current.querySelectorAll(".home-service-link"))
+          const servicePills = servicesRef.current
+            ? Array.from(servicesRef.current.querySelectorAll(".home-service-pill"))
             : [];
-          const serviceLines = servicesRef.current
-            ? Array.from(servicesRef.current.querySelectorAll(".home-services-line"))
-            : [];
-          const animatedElements = [heading, logo, ...serviceLinks, ...serviceLines].filter(
-            Boolean
-          );
+          const animatedElements = [logo, ...words, ...servicePills].filter(Boolean);
+          const getPillRotation = (element) =>
+            desktopServices ? Number(element.dataset.rotate ?? 0) : 0;
 
           if (reduceMotion) {
             gsap.set(animatedElements, {
@@ -2621,96 +2677,72 @@ function HomepageServicesPreview() {
               x: 0,
               y: 0,
               scale: 1,
-              scaleX: 1,
-              scaleY: 1,
+              rotation: (_index, element) => getPillRotation(element),
               filter: "blur(0px)",
             });
+            gsap.set(words, { color: "#090a0a" });
             return undefined;
           }
 
+          gsap.set(words, { color: "rgba(9, 10, 10, 0.18)" });
+
+          gsap.to(words, {
+            color: "#090a0a",
+            ease: "none",
+            stagger: 0.045,
+            scrollTrigger: {
+              trigger: section,
+              start: "top 70%",
+              end: "bottom 45%",
+              scrub: 0.55,
+            },
+          });
+
           const timeline = gsap.timeline({
             scrollTrigger: {
-              trigger: servicesRef.current,
-              start: "top 76%",
+              trigger: section,
+              start: "top 78%",
               once: true,
             },
           });
 
           timeline.fromTo(
-            heading,
-            {
-              autoAlpha: 0,
-              y: 18,
-              filter: "blur(7px)",
-            },
-            {
-              autoAlpha: 1,
-              y: 0,
-              filter: "blur(0px)",
-              duration: 0.62,
-              ease: "power3.out",
-            }
-          );
-
-          timeline.fromTo(
             logo,
-            {
-              autoAlpha: 0,
-              y: 14,
-              scale: 0.96,
-              filter: "blur(4px)",
-            },
+            { autoAlpha: 0, y: 16, scale: 0.96, filter: "blur(5px)" },
             {
               autoAlpha: 1,
               y: 0,
               scale: 1,
               filter: "blur(0px)",
-              duration: 0.66,
+              duration: 0.58,
               ease: "power3.out",
-            },
-            0.14
+            }
           );
 
           timeline.fromTo(
-            serviceLines,
-            {
-              autoAlpha: 0,
-              scaleX: 0.6,
-              scaleY: 0.6,
-            },
-            {
-              autoAlpha: 1,
-              scaleX: 1,
-              scaleY: 1,
-              duration: 0.5,
-              ease: "power2.out",
-              stagger: 0.035,
-            },
-            0.28
-          );
-
-          timeline.fromTo(
-            serviceLinks,
+            servicePills,
             {
               autoAlpha: 0,
               x: (_index, element) =>
                 desktopServices ? Number(element.dataset.startX ?? 0) : 0,
               y: (_index, element) =>
-                desktopServices ? Number(element.dataset.startY ?? 0) : 14,
+                desktopServices ? Number(element.dataset.startY ?? 0) : 16,
               scale: 0.96,
-              filter: "blur(3px)",
+              rotation: (_index, element) => getPillRotation(element) * 0.35,
+              filter: "blur(5px)",
             },
             {
               autoAlpha: 1,
               x: 0,
               y: 0,
               scale: 1,
+              rotation: (_index, element) => getPillRotation(element),
               filter: "blur(0px)",
-              duration: 0.72,
+              duration: 0.68,
               ease: "power3.out",
-              stagger: 0.075,
+              stagger: 0.055,
             },
-            0.3
+            0.18
           );
 
           return undefined;
@@ -2730,41 +2762,63 @@ function HomepageServicesPreview() {
       aria-labelledby="home-services-title"
     >
       <div className="home-services-shell">
+        <div className="home-services-logo">
+          <img src={solisLogoNav} alt="SOLIS" loading="lazy" decoding="async" />
+        </div>
+
         <h2 className="home-services-heading" id="home-services-title">
-          Ce qu’on propose
+          {homepageServicesWords.map((word, index) => (
+            <span className="home-services-word" key={`${word}-${index}`}>
+              {word}
+            </span>
+          ))}
         </h2>
 
-        <div className="home-services-map" aria-label="Aperçu des services SOLIS">
-          <span className="home-services-orbit" aria-hidden="true" />
-          <span
-            className="home-services-line home-services-line--top"
-            aria-hidden="true"
-          />
-          <span
-            className="home-services-line home-services-line--left"
-            aria-hidden="true"
-          />
-          <span
-            className="home-services-line home-services-line--right"
-            aria-hidden="true"
-          />
+        <div className="home-services-pills" aria-label="Aperçu des services SOLIS">
+          {homepageServicePills.map((service) => {
+            const pillClassName = [
+              "home-service-pill",
+              `home-service-pill--${service.position}`,
+              `home-service-pill--${service.tone}`,
+              service.href ? "home-service-pill--link" : "home-service-pill--label",
+            ].join(" ");
+            const pillContent = (
+              <>
+                <span className="home-service-pill-mark" aria-hidden="true" />
+                <span>{service.label}</span>
+              </>
+            );
 
-          <div className="home-services-logo">
-            <img src={solisLogoNav} alt="SOLIS" loading="lazy" decoding="async" />
-          </div>
+            if (service.href) {
+              return (
+                <a
+                  className={pillClassName}
+                  href={service.href}
+                  key={service.href}
+                  data-rotate={service.rotate}
+                  data-start-x={service.startX}
+                  data-start-y={service.startY}
+                  onClick={handleRouteLinkClick}
+                  style={{ "--pill-rotate": `${service.rotate}deg` }}
+                >
+                  {pillContent}
+                </a>
+              );
+            }
 
-          {homepageServiceLinks.map((service) => (
-            <a
-              className={`home-service-link home-service-link--${service.position} home-service-link--${service.tone}`}
-              href={service.href}
-              key={service.href}
-              data-start-x={service.startX}
-              data-start-y={service.startY}
-              onClick={handleRouteLinkClick}
-            >
-              <span>{service.label}</span>
-            </a>
-          ))}
+            return (
+              <span
+                className={pillClassName}
+                key={service.label}
+                data-rotate={service.rotate}
+                data-start-x={service.startX}
+                data-start-y={service.startY}
+                style={{ "--pill-rotate": `${service.rotate}deg` }}
+              >
+                {pillContent}
+              </span>
+            );
+          })}
         </div>
       </div>
     </section>
