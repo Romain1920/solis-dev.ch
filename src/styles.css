@@ -1818,7 +1818,7 @@ a {
 .home-services-heading {
   position: relative;
   z-index: 3;
-  max-width: min(760px, 54vw);
+  max-width: min(680px, 50vw);
   margin: 0 auto;
   color: #090a0a;
   font-size: clamp(2.15rem, 2.65vw, 3.25rem);
