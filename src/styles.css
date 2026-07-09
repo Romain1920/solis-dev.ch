@@ -1902,34 +1902,33 @@ a {
   position: relative;
   overflow: hidden;
   scroll-margin-top: 118px;
-  padding: clamp(108px, 11vw, 184px) 0 clamp(112px, 11vw, 190px);
-  background:
-    linear-gradient(180deg, rgba(246, 246, 244, 0.96), rgba(252, 252, 250, 0.98) 58%, #ffffff),
-    #f7f7f5;
+  padding: clamp(46px, 5.4vw, 86px) 0 clamp(92px, 9vw, 150px);
+  background: #ffffff;
 }
 
 .home-services-shell {
   position: relative;
   width: min(1320px, calc(100vw - 56px));
-  min-height: clamp(620px, 53vw, 780px);
+  min-height: clamp(560px, 47vw, 690px);
   margin: 0 auto;
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-start;
   isolation: isolate;
+  padding-top: clamp(30px, 3.2vw, 54px);
   text-align: center;
 }
 
 .home-services-heading {
   position: relative;
   z-index: 3;
-  max-width: min(900px, 64vw);
+  max-width: min(820px, 58vw);
   margin: 0 auto;
   color: #090a0a;
-  font-size: clamp(2.8rem, 3.85vw, 4.85rem);
+  font-size: clamp(2.65rem, 3.55vw, 4.45rem);
   font-weight: 560;
-  line-height: 1.14;
+  line-height: 1.13;
   letter-spacing: 0;
   text-align: center;
   text-wrap: balance;
@@ -1946,8 +1945,8 @@ a {
 .home-services-logo {
   position: relative;
   z-index: 4;
-  width: clamp(94px, 7.2vw, 128px);
-  margin: 0 auto clamp(46px, 4.8vw, 70px);
+  width: clamp(132px, 9vw, 168px);
+  margin: 0 auto clamp(36px, 3.8vw, 58px);
   display: grid;
   place-items: center;
 }
@@ -1977,37 +1976,42 @@ a {
   object-fit: contain;
 }
 
-.home-services-pills {
+.home-services-notes {
   position: absolute;
   inset: 0;
   z-index: 2;
   pointer-events: none;
 }
 
-.home-service-pill {
+.home-service-note {
   position: absolute;
   z-index: 2;
   display: inline-flex;
   align-items: center;
-  gap: 10px;
-  max-width: 280px;
-  padding: 12px 18px 12px 14px;
-  border: 1px solid rgba(9, 10, 10, 0.06);
-  border-radius: 999px;
-  background: rgba(255, 255, 255, 0.88);
+  justify-content: center;
+  max-width: 292px;
+  min-height: 52px;
+  padding: 18px 19px 13px;
+  border: 1px solid rgba(9, 10, 10, 0.075);
+  border-radius: 6px;
+  background:
+    linear-gradient(175deg, rgba(255, 255, 255, 0.98), rgba(251, 250, 244, 0.95) 72%),
+    radial-gradient(circle at 18% 16%, rgba(255, 255, 255, 0.9), transparent 38%),
+    rgba(255, 255, 255, 0.94);
   box-shadow:
-    0 18px 38px rgba(16, 17, 18, 0.09),
-    0 6px 14px rgba(16, 17, 18, 0.06),
-    inset 0 1px 0 rgba(255, 255, 255, 0.82);
+    0 16px 30px rgba(16, 17, 18, 0.085),
+    0 4px 9px rgba(16, 17, 18, 0.05),
+    inset 0 1px 0 rgba(255, 255, 255, 0.86),
+    inset 0 -12px 18px rgba(130, 112, 84, 0.025);
   color: rgba(9, 10, 10, 0.86);
-  font-size: clamp(0.98rem, 1.02vw, 1.12rem);
+  font-size: clamp(0.96rem, 0.98vw, 1.08rem);
   font-weight: 590;
   line-height: 1.08;
   letter-spacing: 0;
   text-align: left;
   white-space: nowrap;
   pointer-events: auto;
-  transform: rotate(var(--pill-rotate, 0deg));
+  transform: rotate(var(--note-rotate, 0deg));
   transform-origin: center;
   will-change: transform, opacity, filter;
   transition:
@@ -2016,88 +2020,107 @@ a {
     color 180ms ease;
 }
 
-.home-service-pill-mark {
-  flex: 0 0 auto;
-  width: 28px;
-  height: 28px;
-  border-radius: 999px;
-  background:
-    radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.95) 0 20%, transparent 22%),
-    rgba(69, 157, 240, 0.88);
-  box-shadow: 0 0 0 7px rgba(69, 157, 240, 0.1);
-}
-
-.home-service-pill--orange .home-service-pill-mark {
-  background:
-    radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.95) 0 20%, transparent 22%),
-    rgba(238, 124, 66, 0.9);
-  box-shadow: 0 0 0 7px rgba(238, 124, 66, 0.1);
-}
-
-.home-service-pill--left-top {
-  left: 0;
-  top: 27%;
-}
-
-.home-service-pill--left-middle {
-  left: 5.5%;
-  top: 44%;
-}
-
-.home-service-pill--left-bottom {
-  left: 3%;
-  top: 61%;
-}
-
-.home-service-pill--left-wide {
-  left: 10%;
-  top: 78%;
-}
-
-.home-service-pill--right-top {
+.home-service-note::after {
+  content: "";
+  position: absolute;
   right: 0;
-  top: 27%;
+  bottom: 0;
+  width: 24px;
+  height: 22px;
+  border-radius: 2px;
+  background:
+    linear-gradient(135deg, rgba(9, 10, 10, 0.045), rgba(255, 255, 255, 0) 54%),
+    linear-gradient(315deg, rgba(240, 238, 229, 0.7), rgba(255, 255, 255, 0) 52%);
+  opacity: 0.62;
+  pointer-events: none;
 }
 
-.home-service-pill--right-middle {
-  right: 4.5%;
+.home-service-note-pin {
+  position: absolute;
+  left: 18px;
+  top: -7px;
+  z-index: 2;
+  width: 15px;
+  height: 15px;
+  border-radius: 999px;
+  background: var(--pin-color, rgba(69, 157, 240, 0.88));
+  box-shadow:
+    inset 0 1px 2px rgba(255, 255, 255, 0.78),
+    inset 0 -2px 3px rgba(9, 10, 10, 0.08),
+    0 3px 6px rgba(16, 17, 18, 0.22),
+    0 0 0 5px rgba(69, 157, 240, 0.08);
+}
+
+.home-service-note > span:last-child {
+  position: relative;
+  z-index: 1;
+}
+
+.home-service-note--blue {
+  --pin-color: rgba(69, 157, 240, 0.9);
+}
+
+.home-service-note--orange {
+  --pin-color: rgba(238, 124, 66, 0.92);
+}
+
+.home-service-note--orange .home-service-note-pin {
+  box-shadow:
+    inset 0 1px 1px rgba(255, 255, 255, 0.72),
+    0 2px 5px rgba(16, 17, 18, 0.2),
+    0 0 0 5px rgba(238, 124, 66, 0.09);
+}
+
+.home-service-note--left-top {
+  left: 1.5%;
+  top: 22%;
+}
+
+.home-service-note--left-middle {
+  left: 4%;
+  top: 43%;
+}
+
+.home-service-note--left-bottom {
+  left: 2.5%;
+  top: 59%;
+}
+
+.home-service-note--right-top {
+  right: 1.5%;
+  top: 25%;
+}
+
+.home-service-note--right-middle {
+  right: 4%;
   top: 44%;
 }
 
-.home-service-pill--right-bottom {
-  right: 6%;
-  top: 61%;
+.home-service-note--right-bottom {
+  right: 7%;
+  top: 59%;
 }
 
-.home-service-pill--right-wide {
-  right: 9%;
-  top: 78%;
-}
-
-.home-service-pill--bottom {
-  left: 50%;
-  top: 84%;
-  translate: -50% 0;
-}
-
-.home-service-pill--link:hover,
-.home-service-pill--link:focus-visible {
-  background: rgba(255, 255, 255, 0.96);
+.home-service-note--link:hover,
+.home-service-note--link:focus-visible {
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 1), rgba(253, 252, 248, 0.96)),
+    #ffffff;
   box-shadow:
-    0 22px 44px rgba(16, 17, 18, 0.12),
-    0 8px 16px rgba(16, 17, 18, 0.07),
+    0 18px 34px rgba(16, 17, 18, 0.11),
+    0 4px 10px rgba(16, 17, 18, 0.06),
     inset 0 1px 0 rgba(255, 255, 255, 0.9);
   color: #090a0a;
   outline: none;
 }
 
-.home-service-pill--blue.home-service-pill--link:hover,
-.home-service-pill--blue.home-service-pill--link:focus-visible {
+.home-service-note--blue.home-service-note--link:hover,
+.home-service-note--blue.home-service-note--link:focus-visible {
   color: #287fd7;
 }
 
-.home-service-pill--orange.home-service-pill--link:hover,
-.home-service-pill--orange.home-service-pill--link:focus-visible {
+.home-service-note--orange.home-service-note--link:hover,
+.home-service-note--orange.home-service-note--link:focus-visible {
   color: var(--orange);
 }
 
@@ -4038,7 +4061,7 @@ a {
   }
 
   .home-services-preview {
-    padding: 86px 0 108px;
+    padding: 64px 0 94px;
   }
 
   .home-services-shell {
@@ -4048,8 +4071,8 @@ a {
   }
 
   .home-services-logo {
-    width: clamp(86px, 13vw, 112px);
-    margin-bottom: 38px;
+    width: clamp(124px, 18vw, 150px);
+    margin-bottom: 34px;
   }
 
   .home-services-heading {
@@ -4058,11 +4081,11 @@ a {
     line-height: 1.1;
   }
 
-  .home-services-pills {
+  .home-services-notes {
     position: relative;
     inset: auto;
     width: min(100%, 720px);
-    margin-top: 44px;
+    margin-top: 38px;
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
@@ -4070,21 +4093,19 @@ a {
     pointer-events: auto;
   }
 
-  .home-service-pill,
-  .home-service-pill--left-top,
-  .home-service-pill--left-middle,
-  .home-service-pill--left-bottom,
-  .home-service-pill--left-wide,
-  .home-service-pill--right-top,
-  .home-service-pill--right-middle,
-  .home-service-pill--right-bottom,
-  .home-service-pill--right-wide,
-  .home-service-pill--bottom {
+  .home-service-note,
+  .home-service-note--left-top,
+  .home-service-note--left-middle,
+  .home-service-note--left-bottom,
+  .home-service-note--right-top,
+  .home-service-note--right-middle,
+  .home-service-note--right-bottom {
     position: relative;
     inset: auto;
     translate: none;
-    max-width: min(100%, 320px);
-    font-size: clamp(0.95rem, 1.8vw, 1.06rem);
+    max-width: min(100%, 330px);
+    font-size: clamp(0.95rem, 1.8vw, 1.05rem);
+    transform: none;
   }
 
   .home-value-section {
@@ -4766,7 +4787,7 @@ a {
   }
 
   .home-services-preview {
-    padding: 66px 0 86px;
+    padding: 50px 0 76px;
   }
 
   .home-services-shell {
@@ -4774,8 +4795,8 @@ a {
   }
 
   .home-services-logo {
-    width: min(104px, 30vw);
-    margin-bottom: 34px;
+    width: min(132px, 38vw);
+    margin-bottom: 28px;
   }
 
   .home-services-logo::before,
@@ -4800,40 +4821,32 @@ a {
     margin-right: 0.16em;
   }
 
-  .home-services-pills {
+  .home-services-notes {
     width: min(100%, 370px);
-    margin-top: 34px;
+    margin-top: 30px;
     display: grid;
     grid-template-columns: 1fr;
     gap: 12px;
   }
 
-  .home-service-pill,
-  .home-service-pill--left-top,
-  .home-service-pill--left-middle,
-  .home-service-pill--left-bottom,
-  .home-service-pill--left-wide,
-  .home-service-pill--right-top,
-  .home-service-pill--right-middle,
-  .home-service-pill--right-bottom,
-  .home-service-pill--right-wide,
-  .home-service-pill--bottom {
+  .home-service-note,
+  .home-service-note--left-top,
+  .home-service-note--left-middle,
+  .home-service-note--left-bottom,
+  .home-service-note--right-top,
+  .home-service-note--right-middle,
+  .home-service-note--right-bottom {
     width: 100%;
     max-width: 100%;
     justify-content: flex-start;
-    padding: 13px 16px 13px 14px;
-    font-size: clamp(0.98rem, 4.2vw, 1.08rem);
+    padding: 13px 16px 13px 15px;
+    font-size: clamp(0.96rem, 4vw, 1.06rem);
     transform: none;
   }
 
-  .home-service-pill-mark {
-    width: 24px;
-    height: 24px;
-    box-shadow: 0 0 0 6px rgba(69, 157, 240, 0.1);
-  }
-
-  .home-service-pill--orange .home-service-pill-mark {
-    box-shadow: 0 0 0 6px rgba(238, 124, 66, 0.1);
+  .home-service-note-pin {
+    width: 10px;
+    height: 10px;
   }
 
   .home-value-section {

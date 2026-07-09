@@ -72,23 +72,31 @@ const homepageServicesSentence =
 
 const homepageServicesWords = homepageServicesSentence.split(" ");
 
-const homepageServicePills = [
+const homepageServiceNotes = [
   {
     href: "/services#site-internet-sur-mesure",
     label: "Site internet sur mesure",
     position: "left-top",
     tone: "blue",
-    rotate: -5,
-    startX: -28,
+    rotate: -4,
+    startX: -24,
     startY: 18,
+  },
+  {
+    label: "E-commerce",
+    position: "left-middle",
+    tone: "orange",
+    rotate: 3,
+    startX: -22,
+    startY: 16,
   },
   {
     href: "/services#application-mobile",
     label: "Application mobile",
     position: "right-top",
     tone: "orange",
-    rotate: 4,
-    startX: 28,
+    rotate: 3,
+    startX: 24,
     startY: 18,
   },
   {
@@ -96,57 +104,25 @@ const homepageServicePills = [
     label: "Logiciel métier",
     position: "right-middle",
     tone: "blue",
-    rotate: -4,
-    startX: 24,
+    rotate: -3,
+    startX: 22,
     startY: 14,
   },
   {
-    label: "Conseil",
-    position: "left-middle",
-    tone: "orange",
-    rotate: 3,
-    startX: -22,
-    startY: 18,
-  },
-  {
-    label: "Maquettage",
+    label: "Accompagnement startup",
     position: "left-bottom",
     tone: "blue",
-    rotate: -4,
-    startX: -24,
-    startY: 16,
-  },
-  {
-    label: "Design",
-    position: "right-bottom",
-    tone: "orange",
-    rotate: 5,
-    startX: 24,
-    startY: 18,
-  },
-  {
-    label: "Accompagnement startup",
-    position: "left-wide",
-    tone: "blue",
-    rotate: 4,
+    rotate: 3,
     startX: -20,
     startY: 16,
   },
   {
     label: "SEO / Google Ads",
-    position: "right-wide",
+    position: "right-bottom",
     tone: "blue",
     rotate: -3,
     startX: 20,
     startY: 16,
-  },
-  {
-    label: "E-commerce",
-    position: "bottom",
-    tone: "orange",
-    rotate: -2,
-    startX: 0,
-    startY: 20,
   },
 ];
 
@@ -772,10 +748,32 @@ const getCurrentLocationState = () => {
     return { path: "/", hash: "" };
   }
 
+  suppressInitialContactHash();
+
   return {
     path: normalizeRoutePath(window.location.pathname),
     hash: window.location.hash,
   };
+};
+
+let initialContactHashSuppressed = false;
+
+const suppressInitialContactHash = () => {
+  if (initialContactHashSuppressed || typeof window === "undefined") {
+    return;
+  }
+
+  initialContactHashSuppressed = true;
+
+  if (normalizeRoutePath(window.location.pathname) !== "/" || window.location.hash !== "#contact") {
+    return;
+  }
+
+  window.history.replaceState(
+    window.history.state ?? {},
+    "",
+    `${window.location.pathname || "/"}${window.location.search}`
+  );
 };
 
 const getInternalHref = (href) => {
@@ -2664,11 +2662,11 @@ function HomepageServicesPreview() {
             ? Array.from(section.querySelectorAll(".home-services-word"))
             : [];
           const logo = servicesRef.current?.querySelector(".home-services-logo");
-          const servicePills = servicesRef.current
-            ? Array.from(servicesRef.current.querySelectorAll(".home-service-pill"))
+          const serviceNotes = servicesRef.current
+            ? Array.from(servicesRef.current.querySelectorAll(".home-service-note"))
             : [];
-          const animatedElements = [logo, ...words, ...servicePills].filter(Boolean);
-          const getPillRotation = (element) =>
+          const animatedElements = [logo, ...words, ...serviceNotes].filter(Boolean);
+          const getNoteRotation = (element) =>
             desktopServices ? Number(element.dataset.rotate ?? 0) : 0;
 
           if (reduceMotion) {
@@ -2677,7 +2675,7 @@ function HomepageServicesPreview() {
               x: 0,
               y: 0,
               scale: 1,
-              rotation: (_index, element) => getPillRotation(element),
+              rotation: (_index, element) => getNoteRotation(element),
               filter: "blur(0px)",
             });
             gsap.set(words, { color: "#090a0a" });
@@ -2693,7 +2691,7 @@ function HomepageServicesPreview() {
             scrollTrigger: {
               trigger: section,
               start: "top 70%",
-              end: "bottom 45%",
+              end: "center 58%",
               scrub: 0.55,
             },
           });
@@ -2720,7 +2718,7 @@ function HomepageServicesPreview() {
           );
 
           timeline.fromTo(
-            servicePills,
+            serviceNotes,
             {
               autoAlpha: 0,
               x: (_index, element) =>
@@ -2728,7 +2726,7 @@ function HomepageServicesPreview() {
               y: (_index, element) =>
                 desktopServices ? Number(element.dataset.startY ?? 0) : 16,
               scale: 0.96,
-              rotation: (_index, element) => getPillRotation(element) * 0.35,
+              rotation: (_index, element) => getNoteRotation(element) * 0.35,
               filter: "blur(5px)",
             },
             {
@@ -2736,7 +2734,7 @@ function HomepageServicesPreview() {
               x: 0,
               y: 0,
               scale: 1,
-              rotation: (_index, element) => getPillRotation(element),
+              rotation: (_index, element) => getNoteRotation(element),
               filter: "blur(0px)",
               duration: 0.68,
               ease: "power3.out",
@@ -2774,17 +2772,17 @@ function HomepageServicesPreview() {
           ))}
         </h2>
 
-        <div className="home-services-pills" aria-label="Aperçu des services SOLIS">
-          {homepageServicePills.map((service) => {
-            const pillClassName = [
-              "home-service-pill",
-              `home-service-pill--${service.position}`,
-              `home-service-pill--${service.tone}`,
-              service.href ? "home-service-pill--link" : "home-service-pill--label",
+        <div className="home-services-notes" aria-label="Aperçu des services SOLIS">
+          {homepageServiceNotes.map((service) => {
+            const noteClassName = [
+              "home-service-note",
+              `home-service-note--${service.position}`,
+              `home-service-note--${service.tone}`,
+              service.href ? "home-service-note--link" : "home-service-note--label",
             ].join(" ");
-            const pillContent = (
+            const noteContent = (
               <>
-                <span className="home-service-pill-mark" aria-hidden="true" />
+                <span className="home-service-note-pin" aria-hidden="true" />
                 <span>{service.label}</span>
               </>
             );
@@ -2792,30 +2790,30 @@ function HomepageServicesPreview() {
             if (service.href) {
               return (
                 <a
-                  className={pillClassName}
+                  className={noteClassName}
                   href={service.href}
                   key={service.href}
                   data-rotate={service.rotate}
                   data-start-x={service.startX}
                   data-start-y={service.startY}
                   onClick={handleRouteLinkClick}
-                  style={{ "--pill-rotate": `${service.rotate}deg` }}
+                  style={{ "--note-rotate": `${service.rotate}deg` }}
                 >
-                  {pillContent}
+                  {noteContent}
                 </a>
               );
             }
 
             return (
               <span
-                className={pillClassName}
+                className={noteClassName}
                 key={service.label}
                 data-rotate={service.rotate}
                 data-start-x={service.startX}
                 data-start-y={service.startY}
-                style={{ "--pill-rotate": `${service.rotate}deg` }}
+                style={{ "--note-rotate": `${service.rotate}deg` }}
               >
-                {pillContent}
+                {noteContent}
               </span>
             );
           })}

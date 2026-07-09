@@ -412,6 +412,12 @@ void main() {
       );
 
       outColor = mix(blurredPixel, vec4(u_tint.r, u_tint.g, u_tint.b, 1.0), u_tint.a * 0.8);
+      float normalStrength = clamp(length(normal) * 0.08, 0.0, 1.0);
+      float softBodySheen =
+        smoothstep(0.95, 0.15, v_uv.y) *
+        smoothstep(-0.35, 0.75, v_uv.x - v_uv.y + 0.2) *
+        0.08;
+      outColor.rgb = mix(outColor.rgb, vec3(1.0), softBodySheen);
 
       float fresnelFactor = clamp(
         pow(
@@ -430,10 +436,12 @@ void main() {
       fresnelTintLCH.x += 20.0 * fresnelFactor * u_refFresnelFactor;
       fresnelTintLCH.x = clamp(fresnelTintLCH.x, 0.0, 100.0);
 
+      float fresnelMix =
+        clamp(fresnelFactor * u_refFresnelFactor * 0.65 * normalStrength, 0.0, 0.58);
       outColor = mix(
         outColor,
-        vec4(LCH_TO_SRGB(fresnelTintLCH), 1.0),
-        fresnelFactor * u_refFresnelFactor * 0.7 * length(normal)
+        vec4(clamp(LCH_TO_SRGB(fresnelTintLCH), 0.0, 1.0), 1.0),
+        fresnelMix
       );
 
       float glareGeoFactor = clamp(
@@ -468,10 +476,12 @@ void main() {
       glareTintLCH.y += 30.0 * glareAngleFactor * glareGeoFactor;
       glareTintLCH.x = clamp(glareTintLCH.x, 0.0, 120.0);
 
+      float glareMix =
+        clamp(glareAngleFactor * glareGeoFactor * 0.72 * normalStrength, 0.0, 0.64);
       outColor = mix(
         outColor,
-        vec4(LCH_TO_SRGB(glareTintLCH), 1.0),
-        glareAngleFactor * glareGeoFactor * length(normal)
+        vec4(clamp(LCH_TO_SRGB(glareTintLCH), 0.0, 1.0), 1.0),
+        glareMix
       );
     }
   } else {
@@ -479,6 +489,6 @@ void main() {
   }
 
   outColor = mix(outColor, texture(u_bg, v_uv), smoothstep(-0.001, 0.001, merged));
-  fragColor = outColor;
+  fragColor = vec4(clamp(outColor.rgb, 0.0, 1.0), outColor.a);
 }
 `;
