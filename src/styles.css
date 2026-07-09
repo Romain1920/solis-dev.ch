@@ -2983,6 +2983,27 @@ a {
   }
 }
 
+@keyframes lead-iphone-cta-shine {
+  0% {
+    opacity: 0;
+    transform: translateX(0) skewX(-20deg);
+  }
+
+  5% {
+    opacity: 0.78;
+  }
+
+  18% {
+    opacity: 0;
+    transform: translateX(640%) skewX(-20deg);
+  }
+
+  100% {
+    opacity: 0;
+    transform: translateX(640%) skewX(-20deg);
+  }
+}
+
 @media (max-width: 1280px) {
   .hero-shell {
     width: min(1040px, calc(100vw - 72px));
@@ -4311,6 +4332,42 @@ a {
   font-size: 0.78rem;
   line-height: 1.12;
   white-space: normal;
+}
+
+.hero-form-card--iphone
+  .lead-step--reward:not(.is-playing)
+  .lead-actions--reward
+  .lead-primary-button {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+}
+
+.hero-form-card--iphone
+  .lead-step--reward:not(.is-playing)
+  .lead-actions--reward
+  .lead-primary-button::after {
+  content: "";
+  position: absolute;
+  top: -55%;
+  bottom: -55%;
+  left: -34%;
+  z-index: 1;
+  width: 24%;
+  min-width: 58px;
+  border-radius: 999px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.08),
+    rgba(255, 255, 255, 0.46),
+    rgba(255, 255, 255, 0.08),
+    transparent
+  );
+  opacity: 0;
+  pointer-events: none;
+  transform: translateX(0) skewX(-20deg);
+  animation: lead-iphone-cta-shine 5s cubic-bezier(0.2, 0, 0, 1) 1.15s infinite;
 }
 
 .hero-form-card--iphone .lead-reward-celebration {
