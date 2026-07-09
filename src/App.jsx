@@ -241,12 +241,6 @@ const metrics = [
 
 const homeStats = [
   {
-    id: "active",
-    target: 6,
-    label: "projets en cours",
-    isLive: true,
-  },
-  {
     id: "websites",
     target: 100,
     prefix: "+",
@@ -263,6 +257,11 @@ const homeStats = [
     target: 500000,
     format: "swiss",
     label: "CHF générés sur des sites e-commerce",
+  },
+  {
+    id: "active",
+    target: 6,
+    label: "projets en cours",
   },
 ].map((stat) => ({
   ...stat,
@@ -2308,6 +2307,17 @@ function HomeStatsSection() {
           const liveTraces = statsRef.current
             ? Array.from(statsRef.current.querySelectorAll(".home-stat-live-trace"))
             : [];
+          const getNoteNumberValue = (element, property) => {
+            const value = window.getComputedStyle(element).getPropertyValue(property);
+
+            return Number.parseFloat(value) || 0;
+          };
+          const getNoteRotation = (_index, element) =>
+            getNoteNumberValue(element, "--note-rotation");
+          const getNoteY = (_index, element) =>
+            getNoteNumberValue(element, "--note-y");
+          const getNoteStartRotation = (index, element) =>
+            getNoteRotation(index, element) + (index % 2 === 0 ? -4.2 : 4.2);
           const setFinalValues = () => {
             statNumbers.forEach((element) => {
               element.textContent = element.dataset.final ?? "";
@@ -2316,10 +2326,17 @@ function HomeStatsSection() {
 
           if (reduceMotion) {
             setFinalValues();
-            gsap.set([...statItems, ...statLabels, ...liveTraces], {
+            gsap.set(statItems, {
               autoAlpha: 1,
-              y: 0,
+              y: getNoteY,
+              rotation: getNoteRotation,
               scale: 1,
+              filter: "blur(0px)",
+            });
+            gsap.set([...statLabels, ...liveTraces], {
+              autoAlpha: 1,
+              x: 0,
+              y: 0,
               filter: "blur(0px)",
             });
             return undefined;
@@ -2339,16 +2356,21 @@ function HomeStatsSection() {
             statItems,
             {
               autoAlpha: 0,
-              y: 18,
-              filter: "blur(8px)",
+              y: (index, element) => getNoteY(index, element) + 24,
+              rotation: getNoteStartRotation,
+              scale: 0.96,
+              filter: "blur(6px)",
+              transformOrigin: "50% 14%",
             },
             {
               autoAlpha: 1,
-              y: 0,
+              y: getNoteY,
+              rotation: getNoteRotation,
+              scale: 1,
               filter: "blur(0px)",
-              duration: 0.62,
+              duration: 0.68,
               ease: "power3.out",
-              stagger: 0.055,
+              stagger: 0.08,
             },
             0
           );
