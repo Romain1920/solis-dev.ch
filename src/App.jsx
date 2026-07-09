@@ -11,6 +11,7 @@ import lyndonPortrait from "../assets/team/lyndon-vouilloz.jpg";
 import macBookFrameImage from "../assets/macbook-pro-m5.png";
 import romainPortrait from "../assets/team/romain-darioli.jpg";
 import solisLogoNav from "../assets/solis-logo-nav.png";
+import solisLiquidLogoVideo from "../assets/videos/solis-liquid-logo.mp4";
 import studioDisplayImage from "../assets/studio-display-light.png";
 import { portfolioProjects, projects } from "./data/projects";
 
@@ -2723,7 +2724,16 @@ function HomepageServicesPreview() {
           />
 
           <div className="home-services-logo">
-            <img src={solisLogoNav} alt="SOLIS" loading="lazy" decoding="async" />
+            <video
+              className="home-services-logo-video"
+              src={solisLiquidLogoVideo}
+              aria-label="Logo SOLIS animé"
+              autoPlay
+              loop
+              muted
+              playsInline
+              preload="metadata"
+            />
           </div>
 
           {homepageServiceLinks.map((service) => (
