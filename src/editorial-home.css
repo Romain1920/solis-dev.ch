@@ -33,12 +33,12 @@
 }
 
 :root[data-theme="dark"] .editorial-home {
-  --editorial-page: #0f0f0f;
-  --editorial-surface: #171717;
-  --editorial-surface-raised: #202020;
-  --editorial-text: #f2f2f0;
-  --editorial-muted: #9ca1ad;
-  --editorial-border: rgba(255, 255, 255, 0.12);
+  --editorial-page: var(--theme-page, #18191b);
+  --editorial-surface: var(--theme-surface, #202124);
+  --editorial-surface-raised: var(--theme-surface-elevated, #292a2d);
+  --editorial-text: var(--theme-ink, #f2f2f0);
+  --editorial-muted: var(--theme-muted, #9ca1ad);
+  --editorial-border: var(--theme-line, rgba(255, 255, 255, 0.12));
   --editorial-shadow: rgba(0, 0, 0, 0.38);
 }
 

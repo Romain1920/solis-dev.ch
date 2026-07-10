@@ -15,6 +15,7 @@ import studioDisplayImage from "../assets/studio-display-light.png";
 import { EditorialHeader } from "./components/EditorialHeader";
 import EditorialHomeExperience from "./components/EditorialHomeExperience";
 import { MockupLeadForm } from "./components/MockupLeadForm";
+import SplitEditorialHomeExperience from "./components/SplitEditorialHomeExperience";
 import { ThemeProvider } from "./components/ThemeProvider";
 import { portfolioProjects, projects } from "./data/projects";
 
@@ -145,11 +146,6 @@ const routePaths = new Set(["/", "/services", "/portfolio", "/equipe"]);
 const screenshotIntervalMs = 1500;
 const ENABLE_SPLIT_AZURIO_HERO = true;
 const ENABLE_CURRENT_AZURIO_HERO = false;
-const ENABLE_EDITORIAL_HOME_EXPERIENCE =
-  ENABLE_SPLIT_AZURIO_HERO || ENABLE_CURRENT_AZURIO_HERO;
-const EDITORIAL_HOME_EXPERIENCE_VARIANT = ENABLE_SPLIT_AZURIO_HERO
-  ? "split"
-  : "current";
 const ENABLE_EDITORIAL_GLOBAL_HEADER = true;
 const ENABLE_NEW_HERO_FORM = true;
 const ENABLE_HERO_FORM_CARD = false;
@@ -1064,9 +1060,15 @@ function PageContent({ path }) {
 function HomePage() {
   return (
     <>
-      {ENABLE_EDITORIAL_HOME_EXPERIENCE ? (
+      {ENABLE_SPLIT_AZURIO_HERO ? (
+        <SplitEditorialHomeExperience
+          renderForm={({ variant }) => <MockupLeadForm variant={variant} />}
+          trustContent={<HeroTrustRow />}
+          whatsappHref={whatsappHref}
+        />
+      ) : ENABLE_CURRENT_AZURIO_HERO ? (
         <EditorialHomeExperience
-          experienceVariant={EDITORIAL_HOME_EXPERIENCE_VARIANT}
+          experienceVariant="current"
           onInternalNavigate={({ href }) => navigateToInternalHref(href)}
           renderForm={({ variant }) => <MockupLeadForm variant={variant} />}
           trustContent={<HeroTrustRow />}

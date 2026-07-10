@@ -13,9 +13,9 @@
 }
 
 :root[data-theme="dark"] {
-  --theme-page: #0f0f0f;
-  --theme-surface: #171717;
-  --theme-surface-elevated: #202020;
+  --theme-page: #18191b;
+  --theme-surface: #202124;
+  --theme-surface-elevated: #292a2d;
   --theme-ink: #f2f2f0;
   --theme-muted: #9ca1ad;
   --theme-line: rgba(255, 255, 255, 0.12);
@@ -24,7 +24,7 @@
   --ink: var(--theme-ink);
   --muted: var(--theme-muted);
   --paper: var(--theme-page);
-  --glass: rgba(32, 32, 32, 0.84);
+  --glass: rgba(32, 33, 36, 0.88);
   --line: var(--theme-line);
   color-scheme: dark;
 }
@@ -150,7 +150,7 @@ main,
 
 :root[data-theme="dark"] .team-photo-frame {
   border-color: var(--theme-line);
-  background: #181818;
+  background: var(--theme-surface);
 }
 
 :root[data-theme="dark"] .home-service-note {

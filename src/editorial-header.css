@@ -3,8 +3,8 @@
   --editorial-header-line: rgba(17, 17, 17, 0.22);
   --editorial-header-wash: rgba(238, 234, 232, 0.94);
   --editorial-header-focus: #ef5a3f;
-  --editorial-menu-paper: #0f0f0f;
-  --editorial-menu-surface: #191919;
+  --editorial-menu-paper: #151618;
+  --editorial-menu-surface: #1e2022;
   --editorial-menu-ink: #f2f2f0;
   --editorial-menu-muted: #92928f;
   --editorial-menu-line: rgba(255, 255, 255, 0.14);
@@ -31,7 +31,7 @@
 html[data-theme="dark"] .editorial-header {
   --editorial-header-ink: #f2f2f0;
   --editorial-header-line: rgba(255, 255, 255, 0.24);
-  --editorial-header-wash: rgba(15, 15, 15, 0.94);
+  --editorial-header-wash: rgba(24, 25, 27, 0.94);
 }
 
 .editorial-header button,

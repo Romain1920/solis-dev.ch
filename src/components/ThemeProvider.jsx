@@ -13,6 +13,7 @@ export const THEME_STORAGE_KEY = "solis-theme";
 const SYSTEM_PREFERENCE = "system";
 const DARK_THEME = "dark";
 const LIGHT_THEME = "light";
+const DARK_THEME_COLOR = "#18191b";
 const THEME_QUERY = "(prefers-color-scheme: dark)";
 const ThemeContext = createContext(null);
 
@@ -51,7 +52,10 @@ const applyThemeToDocument = (theme, preference) => {
   root.style.colorScheme = theme;
 
   const themeColor = document.querySelector('meta[name="theme-color"]');
-  themeColor?.setAttribute("content", theme === DARK_THEME ? "#0f0f0f" : "#eeeae8");
+  themeColor?.setAttribute(
+    "content",
+    theme === DARK_THEME ? DARK_THEME_COLOR : "#eeeae8"
+  );
 };
 
 /**
