@@ -7,33 +7,6 @@
       name="description"
       content="SOLIS Développement conçoit des sites web, applications et logiciels métier entièrement sur mesure en Suisse romande."
     />
-    <meta name="theme-color" content="#eeeae8" />
-    <script>
-      (() => {
-        const storageKey = "solis-theme";
-        let storedTheme = null;
-
-        try {
-          const value = window.localStorage.getItem(storageKey);
-          storedTheme = value === "light" || value === "dark" ? value : null;
-        } catch {
-          storedTheme = null;
-        }
-
-        const systemTheme = window.matchMedia("(prefers-color-scheme: dark)").matches
-          ? "dark"
-          : "light";
-        const theme = storedTheme ?? systemTheme;
-
-        document.documentElement.dataset.theme = theme;
-        document.documentElement.dataset.themePreference = storedTheme ?? "system";
-        document.documentElement.dataset.themeSource = storedTheme ? "manual" : "system";
-        document.documentElement.style.colorScheme = theme;
-        document
-          .querySelector('meta[name="theme-color"]')
-          ?.setAttribute("content", theme === "dark" ? "#18191b" : "#eeeae8");
-      })();
-    </script>
     <title>SOLIS Développement - Maquettes interactives et logiciels sur mesure</title>
   </head>
   <body>

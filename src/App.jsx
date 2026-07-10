@@ -1,10 +1,10 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { flushSync } from "react-dom";
 import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import ReactLenis, { useLenis } from "lenis/react";
+import ReactLenis from "lenis/react";
 import aymericPortrait from "../assets/team/aymeric-sarrasin.jpg";
 import iphoneFrameImage from "../assets/iphone-17-black-portrait.png";
 import lyndonPortrait from "../assets/team/lyndon-vouilloz.jpg";
@@ -12,11 +12,6 @@ import macBookFrameImage from "../assets/macbook-pro-m5.png";
 import romainPortrait from "../assets/team/romain-darioli.jpg";
 import solisLogoNav from "../assets/solis-logo-nav.png";
 import studioDisplayImage from "../assets/studio-display-light.png";
-import { EditorialHeader } from "./components/EditorialHeader";
-import EditorialHomeExperience from "./components/EditorialHomeExperience";
-import { MockupLeadForm } from "./components/MockupLeadForm";
-import SplitEditorialHomeExperience from "./components/SplitEditorialHomeExperience";
-import { ThemeProvider } from "./components/ThemeProvider";
 import { portfolioProjects, projects } from "./data/projects";
 
 gsap.registerPlugin(useGSAP, ScrollTrigger);
@@ -144,9 +139,6 @@ const homeValuePrinciples = ["Sur mesure", "Performance", "Conversion"];
 const routePaths = new Set(["/", "/services", "/portfolio", "/equipe"]);
 
 const screenshotIntervalMs = 1500;
-const ENABLE_SPLIT_AZURIO_HERO = true;
-const ENABLE_CURRENT_AZURIO_HERO = false;
-const ENABLE_EDITORIAL_GLOBAL_HEADER = true;
 const ENABLE_NEW_HERO_FORM = true;
 const ENABLE_HERO_FORM_CARD = false;
 const ENABLE_HERO_FORM_IPHONE_TEST = true;
@@ -160,7 +152,7 @@ const heroMouseTrailStagger = 0.03;
 const heroMouseTrailDuration = 0.5;
 const heroMouseTrailPoolSize = 12;
 
-const lenisOptions = { autoRaf: false, lerp: 0.08, wheelMultiplier: 0.9 };
+const lenisOptions = { lerp: 0.08, wheelMultiplier: 0.9 };
 const projectById = new Map(projects.map((project) => [project.id, project]));
 const portfolioProjectById = new Map(
   portfolioProjects.map((project) => [project.id, project])
@@ -824,22 +816,7 @@ const handleRouteLinkClick = (event) => {
 
   event.preventDefault();
 
-  navigateToInternalHref(anchor.getAttribute("href"));
-};
-
-const navigateToInternalHref = (href) => {
-  if (typeof window === "undefined") {
-    return;
-  }
-
-  const url = new URL(href, window.location.origin);
-
-  if (url.origin !== window.location.origin || !isRoutePath(url.pathname)) {
-    window.location.assign(url.href);
-    return;
-  }
-
-  const nextHref = getInternalHref(href);
+  const nextHref = getInternalHref(anchor.getAttribute("href"));
   const currentHref = `${normalizeRoutePath(window.location.pathname)}${window.location.hash}`;
   const shouldResetScroll = !url.hash;
 
@@ -969,76 +946,24 @@ function useRouteScroll(path, hash) {
 
 function App() {
   const { path, hash } = usePageLocation();
-  const lenisRef = useRef(null);
 
   useRouteScroll(path, hash);
 
-  const handleMenuScrollLock = useCallback((locked) => {
-    const lenis = lenisRef.current?.lenis;
-
-    if (!lenis) {
-      return;
-    }
-
-    if (locked) {
-      lenis.stop();
-    } else {
-      lenis.start();
-    }
-  }, []);
-
   return (
-    <ThemeProvider>
-      <ReactLenis ref={lenisRef} root options={lenisOptions}>
-        <LenisScrollSync />
-        <a className="skip-link" href="#contenu">
-          Aller au contenu
-        </a>
+    <ReactLenis root options={lenisOptions}>
+      <a className="skip-link" href="#contenu">
+        Aller au contenu
+      </a>
 
-        {ENABLE_EDITORIAL_GLOBAL_HEADER ? (
-          <EditorialHeader
-            currentPath={path}
-            currentHash={hash}
-            onNavigate={handleRouteLinkClick}
-            onScrollLockChange={handleMenuScrollLock}
-          />
-        ) : (
-          <Header currentPath={path} />
-        )}
+      <Header currentPath={path} />
 
-        <main id="contenu" data-route={path}>
-          <PageContent path={path} />
-        </main>
+      <main id="contenu" data-route={path}>
+        <PageContent path={path} />
+      </main>
 
-        <Footer />
-      </ReactLenis>
-    </ThemeProvider>
+      <Footer />
+    </ReactLenis>
   );
-}
-
-function LenisScrollSync() {
-  const lenis = useLenis();
-
-  useEffect(() => {
-    if (!lenis) {
-      return undefined;
-    }
-
-    const updateLenis = (time) => {
-      lenis.raf(time * 1000);
-    };
-
-    lenis.on("scroll", ScrollTrigger.update);
-    gsap.ticker.add(updateLenis);
-    ScrollTrigger.refresh();
-
-    return () => {
-      lenis.off("scroll", ScrollTrigger.update);
-      gsap.ticker.remove(updateLenis);
-    };
-  }, [lenis]);
-
-  return null;
 }
 
 function PageContent({ path }) {
@@ -1060,23 +985,7 @@ function PageContent({ path }) {
 function HomePage() {
   return (
     <>
-      {ENABLE_SPLIT_AZURIO_HERO ? (
-        <SplitEditorialHomeExperience
-          renderForm={({ variant }) => <MockupLeadForm variant={variant} />}
-          trustContent={<HeroTrustRow />}
-          whatsappHref={whatsappHref}
-        />
-      ) : ENABLE_CURRENT_AZURIO_HERO ? (
-        <EditorialHomeExperience
-          experienceVariant="current"
-          onInternalNavigate={({ href }) => navigateToInternalHref(href)}
-          renderForm={({ variant }) => <MockupLeadForm variant={variant} />}
-          trustContent={<HeroTrustRow />}
-          whatsappHref={whatsappHref}
-        />
-      ) : (
-        <Hero />
-      )}
+      <Hero />
       <div className="content-section-wrapper">
         <HomepageServicesPreview />
         <HomeStatsSection />
@@ -2646,22 +2555,20 @@ function HomeStatsSection() {
             );
           });
 
-          if (liveTraces.length > 0) {
-            timeline.fromTo(
-              liveTraces,
-              {
-                autoAlpha: 0,
-                x: -8,
-              },
-              {
-                autoAlpha: 1,
-                x: 0,
-                duration: 0.42,
-                ease: "power3.out",
-              },
-              0.48
-            );
-          }
+          timeline.fromTo(
+            liveTraces,
+            {
+              autoAlpha: 0,
+              x: -8,
+            },
+            {
+              autoAlpha: 1,
+              x: 0,
+              duration: 0.42,
+              ease: "power3.out",
+            },
+            0.48
+          );
 
           return undefined;
         }
@@ -2757,21 +2664,19 @@ function HomepageServicesPreview() {
             return undefined;
           }
 
-          if (words.length > 0) {
-            gsap.set(words, { color: "rgba(9, 10, 10, 0.18)" });
+          gsap.set(words, { color: "rgba(9, 10, 10, 0.18)" });
 
-            gsap.to(words, {
-              color: "#090a0a",
-              ease: "none",
-              stagger: 0.045,
-              scrollTrigger: {
-                trigger: section,
-                start: "top 70%",
-                end: "center 58%",
-                scrub: 0.55,
-              },
-            });
-          }
+          gsap.to(words, {
+            color: "#090a0a",
+            ease: "none",
+            stagger: 0.045,
+            scrollTrigger: {
+              trigger: section,
+              start: "top 70%",
+              end: "center 58%",
+              scrub: 0.55,
+            },
+          });
 
           const timeline = gsap.timeline({
             scrollTrigger: {
@@ -2781,24 +2686,21 @@ function HomepageServicesPreview() {
             },
           });
 
-          if (logo) {
-            timeline.fromTo(
-              logo,
-              { autoAlpha: 0, y: 16, scale: 0.96, filter: "blur(5px)" },
-              {
-                autoAlpha: 1,
-                y: 0,
-                scale: 1,
-                filter: "blur(0px)",
-                duration: 0.58,
-                ease: "power3.out",
-              }
-            );
-          }
+          timeline.fromTo(
+            logo,
+            { autoAlpha: 0, y: 16, scale: 0.96, filter: "blur(5px)" },
+            {
+              autoAlpha: 1,
+              y: 0,
+              scale: 1,
+              filter: "blur(0px)",
+              duration: 0.58,
+              ease: "power3.out",
+            }
+          );
 
-          if (serviceNotes.length > 0) {
-            timeline.fromTo(
-              serviceNotes,
+          timeline.fromTo(
+            serviceNotes,
             {
               autoAlpha: 0,
               x: (_index, element) =>
@@ -2820,9 +2722,8 @@ function HomepageServicesPreview() {
               ease: "power3.out",
               stagger: 0.055,
             },
-              0.18
-            );
-          }
+            0.18
+          );
 
           return undefined;
         }
